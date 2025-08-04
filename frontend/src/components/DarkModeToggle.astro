@@ -1,0 +1,119 @@
+---
+// Dark mode toggle component
+---
+
+<button class="dark-mode-toggle" aria-label="Toggle dark mode">
+  <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <circle cx="12" cy="12" r="5"></circle>
+    <line x1="12" y1="1" x2="12" y2="3"></line>
+    <line x1="12" y1="21" x2="12" y2="23"></line>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+    <line x1="1" y1="12" x2="3" y2="12"></line>
+    <line x1="21" y1="12" x2="23" y2="12"></line>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+  </svg>
+  <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+  </svg>
+</button>
+
+<style>
+  .dark-mode-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 999;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark-mode-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .dark-mode-toggle:active {
+    transform: scale(0.95);
+  }
+
+  .sun-icon,
+  .moon-icon {
+    position: absolute;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .sun-icon {
+    opacity: 1;
+    transform: rotate(0deg);
+    color: var(--color-warning);
+  }
+
+  .moon-icon {
+    opacity: 0;
+    transform: rotate(-180deg);
+    color: var(--color-secondary);
+  }
+
+  [data-theme="dark"] .sun-icon {
+    opacity: 0;
+    transform: rotate(180deg);
+  }
+
+  [data-theme="dark"] .moon-icon {
+    opacity: 1;
+    transform: rotate(0deg);
+  }
+
+  /* Mobile positioning */
+  @media (max-width: 768px) {
+    .dark-mode-toggle {
+      bottom: 16px;
+      right: 16px;
+      width: 44px;
+      height: 44px;
+    }
+  }
+</style>
+
+<script>
+  // Theme management
+  const toggle = document.querySelector('.dark-mode-toggle');
+  const html = document.documentElement;
+  
+  // Check for saved theme preference or default to light
+  const currentTheme = localStorage.getItem('theme') || 'light';
+  html.setAttribute('data-theme', currentTheme);
+  
+  // Toggle theme
+  toggle?.addEventListener('click', () => {
+    const theme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  });
+  
+  // Listen for system theme changes
+  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  
+  // Set initial theme based on system preference if no saved preference
+  if (!localStorage.getItem('theme')) {
+    html.setAttribute('data-theme', mediaQuery.matches ? 'dark' : 'light');
+  }
+  
+  // Update on system theme change
+  mediaQuery.addEventListener('change', (e) => {
+    if (!localStorage.getItem('theme')) {
+      html.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+    }
+  });
+</script>

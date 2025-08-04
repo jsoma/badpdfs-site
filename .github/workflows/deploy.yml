@@ -1,0 +1,104 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Prevent concurrent deployments
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '18'
+  R2_PUBLIC_URL: https://pub-4e99d31d19cb404d8d4f5f7efa51ef6e.r2.dev
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    permissions:
+      contents: write
+      pages: write
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            processor/.venv
+            ~/.cache/pip
+          key: ${{ runner.os }}-deps-${{ hashFiles('processor/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
+      
+      - name: Cache PDFs
+        uses: actions/cache@v3
+        with:
+          path: content/pdfs/**/*.pdf
+          key: ${{ runner.os }}-pdfs-${{ hashFiles('content/pdfs/**/*.md') }}
+          restore-keys: |
+            ${{ runner.os }}-pdfs-
+      
+      - name: Cache build artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            processor/.build_cache.json
+            processor/artifacts/
+            frontend/public/artifacts/
+          key: ${{ runner.os }}-artifacts-${{ hashFiles('content/pdfs/**/*.md', 'processor/**/*.py') }}
+          restore-keys: |
+            ${{ runner.os }}-artifacts-
+      
+      - name: Setup Python environment
+        working-directory: processor
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+          pip install -e .
+          pip install --upgrade "natural-pdf @ git+https://github.com/jsoma/natural-pdf.git"
+      
+      - name: Download missing PDFs
+        working-directory: processor
+        run: python scripts/download_pdfs_from_r2.py
+      
+      - name: Build processor artifacts
+        working-directory: processor
+        run: |
+          source .venv/bin/activate
+          python build.py build
+      
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+      
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: frontend/dist
+          publish_branch: gh-pages
+          force_orphan: true
+          commit_message: Deploy ${{ github.sha }}

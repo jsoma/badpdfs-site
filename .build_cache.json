@@ -1,0 +1,516 @@
+{
+  "files": {
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/cia-document/cia-document-extraction.md": "6b0630cb165a1a1d72f6a63c02af654f",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1.md": "a5dd62796a0010e61c2b6a6e9fef599b",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/24480polcompleted/24480polcompleted.md": "54b257be3cc1bd463048e4dab18b8796",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/focus/focus.md": "c3005c0a426bfd6365268efc40cd97df",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a.md": "32bc0aca407f7ee873923ff860a97e54",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/mednine/mednine.md": "c40b3bf92bb4b4b763683e43304e1196",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/cia-document/cia-doc.pdf": "523a3b9fd68bd7907f6a84d98a2d767f",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1.pdf": "12811832b1da735b30463816392fe91d",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/24480polcompleted/24480polcompleted.pdf": "271ae898fd98d5624792d8afdc3f5f90",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/focus/focus.pdf": "124981dd2f115f92575b97aec2e4175f",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a.pdf": "f222eb2c0e8053fae62f4563505b0064",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/mednine/mednine.pdf": "91388a1568de941b121610b30183d1a9"
+  },
+  "builds": {},
+  "tasks": {
+    "cia-document": {
+      "metadata": {
+        "timestamp": "2025-08-03T19:05:35.921410",
+        "result": {
+          "task_name": "metadata",
+          "success": true,
+          "data": {
+            "metadata_count": 1
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/cia-document/cia-document-extraction.json",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/cia-document/metadata.json"
+          ]
+        }
+      },
+      "screenshots": {
+        "timestamp": "2025-08-03T19:05:40.035804",
+        "result": {
+          "task_name": "screenshots",
+          "success": true,
+          "data": {
+            "status": "success",
+            "pdf_file": "cia-doc.pdf",
+            "page_count": 17,
+            "screenshots_generated": 10
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-4-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-9-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-2-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-7.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-10.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-5-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-6.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-4.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-8-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-5.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-3-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-1.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-10-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-2.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-3.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-6-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-8.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-9.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-7-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/cia-document/cia-doc-1-thumb.png"
+          ]
+        }
+      },
+      "notebooks": {
+        "timestamp": "2025-08-03T19:07:39.614789",
+        "result": {
+          "task_name": "notebooks",
+          "success": true,
+          "data": {
+            "notebooks_created": 1,
+            "results": [
+              {
+                "approach": "cia-document-extraction",
+                "status": "success",
+                "path": "pdfs/cia-document/notebooks/cia-document-extraction.ipynb"
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/cia-document/notebooks/cia-document-extraction.ipynb",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/cia-document/notebooks/manifest.json"
+          ]
+        }
+      }
+    },
+    "k046682-111320-opa-lea-database-install_1": {
+      "metadata": {
+        "timestamp": "2025-08-03T19:05:35.928223",
+        "result": {
+          "task_name": "metadata",
+          "success": true,
+          "data": {
+            "metadata_count": 1
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1.json",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/k046682-111320-opa-lea-database-install_1/metadata.json"
+          ]
+        }
+      },
+      "screenshots": {
+        "timestamp": "2025-08-03T19:05:42.343004",
+        "result": {
+          "task_name": "screenshots",
+          "success": true,
+          "data": {
+            "status": "success",
+            "pdf_file": "k046682-111320-opa-lea-database-install_1.pdf",
+            "page_count": 5,
+            "screenshots_generated": 5
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1-5.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1-4.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1-1-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1-3.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1-2.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1-1.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1-5-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1-3-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1-4-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1-2-thumb.png"
+          ]
+        }
+      },
+      "notebooks": {
+        "timestamp": "2025-08-03T19:07:39.616212",
+        "result": {
+          "task_name": "notebooks",
+          "success": true,
+          "data": {
+            "notebooks_created": 1,
+            "results": [
+              {
+                "approach": "k046682-111320-opa-lea-database-install_1",
+                "status": "success",
+                "path": "pdfs/k046682-111320-opa-lea-database-install_1/notebooks/k046682-111320-opa-lea-database-install_1.ipynb"
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/k046682-111320-opa-lea-database-install_1/notebooks/k046682-111320-opa-lea-database-install_1.ipynb",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/k046682-111320-opa-lea-database-install_1/notebooks/manifest.json"
+          ]
+        }
+      }
+    },
+    "24480polcompleted": {
+      "metadata": {
+        "timestamp": "2025-08-03T19:05:35.930777",
+        "result": {
+          "task_name": "metadata",
+          "success": true,
+          "data": {
+            "metadata_count": 1
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/24480polcompleted/24480polcompleted.json",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/24480polcompleted/metadata.json"
+          ]
+        }
+      },
+      "screenshots": {
+        "timestamp": "2025-08-03T19:05:47.595356",
+        "result": {
+          "task_name": "screenshots",
+          "success": true,
+          "data": {
+            "status": "success",
+            "pdf_file": "24480polcompleted.pdf",
+            "page_count": 47,
+            "screenshots_generated": 10
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-3.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-2.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-1.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-5.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-4.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-6.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-6-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-7.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-1-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-7-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-2-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-9-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-4-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-10.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-3-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-9.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-8.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-10-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-8-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/24480polcompleted/24480polcompleted-5-thumb.png"
+          ]
+        }
+      },
+      "execution": {
+        "timestamp": "2025-08-03T19:07:35.617646",
+        "result": {
+          "task_name": "execution",
+          "success": true,
+          "data": {
+            "executed": 1,
+            "results": [
+              {
+                "approach": "24480polcompleted",
+                "status": "success",
+                "code_errors": 0
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/24480polcompleted/executions/24480polcompleted.json"
+          ]
+        }
+      },
+      "notebooks": {
+        "timestamp": "2025-08-03T19:07:39.617247",
+        "result": {
+          "task_name": "notebooks",
+          "success": true,
+          "data": {
+            "notebooks_created": 1,
+            "results": [
+              {
+                "approach": "24480polcompleted",
+                "status": "success",
+                "path": "pdfs/24480polcompleted/notebooks/24480polcompleted.ipynb"
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/24480polcompleted/notebooks/24480polcompleted.ipynb",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/24480polcompleted/notebooks/manifest.json"
+          ]
+        }
+      }
+    },
+    "focus": {
+      "metadata": {
+        "timestamp": "2025-08-03T19:40:27.975433",
+        "result": {
+          "task_name": "metadata",
+          "success": true,
+          "data": {
+            "metadata_count": 1
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/focus/focus.json",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/focus/metadata.json"
+          ]
+        }
+      },
+      "screenshots": {
+        "timestamp": "2025-08-03T19:40:32.926227",
+        "result": {
+          "task_name": "screenshots",
+          "success": true,
+          "data": {
+            "status": "success",
+            "pdf_file": "focus.pdf",
+            "page_count": 2,
+            "screenshots_generated": 2
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/focus/focus-2-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/focus/focus-2.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/focus/focus-1.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/focus/focus-1-thumb.png"
+          ]
+        }
+      },
+      "execution": {
+        "timestamp": "2025-08-03T19:40:31.514630",
+        "result": {
+          "task_name": "execution",
+          "success": true,
+          "data": {
+            "executed": 1,
+            "results": [
+              {
+                "approach": "focus",
+                "status": "success",
+                "code_errors": 0
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/focus/executions/focus.json"
+          ]
+        }
+      },
+      "notebooks": {
+        "timestamp": "2025-08-03T19:40:32.928267",
+        "result": {
+          "task_name": "notebooks",
+          "success": true,
+          "data": {
+            "notebooks_created": 1,
+            "results": [
+              {
+                "approach": "focus",
+                "status": "success",
+                "path": "pdfs/focus/notebooks/focus.ipynb"
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/focus/notebooks/focus.ipynb",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/focus/notebooks/manifest.json"
+          ]
+        }
+      }
+    },
+    "czech-republic-pisa2012_zakovsky_dotaznik_a": {
+      "metadata": {
+        "timestamp": "2025-08-03T19:05:35.937920",
+        "result": {
+          "task_name": "metadata",
+          "success": true,
+          "data": {
+            "metadata_count": 1
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a.json",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/metadata.json"
+          ]
+        }
+      },
+      "screenshots": {
+        "timestamp": "2025-08-03T19:05:51.784638",
+        "result": {
+          "task_name": "screenshots",
+          "success": true,
+          "data": {
+            "status": "success",
+            "pdf_file": "czech-republic-pisa2012_zakovsky_dotaznik_a.pdf",
+            "page_count": 56,
+            "screenshots_generated": 10
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-4.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-5.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-7.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-6.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-2.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-3.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-6-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-1.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-1-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-10.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-7-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-2-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-9-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-10-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-4-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-3-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-8-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-8.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-9.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a-5-thumb.png"
+          ]
+        }
+      },
+      "execution": {
+        "timestamp": "2025-08-03T19:07:38.943318",
+        "result": {
+          "task_name": "execution",
+          "success": true,
+          "data": {
+            "executed": 1,
+            "results": [
+              {
+                "approach": "czech-republic-pisa2012_zakovsky_dotaznik_a",
+                "status": "success",
+                "code_errors": 8
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/executions/czech-republic-pisa2012_zakovsky_dotaznik_a.json"
+          ]
+        }
+      },
+      "notebooks": {
+        "timestamp": "2025-08-03T19:07:39.623676",
+        "result": {
+          "task_name": "notebooks",
+          "success": true,
+          "data": {
+            "notebooks_created": 1,
+            "results": [
+              {
+                "approach": "czech-republic-pisa2012_zakovsky_dotaznik_a",
+                "status": "success",
+                "path": "pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/notebooks/czech-republic-pisa2012_zakovsky_dotaznik_a.ipynb"
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/notebooks/czech-republic-pisa2012_zakovsky_dotaznik_a.ipynb",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/notebooks/manifest.json"
+          ]
+        }
+      }
+    },
+    "mednine": {
+      "metadata": {
+        "timestamp": "2025-08-03T19:16:58.284568",
+        "result": {
+          "task_name": "metadata",
+          "success": true,
+          "data": {
+            "metadata_count": 1
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/mednine/mednine.json",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/mednine/metadata.json"
+          ]
+        }
+      },
+      "screenshots": {
+        "timestamp": "2025-08-03T19:17:00.961352",
+        "result": {
+          "task_name": "screenshots",
+          "success": true,
+          "data": {
+            "status": "success",
+            "pdf_file": "mednine.pdf",
+            "page_count": 4,
+            "screenshots_generated": 4
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/mednine/mednine-4.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/mednine/mednine-1-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/mednine/mednine-1.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/mednine/mednine-2.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/mednine/mednine-3.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/mednine/mednine-3-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/mednine/mednine-4-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/mednine/mednine-2-thumb.png"
+          ]
+        }
+      },
+      "execution": {
+        "timestamp": "2025-08-03T19:16:59.872984",
+        "result": {
+          "task_name": "execution",
+          "success": true,
+          "data": {
+            "executed": 1,
+            "results": [
+              {
+                "approach": "mednine",
+                "status": "success",
+                "code_errors": 0
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/mednine/executions/mednine.json"
+          ]
+        }
+      },
+      "notebooks": {
+        "timestamp": "2025-08-03T19:17:00.964828",
+        "result": {
+          "task_name": "notebooks",
+          "success": true,
+          "data": {
+            "notebooks_created": 1,
+            "results": [
+              {
+                "approach": "mednine",
+                "status": "success",
+                "path": "pdfs/mednine/notebooks/mednine.ipynb"
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/mednine/notebooks/mednine.ipynb",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/mednine/notebooks/manifest.json"
+          ]
+        }
+      }
+    }
+  },
+  "version": "2.0"
+}

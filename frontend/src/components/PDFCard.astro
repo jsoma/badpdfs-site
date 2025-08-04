@@ -1,0 +1,66 @@
+---
+export interface Props {
+  pdf: any
+}
+
+const { pdf } = Astro.props
+const slug = pdf.primary_slug || pdf.slug
+
+// Build the correct screenshot path: screenshots/{id}/{pdf-name}-1-thumb.png
+const pdfName = pdf.pdf.replace('.pdf', '')
+const thumbnailPath = `/artifacts/screenshots/${pdf.id}/${pdfName}-1-thumb.png`
+---
+
+<a 
+  href={`/pdfs/${slug}`} 
+  class="pdf-card group block rounded-lg shadow hover:shadow-lg transition-all"
+>
+  <div class="aspect-[8.5/11] bg-gray-100 rounded-t-lg overflow-hidden relative">
+    <img 
+      src={thumbnailPath}
+      alt={pdf.title}
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform"
+      loading="lazy"
+    />
+    {/* Overlay with PDF name for now */}
+    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-4">
+      <span class="text-white text-xs font-medium">{pdf.pdf}</span>
+    </div>
+  </div>
+  <div class="p-4">
+    <h3 class="pdf-title font-semibold mb-2 line-clamp-2">{pdf.title}</h3>
+    <p class="pdf-description text-sm mb-3 line-clamp-4">{pdf.description}</p>
+    <div class="flex flex-wrap gap-1">
+      {pdf.methods.slice(0, 3).map(method => (
+        <span class="method-tag text-xs px-2 py-1 rounded">
+          {method}
+        </span>
+      ))}
+      {pdf.methods.length > 3 && (
+        <span class="text-xs text-gray-500 px-2 py-1">
+          +{pdf.methods.length - 3} more
+        </span>
+      )}
+    </div>
+  </div>
+</a>
+
+<style>
+  .pdf-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+  
+  .pdf-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primary);
+  }
+  
+  .pdf-title {
+    color: var(--color-text);
+  }
+  
+  .pdf-description {
+    color: var(--color-text-muted);
+  }
+</style>

@@ -1,0 +1,989 @@
+---
+// Search.astro - Global search component with FlexSearch
+---
+
+<div class="search-wrapper">
+  <div class="search-container">
+    <div class="search-input-wrapper">
+      <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+      <input
+        type="search"
+        id="search-input"
+        class="search-input"
+        placeholder="Search PDFs, methods, or content..."
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <span class="search-shortcut">/</span>
+    </div>
+    <div id="search-results" class="search-results"></div>
+  </div>
+</div>
+
+<script>
+  import FlexSearch from 'flexsearch';
+  
+  let searchIndex = null;
+  let methodIndex = null;
+  let documents = {};
+  let allMetadata = [];
+  let methodUsageMap = {};
+  let isSearchOpen = false;
+  
+  // Load search index and metadata
+  async function loadSearchIndex() {
+    try {
+      // Load search index
+      const response = await fetch('/artifacts/search_index.compact.json');
+      const data = await response.json();
+      
+      // Store documents
+      data.documents.forEach(doc => {
+        documents[doc.id] = doc;
+      });
+      
+      // Store method index
+      methodIndex = data.methodIndex;
+      
+      // Load all metadata for method usage snippets
+      const metadataResponse = await fetch('/artifacts/all_metadata.json');
+      allMetadata = await metadataResponse.json();
+      
+      // Build method usage map
+      allMetadata.forEach(item => {
+        if (item.method_usage) {
+          item.method_usage.forEach(usage => {
+            const method = usage.method;
+            if (!methodUsageMap[method]) {
+              methodUsageMap[method] = [];
+            }
+            methodUsageMap[method].push({
+              example: item.id,
+              title: item.title,
+              slug: item.slug,
+              usage: usage
+            });
+          });
+        }
+      });
+      
+      // Create FlexSearch index
+      searchIndex = new FlexSearch.Document({
+        document: {
+          id: 'id',
+          index: ['title', 'description', 'content', 'methods', 'tags'],
+          store: ['id', 'slug', 'title', 'description', 'methods']
+        },
+        tokenize: 'forward',
+        threshold: 0,
+        resolution: 9,
+        depth: 3
+      });
+      
+      // Add documents to index
+      data.documents.forEach(doc => {
+        searchIndex.add(doc);
+      });
+      
+      console.log('Search index loaded:', data.documents.length, 'documents');
+      console.log('Method usage map loaded:', Object.keys(methodUsageMap).length, 'methods');
+    } catch (error) {
+      console.error('Failed to load search index:', error);
+    }
+  }
+  
+  // Helper function to format method usage as code snippet
+  function formatMethodUsage(usage) {
+    const args = usage.args || [];
+    const kwargs = usage.kwargs || {};
+    
+    // Format arguments
+    const argStrings = [];
+    args.forEach(arg => {
+      if (Array.isArray(arg)) {
+        argStrings.push(`[${arg.map(item => typeof item === 'string' ? `"${item}"` : item).join(', ')}]`);
+      } else if (typeof arg === 'string' && arg !== '<Lambda>') {
+        argStrings.push(`"${arg}"`);
+      } else if (arg === '<Lambda>') {
+        argStrings.push('lambda ...');
+      } else {
+        argStrings.push(String(arg));
+      }
+    });
+    
+    // Format keyword arguments
+    const kwargStrings = [];
+    for (const [key, value] of Object.entries(kwargs)) {
+      if (typeof value === 'string') {
+        kwargStrings.push(`${key}="${value}"`);
+      } else if (typeof value === 'boolean') {
+        kwargStrings.push(`${key}=${value ? 'True' : 'False'}`);
+      } else {
+        kwargStrings.push(`${key}=${value}`);
+      }
+    }
+    
+    // Combine all parameters
+    const allParams = [...argStrings, ...kwargStrings];
+    const paramString = allParams.length > 0 ? allParams.join(', ') : '';
+    
+    return `.${usage.method}(${paramString})`;
+  }
+  
+  // Search function
+  function performSearch(query) {
+    if (!searchIndex || query.length < 2) {
+      return { documents: [], methods: {} };
+    }
+    
+    // Search documents
+    const docResults = searchIndex.search(query, {
+      limit: 10,
+      enrich: true
+    });
+    
+    // Flatten results (FlexSearch returns results grouped by field)
+    const seenIds = new Set();
+    const uniqueResults = [];
+    
+    docResults.forEach(fieldResult => {
+      fieldResult.result.forEach(item => {
+        if (!seenIds.has(item.id)) {
+          seenIds.add(item.id);
+          uniqueResults.push(item.doc);
+        }
+      });
+    });
+    
+    // Search for exact method matches and group by method with snippets
+    const methodGroups = {};
+    const queryLower = query.toLowerCase();
+    
+    if (methodUsageMap) {
+      for (const [method, usageExamples] of Object.entries(methodUsageMap)) {
+        if (method.toLowerCase().includes(queryLower)) {
+          if (!methodGroups[method]) {
+            methodGroups[method] = {
+              method,
+              usageExamples: []
+            };
+          }
+          
+          // Add usage examples with snippets, deduplicating by PDF + snippet
+          const seenUsages = new Set();
+          usageExamples.forEach(example => {
+            const snippet = formatMethodUsage(example.usage);
+            const uniqueKey = `${example.slug}:${snippet}`;
+            
+            if (!seenUsages.has(uniqueKey)) {
+              seenUsages.add(uniqueKey);
+              methodGroups[method].usageExamples.push({
+                title: example.title,
+                slug: example.slug,
+                snippet: snippet
+              });
+            }
+          });
+        }
+      }
+    }
+    
+    return {
+      documents: uniqueResults,
+      methods: methodGroups
+    };
+  }
+  
+  // Render search results
+  function renderResults(results, query) {
+    const container = document.getElementById('search-results');
+    
+    const methodCount = Object.keys(results.methods).length;
+    
+    if (!results.documents.length && methodCount === 0) {
+      container.innerHTML = '<div class="no-results">No results found</div>';
+      return;
+    }
+    
+    let html = '';
+    
+    // Method matches section - now grouped by method
+    if (methodCount > 0) {
+      html += '<div class="results-section">';
+      html += '<div class="results-header">Methods</div>';
+      
+      // Sort methods by relevance and limit to top 5
+      const sortedMethods = Object.values(results.methods)
+        .sort((a, b) => {
+          // Prioritize exact matches
+          const aExact = a.method.toLowerCase() === query.toLowerCase();
+          const bExact = b.method.toLowerCase() === query.toLowerCase();
+          if (aExact && !bExact) return -1;
+          if (!aExact && bExact) return 1;
+          
+          // Then by number of usage examples
+          return b.usageExamples.length - a.usageExamples.length;
+        })
+        .slice(0, 5);
+      
+      sortedMethods.forEach(({ method, usageExamples }) => {
+        const encodedMethod = encodeURIComponent(method.toLowerCase());
+        const methodId = `method-${method.replace(/[^a-zA-Z0-9]/g, '-')}`;
+        const initialSnippets = 3;
+        
+        html += `
+          <div class="method-group" data-method="${method}">
+            <a href="/methods/${encodedMethod}" class="method-group-header">
+              <span class="method-name">${escapeHtml(method)}</span>
+              <span class="method-count">${usageExamples.length} example${usageExamples.length !== 1 ? 's' : ''}</span>
+            </a>
+            <div class="method-snippets" id="${methodId}">
+              ${usageExamples.slice(0, initialSnippets).map(example => `
+                <div class="snippet-item">
+                  <a href="/pdfs/${example.slug}#${encodedMethod}" class="snippet-link">
+                    <span class="snippet-title">${escapeHtml(example.title)}</span>
+                    <code class="snippet-code">${escapeHtml(example.snippet)}</code>
+                  </a>
+                </div>
+              `).join('')}
+            </div>
+            ${usageExamples.length > initialSnippets ? `
+              <a href="/methods/${encodedMethod}" class="show-more-btn">
+                <svg class="show-more-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+                <span class="show-more-text">Show ${usageExamples.length - initialSnippets} more ${usageExamples.length - initialSnippets === 1 ? 'match' : 'matches'}</span>
+              </a>
+            ` : ''}
+          </div>
+        `;
+      });
+      html += '</div>';
+    }
+    
+    // Document matches section
+    if (results.documents.length > 0) {
+      html += '<div class="results-section">';
+      html += '<div class="results-header">PDFs</div>';
+      results.documents.forEach(doc => {
+        html += `
+          <a href="/pdfs/${doc.slug}" class="result-item">
+            <div class="result-title">${highlightMatch(doc.title, query)}</div>
+            <div class="result-description">${highlightMatch(doc.description, query)}</div>
+            <div class="result-methods">
+              ${doc.methods.slice(0, 3).map(m => 
+                `<span class="method-tag">${escapeHtml(m)}</span>`
+              ).join('')}
+            </div>
+          </a>
+        `;
+      });
+      html += '</div>';
+    }
+    
+    // Add "View all results" link at the bottom if there are results
+    if (results.documents.length > 0 || methodCount > 0) {
+      html += `
+        <a href="/search?q=${encodeURIComponent(query)}" class="view-all-results">
+          View all results for "${escapeHtml(query)}" →
+        </a>
+      `;
+    }
+    
+    container.innerHTML = html;
+  }
+  
+  // Highlight matching text
+  function highlightMatch(text, query) {
+    const escaped = escapeHtml(text);
+    const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+    return escaped.replace(regex, '<mark>$1</mark>');
+  }
+  
+  // Escape HTML
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  
+  // Escape regex special characters
+  function escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+  
+  // Setup search UI
+  function setupSearch() {
+    const input = document.getElementById('search-input');
+    const results = document.getElementById('search-results');
+    const searchWrapper = document.querySelector('.search-wrapper');
+    
+    // Handle input
+    let searchTimeout;
+    input.addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      const query = e.target.value.trim();
+      
+      if (query.length < 2) {
+        results.innerHTML = '';
+        results.classList.remove('show');
+        return;
+      }
+      
+      // Debounce search
+      searchTimeout = setTimeout(() => {
+        const searchResults = performSearch(query);
+        renderResults(searchResults, query);
+        results.classList.add('show');
+      }, 150);
+    });
+    
+    // Handle focus
+    input.addEventListener('focus', () => {
+      isSearchOpen = true;
+      searchWrapper.classList.add('focused');
+      if (input.value.length >= 2) {
+        results.classList.add('show');
+      }
+    });
+    
+    // Handle clicks outside
+    document.addEventListener('click', (e) => {
+      if (!searchWrapper.contains(e.target)) {
+        results.classList.remove('show');
+        searchWrapper.classList.remove('focused');
+        isSearchOpen = false;
+      }
+    });
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // "/" to focus search (when not in input)
+      if (e.key === '/' && !isSearchOpen && e.target.tagName !== 'INPUT') {
+        e.preventDefault();
+        input.focus();
+      }
+      
+      // Escape to close
+      if (e.key === 'Escape' && isSearchOpen) {
+        input.blur();
+        results.classList.remove('show');
+        searchWrapper.classList.remove('focused');
+        isSearchOpen = false;
+      }
+    });
+    
+    // Handle navigation with arrow keys
+    let selectedIndex = -1;
+    input.addEventListener('keydown', (e) => {
+      const items = results.querySelectorAll('.result-item, .method-group-header');
+      
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+        updateSelection(items, selectedIndex);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = Math.max(selectedIndex - 1, -1);
+        updateSelection(items, selectedIndex);
+      } else if (e.key === 'Enter') {
+        if (selectedIndex >= 0) {
+          e.preventDefault();
+          items[selectedIndex].click();
+        } else {
+          // No selection, go to search page
+          e.preventDefault();
+          const query = input.value.trim();
+          if (query) {
+            window.location.href = `/search?q=${encodeURIComponent(query)}`;
+          }
+        }
+      }
+    });
+  }
+  
+  // Update keyboard selection
+  function updateSelection(items, index) {
+    items.forEach((item, i) => {
+      if (i === index) {
+        item.classList.add('selected');
+        item.scrollIntoView({ block: 'nearest' });
+      } else {
+        item.classList.remove('selected');
+      }
+    });
+  }
+  
+  
+  // Initialize on load
+  loadSearchIndex();
+  setupSearch();
+</script>
+
+<style>
+  .search-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+  }
+  
+  .search-container {
+    position: relative;
+  }
+  
+  .search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, var(--color-gradient-start) 0%, var(--color-gradient-end) 100%);
+    padding: 2px;
+    border-radius: 9999px;
+    transition: transform 0.2s ease;
+  }
+  
+  .search-wrapper.focused .search-input-wrapper {
+    transform: scale(1.02);
+  }
+  
+  .search-icon {
+    position: absolute;
+    left: 1.25rem;
+    color: #9ca3af;
+    pointer-events: none;
+    z-index: 10;
+    transition: color 0.2s;
+  }
+  
+  .search-wrapper.focused .search-icon {
+    color: #6b7280;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 0.625rem 3rem 0.625rem 3rem;
+    font-size: 0.875rem;
+    border: none;
+    border-radius: 9999px;
+    background: white;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+  
+  .search-input::placeholder {
+    color: #9ca3af;
+  }
+  
+  .search-input:focus {
+    outline: none;
+  }
+  
+  .search-shortcut {
+    position: absolute;
+    right: 0.75rem;
+    padding: 0.25rem 0.375rem;
+    background: linear-gradient(135deg, var(--color-gradient-start) 0%, var(--color-gradient-end) 100%);
+    border-radius: 0.375rem;
+    font-size: 0.625rem;
+    color: white;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-weight: 600;
+    line-height: 1;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+  
+  .search-wrapper.focused .search-shortcut {
+    opacity: 0;
+  }
+  
+  .search-input {
+    background: var(--color-background);
+    color: var(--color-text);
+  }
+  
+  .search-icon {
+    color: var(--color-text-muted);
+  }
+</style>
+
+<!-- Global styles for dynamically generated search results -->
+<style is:global>
+  /* Scope all global styles under .search-wrapper to avoid affecting other parts of the page */
+  .search-wrapper .search-results {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    right: 0;
+    background: var(--color-surface);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    box-shadow: 
+      0 25px 50px -12px rgba(0, 0, 0, 0.15),
+      0 0 0 1px var(--color-border),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 50;
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .search-wrapper .search-results.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+  
+  .search-wrapper .search-results::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    border-left: 1px solid #e5e7eb;
+    transform: translateX(-50%) rotate(45deg);
+  }
+  
+  .search-wrapper .no-results {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 0.75rem;
+    font-weight: 500;
+    position: relative;
+  }
+  
+  .search-wrapper .no-results::before {
+    content: '🔍';
+    display: block;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.5;
+  }
+  
+  .search-wrapper .results-section {
+    padding: 0;
+  }
+  
+  .search-wrapper .results-section:not(:last-child) {
+    border-bottom: 1px solid #f3f4f6;
+  }
+  
+  .search-wrapper .results-header {
+    padding: 0.5rem 1rem 0.375rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    background: var(--color-background);
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .search-wrapper .result-item {
+    display: block;
+    padding: 0.625rem 1rem;
+    transition: all 0.15s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+    border-left: 3px solid transparent;
+  }
+  
+  .search-wrapper .result-item:hover,
+  .search-wrapper .result-item.selected {
+    background: var(--color-background);
+    border-left-color: var(--color-primary);
+  }
+  
+  .search-wrapper .method-group {
+    padding: 0.625rem 1rem;
+    border-bottom: 1px solid rgba(243, 244, 246, 0.5);
+    transition: all 0.15s ease;
+  }
+  
+  .search-wrapper .method-group:last-child {
+    border-bottom: none;
+  }
+  
+  .search-wrapper .method-group:hover {
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.02) 0%, rgba(118, 75, 162, 0.02) 100%);
+  }
+  
+  .search-wrapper .method-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-decoration: none;
+    margin-bottom: 0.5rem;
+    padding: 0.25rem;
+    margin: -0.25rem -0.25rem 0.5rem -0.25rem;
+    border-radius: 0.375rem;
+    transition: background 0.15s ease;
+  }
+  
+  .search-wrapper .method-group-header:hover {
+    background: var(--color-surface);
+  }
+  
+  .search-wrapper .method-name {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  
+  .search-wrapper .method-count {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+  
+  .search-wrapper .method-usage {
+    display: flex;
+    align-items: baseline;
+    gap: 0.375rem;
+    font-size: 0.6875rem;
+    line-height: 1.2;
+  }
+  
+  .search-wrapper .usage-label {
+    color: var(--color-text-muted);
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  
+  .search-wrapper .usage-docs {
+    color: var(--color-text-muted);
+  }
+  
+  .search-wrapper .usage-doc-link {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  
+  .search-wrapper .usage-doc-link:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+  
+  .search-wrapper .method-group-header.selected {
+    background: var(--color-surface);
+    padding: 0.25rem 0.5rem;
+    margin: -0.25rem -0.5rem 0.25rem -0.5rem;
+    border-radius: 0.375rem;
+  }
+  
+  .search-wrapper .method-snippets {
+    margin-top: 0.375rem;
+  }
+  
+  .search-wrapper .snippet-item {
+    margin-bottom: 0.375rem;
+  }
+  
+  .search-wrapper .snippet-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  .search-wrapper .snippet-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    padding: 0.25rem 0;
+    transition: all 0.15s ease;
+  }
+  
+  .search-wrapper .snippet-link:hover {
+    color: var(--color-primary);
+  }
+  
+  .search-wrapper .snippet-title {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    margin-bottom: 0.125rem;
+  }
+  
+  .search-wrapper .snippet-code {
+    display: block;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.75rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    padding: 0.375rem 0.5rem;
+    color: var(--color-text);
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  
+  .search-wrapper .snippet-link:hover .snippet-code {
+    background: var(--color-background);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+  
+  .search-wrapper .more-examples {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: #667eea;
+    font-weight: 500;
+    margin-top: 0.5rem;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  
+  .search-wrapper .more-examples:hover {
+    color: #764ba2;
+    text-decoration: underline;
+  }
+  
+  .search-wrapper .result-title {
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.125rem;
+    font-size: 0.875rem;
+    line-height: 1.2;
+  }
+  
+  .search-wrapper .result-description {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-bottom: 0.375rem;
+    line-height: 1.3;
+  }
+  
+  .search-wrapper .result-methods {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+  }
+  
+  .search-wrapper .method-tag {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 9999px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 2px rgba(102, 126, 234, 0.2);
+  }
+  
+  .search-wrapper .method-tag:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+  }
+  
+  .search-wrapper mark {
+    background: var(--color-primary);
+    color: white;
+    font-weight: 700;
+    padding: 0.0625rem 0.25rem;
+    border-radius: 0.1875rem;
+  }
+  
+  /* Scrollbar styling */
+  .search-wrapper .search-results::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .search-wrapper .search-results::-webkit-scrollbar-track {
+    background: #f9fafb;
+  }
+  
+  .search-wrapper .search-results::-webkit-scrollbar-thumb {
+    background: #e5e7eb;
+    border-radius: 3px;
+  }
+  
+  .search-wrapper .search-results::-webkit-scrollbar-thumb:hover {
+    background: #d1d5db;
+  }
+  
+  /* Show more button styling */
+  .search-wrapper .show-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-primary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+  }
+
+  .search-wrapper .show-more-btn:hover {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+  }
+
+  .search-wrapper .show-more-icon {
+    transition: transform 0.2s ease;
+  }
+  
+  .search-wrapper .view-all-results {
+    display: block;
+    padding: 1rem;
+    text-align: center;
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: none;
+    border-top: 1px solid var(--color-border);
+    transition: all 0.15s ease;
+    font-size: 0.875rem;
+  }
+  
+  .search-wrapper .view-all-results:hover {
+    background: var(--color-background);
+    color: var(--color-secondary);
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .search-wrapper .search-results {
+      background: #1f2937;
+      border-color: #374151;
+    }
+    
+    .search-wrapper .search-results::before {
+      background: #1f2937;
+      border-top-color: #374151;
+      border-left-color: #374151;
+    }
+    
+    .search-wrapper .results-header {
+      background: #111827;
+      color: #6b7280;
+    }
+    
+    .search-wrapper .result-item:hover,
+    .search-wrapper .result-item.selected {
+      background-color: #111827;
+    }
+    
+    .search-wrapper .result-title {
+      color: #f3f4f6;
+    }
+    
+    .search-wrapper .result-description {
+      color: #9ca3af;
+    }
+    
+    .search-wrapper .method-tag {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+      color: #a78bfa;
+    }
+    
+    .search-wrapper .method-group {
+      border-bottom-color: rgba(55, 65, 81, 0.5);
+    }
+    
+    .search-wrapper .method-group:hover {
+      background: linear-gradient(90deg, rgba(139, 92, 246, 0.04) 0%, rgba(168, 85, 247, 0.04) 100%);
+    }
+    
+    .search-wrapper .usage-label {
+      color: #9ca3af;
+    }
+    
+    .search-wrapper .usage-docs {
+      color: #9ca3af;
+    }
+    
+    .search-wrapper .usage-doc-link {
+      color: #9ca3af;
+    }
+    
+    .search-wrapper .usage-doc-link:hover {
+      color: #a78bfa;
+    }
+    
+    .search-wrapper .method-group-header.selected {
+      background: linear-gradient(90deg, rgba(139, 92, 246, 0.08) 0%, rgba(168, 85, 247, 0.08) 100%);
+    }
+    
+    .search-wrapper mark {
+      background: var(--color-primary);
+      color: white;
+    }
+    
+    .search-wrapper .search-results::-webkit-scrollbar-track {
+      background: #111827;
+    }
+    
+    .search-wrapper .search-results::-webkit-scrollbar-thumb {
+      background: #374151;
+    }
+    
+    .search-wrapper .search-results::-webkit-scrollbar-thumb:hover {
+      background: #4b5563;
+    }
+    
+    .search-wrapper .snippet-title {
+      color: #9ca3af;
+    }
+    
+    .search-wrapper .snippet-code {
+      background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+      border-color: #374151;
+      color: #f3f4f6;
+    }
+    
+    .search-wrapper .snippet-link:hover .snippet-code {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+      border-color: #a78bfa;
+      color: #a78bfa;
+    }
+    
+    .search-wrapper .method-count {
+      color: #6b7280;
+    }
+    
+    .search-wrapper .more-examples {
+      color: #a78bfa;
+    }
+    
+    .search-wrapper .more-examples:hover {
+      color: #c4b5fd;
+    }
+
+    .search-wrapper .show-more-btn {
+      background: #1f2937;
+      border-color: #374151;
+      color: #a78bfa;
+    }
+
+    .search-wrapper .show-more-btn:hover {
+      background: #a78bfa;
+      color: #111827;
+      border-color: #a78bfa;
+    }
+  }
+</style>

@@ -1,0 +1,108 @@
+---
+import '../styles/global.css'
+import fs from 'fs'
+import path from 'path'
+
+// Load validation errors
+const errorPath = path.join(process.cwd(), '..', 'artifacts', 'validation_errors.json')
+let errorData = null
+
+if (fs.existsSync(errorPath)) {
+  const content = fs.readFileSync(errorPath, 'utf-8')
+  errorData = JSON.parse(content)
+}
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Validation Errors - Bad PDFs</title>
+  </head>
+  <body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+      <nav class="mb-8">
+        <a href="/" class="text-blue-600 hover:text-blue-800">← Back to Gallery</a>
+      </nav>
+
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">Validation Errors</h1>
+        {errorData ? (
+          <p class="text-lg text-gray-600">
+            Found {errorData.invalid_count} example{errorData.invalid_count !== 1 ? 's' : ''} with validation errors out of {errorData.total_items} total.
+          </p>
+        ) : (
+          <p class="text-lg text-gray-600">No validation errors found!</p>
+        )}
+      </header>
+
+      {errorData && errorData.invalid_items && (
+        <div class="space-y-6">
+          {errorData.invalid_items.map((invalidItem, idx) => (
+            <div class="bg-white rounded-lg shadow p-6">
+              <h2 class="text-xl font-semibold text-gray-900 mb-4">
+                {invalidItem.item.title || invalidItem.item.id}
+              </h2>
+              
+              <div class="bg-gray-50 rounded p-4 mb-4">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">Metadata:</h3>
+                <dl class="text-sm space-y-1">
+                  <div>
+                    <dt class="inline font-medium text-gray-600">ID:</dt>
+                    <dd class="inline ml-2">{invalidItem.item.id}</dd>
+                  </div>
+                  <div>
+                    <dt class="inline font-medium text-gray-600">PDF:</dt>
+                    <dd class="inline ml-2">{invalidItem.item.pdf}</dd>
+                  </div>
+                  {invalidItem.item.description && (
+                    <div>
+                      <dt class="inline font-medium text-gray-600">Description:</dt>
+                      <dd class="inline ml-2">{invalidItem.item.description}</dd>
+                    </div>
+                  )}
+                </dl>
+              </div>
+
+              <div class="space-y-3">
+                <h3 class="text-sm font-medium text-gray-700">Errors ({invalidItem.errors.length}):</h3>
+                {invalidItem.errors.map((error, errorIdx) => (
+                  <div class="bg-red-50 border border-red-200 rounded p-3">
+                    <div class="flex items-start">
+                      <span class="text-red-500 mr-2">❌</span>
+                      <div class="flex-1">
+                        <p class="text-sm font-medium text-red-800">
+                          {error.type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </p>
+                        <p class="text-sm text-red-700 mt-1">{error.message}</p>
+                        {error.expected_path && (
+                          <p class="text-xs text-red-600 mt-1 font-mono">
+                            Expected: {error.expected_path}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded">
+                <p class="text-sm text-blue-800">
+                  <strong>To fix:</strong> 
+                  {invalidItem.errors.some(e => e.type === 'missing_screenshots') && 
+                    "Run the screenshot generator for this PDF. "}
+                  {invalidItem.errors.some(e => e.type === 'missing_pdf') && 
+                    "Add the PDF file to the content directory. "}
+                  {invalidItem.errors.some(e => e.type === 'missing_executions') && 
+                    "Run the markdown executor for this file. "}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </body>
+</html>

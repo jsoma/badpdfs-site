@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "badpdfs-processor"
+version = "0.1.0"
+description = "Processor for Bad PDFs - executes markdown and extracts metadata"
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+dependencies = [
+    "PyYAML>=6.0",
+    "pdf2image>=1.16.0",
+    "Pillow>=9.0.0",
+    "matplotlib>=3.5.0",
+    "pandas>=1.4.0",
+    "numpy>=1.21.0",
+    "pytest>=7.0",
+    "pytest-cov>=4.0.0",
+    "markdown>=3.4",
+    "pymdown-extensions>=10.0",
+    "python-dotenv>=1.0.0",  # For R2 credentials
+    "boto3>=1.28.0",  # For R2 uploads
+    "rich>=13.0.0",  # Optional but better console output
+    # Note: natural-pdf should be installed from local development version:
+    # pip install -e ~/Development/natural-pdf
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["tests/*", "*/test_*.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["core*", "domain*", "tasks*", "utils*"]
+exclude = ["tests*"]

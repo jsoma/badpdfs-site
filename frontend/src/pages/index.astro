@@ -1,0 +1,73 @@
+---
+import '../styles/global.css'
+import PDFCard from '../components/PDFCard.astro'
+import Header from '../components/Header.astro'
+import Footer from '../components/Footer.astro'
+import DarkModeToggle from '../components/DarkModeToggle.astro'
+import fs from 'fs'
+import path from 'path'
+import { checkArtifacts } from '../middleware/artifact-check.js'
+
+// Run pre-flight checks
+checkArtifacts();
+
+// Load validated metadata at build time
+const validPdfsPath = path.join(process.cwd(), '..', 'artifacts', 'valid_pdfs.json')
+const validIds = JSON.parse(fs.readFileSync(validPdfsPath, 'utf-8'))
+
+// Load all metadata to properly deduplicate
+const allMetadataPath = path.join(process.cwd(), '..', 'artifacts', 'all_metadata.json')
+const allMetadata = JSON.parse(fs.readFileSync(allMetadataPath, 'utf-8'))
+
+// Deduplicate by PDF id - show only one entry per unique PDF
+const pdfMap = new Map()
+for (const item of allMetadata) {
+  if (validIds.includes(item.id)) {
+    if (!pdfMap.has(item.id)) {
+      // Use the first approach as the primary one for display
+      pdfMap.set(item.id, item)
+    }
+  }
+}
+
+const pdfs = Array.from(pdfMap.values())
+
+// Also load error count for header
+const errorPath = path.join(process.cwd(), '..', 'artifacts', 'validation_errors.json')
+let errorCount = 0
+if (fs.existsSync(errorPath)) {
+  const errorData = JSON.parse(fs.readFileSync(errorPath, 'utf-8'))
+  errorCount = errorData.invalid_count
+}
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>bad pdfs</title>
+	</head>
+	<body>
+		<Header currentPage="home" />
+		
+		<main class="container mx-auto px-4 py-8">
+			{errorCount > 0 && (
+				<div class="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+					<p class="text-sm text-yellow-800">
+						⚠️ {errorCount} example{errorCount > 1 ? 's' : ''} hidden due to validation errors. 
+						<a href="/errors" class="underline text-yellow-900 font-medium">View errors →</a>
+					</p>
+				</div>
+			)}
+
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+				{pdfs.map(pdf => <PDFCard pdf={pdf} />)}
+			</div>
+		</main>
+		
+		<Footer />
+		<DarkModeToggle />
+	</body>
+</html>

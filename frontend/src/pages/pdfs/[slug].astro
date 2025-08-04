@@ -1,0 +1,1128 @@
+---
+import '../../styles/global.css'
+import Header from '../../components/Header.astro'
+import Footer from '../../components/Footer.astro'
+import fs from 'fs'
+import path from 'path'
+import { marked } from 'marked'
+import Prism from 'prismjs'
+import 'prismjs/components/prism-python'
+import 'prismjs/components/prism-bash'
+import 'prismjs/themes/prism-tomorrow.css'
+import 'photoswipe/style.css'
+import ImageLightbox from '../../components/ImageLightbox.astro'
+import { checkArtifacts } from '../../middleware/artifact-check.js'
+
+// Run pre-flight checks
+checkArtifacts();
+
+// Get all PDFs for static generation
+export async function getStaticPaths() {
+  // Load all metadata
+  const allMetadataPath = path.join(process.cwd(), '..', 'artifacts', 'all_metadata.json')
+  const allMetadata = JSON.parse(fs.readFileSync(allMetadataPath, 'utf-8'))
+  const validPdfsPath = path.join(process.cwd(), '..', 'artifacts', 'valid_pdfs.json')
+  const validIds = JSON.parse(fs.readFileSync(validPdfsPath, 'utf-8'))
+  
+  // Create routes for each valid approach
+  const paths = []
+  
+  // Group by PDF id
+  const pdfGroups = new Map()
+  for (const item of allMetadata) {
+    if (validIds.includes(item.id)) {
+      if (!pdfGroups.has(item.id)) {
+        pdfGroups.set(item.id, [])
+      }
+      pdfGroups.get(item.id).push(item)
+    }
+  }
+  
+  // Create a path for each approach
+  for (const [pdfId, approaches] of pdfGroups) {
+    for (const approach of approaches) {
+      paths.push({
+        params: { slug: approach.slug },
+        props: { 
+          pdf: approach,
+          allApproaches: approaches
+        }
+      })
+    }
+  }
+  
+  return paths
+}
+
+const { pdf, allApproaches } = Astro.props
+
+// Load execution results - use the correct file based on the slug
+const approachFile = pdf.approaches.find(a => a.replace('.md', '') === pdf.slug) || pdf.approaches[0]
+const execPath = path.join(process.cwd(), '..', 'artifacts', 'executions', 'pdfs', pdf.id, approachFile.replace('.md', '.json'))
+const execContent = fs.readFileSync(execPath, 'utf-8')
+const execution = JSON.parse(execContent)
+
+// Load R2 URL from shared config
+const configPath = path.join(process.cwd(), '..', 'config.json')
+const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'))
+const R2_PUBLIC_URL = config.r2_public_url
+
+// Construct PDF URL dynamically
+const pdfUrl = `${R2_PUBLIC_URL}/pdfs/${pdf.id}/${pdf.pdf}`
+const pdfSize = pdf.pdf_size || null
+
+// Configure marked options to preserve headers
+marked.setOptions({
+  headerIds: true,
+  mangle: false
+})
+
+// Convert markdown cells to HTML and highlight code
+execution.cells = execution.cells.map(cell => {
+  if (cell.type === 'markdown') {
+    return {
+      ...cell,
+      html: marked(cell.content)
+    }
+  } else if (cell.type === 'code' || cell.type === 'bash') {
+    const language = cell.type === 'bash' ? 'bash' : 'python'
+    return {
+      ...cell,
+      highlightedCode: Prism.highlight(cell.content, Prism.languages[language], language)
+    }
+  } else if (cell.type === 'tab' && cell.cells) {
+    // Process cells within tabs
+    return {
+      ...cell,
+      cells: cell.cells.map(tabCell => {
+        if (tabCell.type === 'markdown') {
+          return {
+            ...tabCell,
+            html: marked(tabCell.content)
+          }
+        } else if (tabCell.type === 'code') {
+          return {
+            ...tabCell,
+            highlightedCode: Prism.highlight(tabCell.content, Prism.languages.python, 'python')
+          }
+        }
+        return tabCell
+      })
+    }
+  }
+  return cell
+})
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pdf.title} - bad pdfs</title>
+  </head>
+  <body>
+    <Header />
+    
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+
+      <!-- PDF Preview and Info Header -->
+      <header class="bg-white mb-8 border-b">
+        <div class="md:grid md:grid-cols-3 gap-6 p-6">
+          <!-- PDF Preview -->
+          <div class="md:col-span-1 mb-6 md:mb-0 header-preview">
+            <img 
+              src={`/artifacts/screenshots/${pdf.id}/${pdf.pdf.replace('.pdf', '')}-1.png`}
+              alt={`${pdf.title} preview`}
+              class="w-full"
+            />
+            <p class="text-sm text-gray-500 mt-2 text-center">{pdf.pdf}</p>
+          </div>
+          
+          <!-- Title and Description -->
+          <div class="md:col-span-2">
+            <h1 class="text-4xl font-bold text-gray-900 mb-3">{pdf.title}</h1>
+            <p class="text-lg text-gray-600 mb-4">{pdf.description}</p>
+            
+            <!-- Methods -->
+            <div class="mb-4">
+              <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Methods Used</h3>
+              <div class="flex flex-wrap gap-2">
+                {pdf.methods.map(method => (
+                  <a href={`/methods/${encodeURIComponent(method.toLowerCase())}`} class="method-tag">
+                    {method}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <!-- Tags -->
+            {pdf.tags && pdf.tags.length > 0 && (
+              <div class="mb-4">
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Tags</h3>
+                <div class="flex flex-wrap gap-2">
+                  {pdf.tags.map(tag => (
+                    <span class="tag-tag">
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <!-- Other walkthroughs using this PDF -->
+            {allApproaches && allApproaches.length > 1 && (
+              <div class="related-tutorials">
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Other walkthroughs using this PDF</h3>
+                <div class="related-tutorials-list">
+                  {allApproaches.map((approach, index) => (
+                    <div class={`related-tutorial-item ${approach.slug === pdf.slug ? 'current' : ''}`}>
+                      {approach.slug === pdf.slug ? (
+                        <div class="tutorial-link-wrapper">
+                          <span class="tutorial-link current-tutorial">{approach.title}</span>
+                          <span class="you-are-here">◀ YOU ARE HERE</span>
+                        </div>
+                      ) : (
+                        <a href={`/pdfs/${approach.slug}`} class="tutorial-link">
+                          {approach.title}
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Area with Optional PDF Preview -->
+      <div class="content-wrapper">
+        <!-- PDF Button/Sidebar -->
+        <aside class="pdf-sidebar" data-pdf-size={pdfSize}>
+          <button class="pdf-view-btn">
+            📖 View PDF
+          </button>
+          <div class="pdf-sidebar-content" style="display: none;">
+            <button class="pdf-close-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            <div class="pdf-preview-wrapper">
+              <iframe 
+                class="pdf-embed"
+                type="application/pdf"
+                data-pdf-url={pdfUrl}
+              />
+            </div>
+            <p class="text-sm text-gray-500 mt-2 text-center">{pdf.pdf}</p>
+          </div>
+        </aside>
+        
+        <!-- Code and Output -->
+        <div class="main-content">
+          <div class="cells-container space-y-8">
+          {(() => {
+            // Group consecutive tabs together
+            const groupedCells = [];
+            let currentTabGroup = null;
+            let globalCodeCellIndex = 0; // Track code cells globally for proper ID assignment
+            
+            execution.cells.forEach((cell, i) => {
+              if (cell.type === 'tab') {
+                if (!currentTabGroup) {
+                  currentTabGroup = {
+                    type: 'tab-group',
+                    tabs: []
+                  };
+                  groupedCells.push(currentTabGroup);
+                }
+                currentTabGroup.tabs.push(cell);
+              } else {
+                currentTabGroup = null;
+                groupedCells.push(cell);
+              }
+            });
+            
+            return groupedCells.map((cell, i) => (
+              <div id={cell.type === 'code' ? `code-${globalCodeCellIndex++}` : undefined} class={`cell-container ${cell.type === 'markdown' ? 'markdown-cell' : ''}`}>
+                {cell.type === 'tab-group' ? (
+                  <div class="tab-group-wrapper">
+                    <div class="multiple-approaches-indicator">
+                      <span class="approaches-text">Multiple approaches</span>
+                      <svg class="swirly-arrow" width="50" height="30" viewBox="0 0 50 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 15 Q 15 5, 28 12 T 45 12" stroke="#6366f1" stroke-width="2" stroke-linecap="round" fill="none"/>
+                        <path d="M40 10 L 45 12 L 42 17" stroke="#6366f1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                      </svg>
+                    </div>
+                    <div class="tab-group">
+                      <div class="tab-nav">
+                        {cell.tabs.map((tab, tabIndex) => (
+                          <button 
+                            class={`tab-button ${tabIndex === 0 ? 'active' : ''}`}
+                            data-tab-index={tabIndex}
+                          >
+                            {tab.title}
+                          </button>
+                        ))}
+                      </div>
+                      <div class="tab-panels">
+                      {cell.tabs.map((tab, tabIndex) => (
+                        <div class={`tab-panel ${tabIndex === 0 ? 'active' : ''}`} data-tab-index={tabIndex}>
+                          {tab.cells && tab.cells.map((tabCell, j) => (
+                            <div class="tab-cell" id={tabCell.type === 'code' ? `code-${globalCodeCellIndex++}` : undefined}>
+                              {tabCell.type === 'markdown' ? (
+                                <div class="prose prose-lg max-w-none p-4" set:html={tabCell.html} />
+                              ) : tabCell.type === 'code' && (
+                                <div class="code-output-container space-y-1">
+                                  <div class="code-section">
+                                    <div class="bg-gray-900 text-gray-100 p-4 relative">
+                                      <button 
+                                        class="copy-btn absolute top-2 right-2 px-2 py-1 text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded transition-colors cursor-pointer flex items-center gap-1"
+                                        onclick={`copyCode(this)`}
+                                        data-code={tabCell.content}
+                                      >
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                        </svg>
+                                        <span>Copy</span>
+                                      </button>
+                                      {tabCell.execution && tabCell.execution.execution_time && (
+                                        <span class="absolute bottom-2 right-2 text-xs text-gray-500">
+                                          {tabCell.execution.execution_time.toFixed(2)}s
+                                        </span>
+                                      )}
+                                      <pre class="text-base overflow-x-auto"><code class="language-python" set:html={tabCell.highlightedCode}></code></pre>
+                                    </div>
+                                  </div>
+                                  {tabCell.execution && (tabCell.execution.output || tabCell.execution.result || tabCell.execution.error || (tabCell.execution.figures && tabCell.execution.figures.length > 0)) && (
+                                    <div class="output-section">
+                                      <div class="bg-gray-50">
+                                        {tabCell.execution.output && (
+                                          <div class="p-4 font-mono text-base">
+                                            <div class="text-xs text-gray-500 mb-2 uppercase tracking-wider">Output</div>
+                                            <pre class="whitespace-pre-wrap text-gray-700">{tabCell.execution.output}</pre>
+                                          </div>
+                                        )}
+                                        {tabCell.execution.result && (
+                                          <div class="p-4">
+                                            {tabCell.execution.result.type === 'image/png' && (
+                                              <a 
+                                                href={tabCell.execution.result.data ? 
+                                                  `data:image/png;base64,${tabCell.execution.result.data}` : 
+                                                  `/artifacts/${tabCell.execution.result.path}`
+                                                }
+                                                class="result-image"
+                                              >
+                                                <img 
+                                                  src={tabCell.execution.result.data ? 
+                                                    `data:image/png;base64,${tabCell.execution.result.data}` : 
+                                                    `/artifacts/${tabCell.execution.result.path}`
+                                                  }
+                                                  alt="Result"
+                                                  class="max-w-full cursor-zoom-in"
+                                                />
+                                              </a>
+                                            )}
+                                            {tabCell.execution.result.type === 'text/html' && (
+                                              <div class="overflow-x-auto dataframe-container prose prose-sm max-w-none" set:html={tabCell.execution.result.data} />
+                                            )}
+                                            {tabCell.execution.result.type === 'text/plain' && (
+                                              <pre class="font-mono text-base whitespace-pre-wrap text-gray-800">{tabCell.execution.result.data}</pre>
+                                            )}
+                                          </div>
+                                        )}
+                                        {tabCell.execution.figures && tabCell.execution.figures.length > 0 && (
+                                          <div class="p-4">
+                                            {tabCell.execution.figures.map((fig, k) => (
+                                              <a
+                                                href={fig.data ? 
+                                                  `data:image/${fig.format};base64,${fig.data}` : 
+                                                  `/artifacts/${fig.path}`
+                                                }
+                                                class="result-image mb-4 last:mb-0 inline-block"
+                                              >
+                                                <img 
+                                                  src={fig.data ? 
+                                                    `data:image/${fig.format};base64,${fig.data}` : 
+                                                    `/artifacts/${fig.path}`
+                                                  }
+                                                  alt={`Figure ${k + 1}`}
+                                                  class="max-w-full cursor-zoom-in"
+                                                />
+                                              </a>
+                                            ))}
+                                          </div>
+                                        )}
+                                        {tabCell.execution.error && (
+                                          <div class="p-4 bg-red-50 font-mono text-base">
+                                            <div class="text-xs text-red-600 mb-2 uppercase tracking-wider font-sans">Error</div>
+                                            <pre class="whitespace-pre-wrap text-red-700">{tabCell.execution.error}</pre>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : cell.type === 'markdown' ? (
+                  <div class="prose prose-lg max-w-none prose-headings:text-gray-900 prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl" set:html={cell.html} />
+                ) : cell.type === 'code' || cell.type === 'bash' ? (
+                <div class="code-output-container space-y-1">
+                  <!-- Code Block -->
+                  <div class="code-section">
+                    <div class="bg-gray-900 text-gray-100 p-4 relative">
+                    <button 
+                      class="copy-btn absolute top-2 right-2 px-2 py-1 text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded transition-colors cursor-pointer flex items-center gap-1"
+                      onclick={`copyCode(this)`}
+                      data-code={cell.content}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                      </svg>
+                      <span>Copy</span>
+                    </button>
+                    {cell.type === 'bash' && (
+                      <span class="absolute top-2 right-20 text-xs text-gray-500">bash</span>
+                    )}
+                    {cell.execution && cell.execution.execution_time && (
+                      <span class="absolute bottom-2 right-2 text-xs text-gray-500">
+                        {cell.execution.execution_time.toFixed(2)}s
+                      </span>
+                    )}
+                    <pre class="text-base overflow-x-auto"><code class="language-{cell.type === 'bash' ? 'bash' : 'python'}" set:html={cell.highlightedCode}></code></pre>
+                    </div>
+                  </div>
+                  
+                  <!-- Output -->
+                  {cell.execution && (cell.execution.output || cell.execution.result || cell.execution.error || (cell.execution.figures && cell.execution.figures.length > 0)) && (
+                    <div class="output-section">
+                      <div class="bg-gray-50">
+                      {cell.execution.output && (
+                        <div class="p-4 font-mono text-base">
+                          <div class="text-xs text-gray-500 mb-2 uppercase tracking-wider">Output</div>
+                          <pre class="whitespace-pre-wrap text-gray-700">{cell.execution.output}</pre>
+                        </div>
+                      )}
+                      {cell.execution.result && (
+                        <div class="p-4">
+                          {cell.execution.result.type === 'image/png' && (
+                            <a 
+                              href={cell.execution.result.data ? 
+                                `data:image/png;base64,${cell.execution.result.data}` : 
+                                `/artifacts/${cell.execution.result.path}`
+                              }
+                              class="result-image"
+                            >
+                              <img 
+                                src={cell.execution.result.data ? 
+                                  `data:image/png;base64,${cell.execution.result.data}` : 
+                                  `/artifacts/${cell.execution.result.path}`
+                                }
+                                alt="Result"
+                                class="max-w-full cursor-zoom-in"
+                              />
+                            </a>
+                          )}
+                          {cell.execution.result.type === 'text/html' && (
+                            <div class="overflow-x-auto dataframe-container prose prose-sm max-w-none" set:html={cell.execution.result.data} />
+                          )}
+                          {cell.execution.result.type === 'text/plain' && (
+                            <pre class="font-mono text-base whitespace-pre-wrap text-gray-800">{cell.execution.result.data}</pre>
+                          )}
+                        </div>
+                      )}
+                      {cell.execution.error && (
+                        <div class="p-4 bg-red-50 font-mono text-base">
+                          <div class="text-xs text-red-600 mb-2 uppercase tracking-wider font-sans">Error</div>
+                          <pre class="whitespace-pre-wrap text-red-700">{cell.execution.error}</pre>
+                        </div>
+                      )}
+                      {cell.execution.figures && cell.execution.figures.length > 0 && (
+                        <div class="p-4">
+                          {cell.execution.figures.map((fig, i) => (
+                            <a
+                              key={i}
+                              href={fig.data ? 
+                                `data:image/${fig.format};base64,${fig.data}` : 
+                                `/artifacts/${fig.path}`
+                              }
+                              class="result-image mb-4 last:mb-0 inline-block"
+                            >
+                              <img 
+                                src={fig.data ? 
+                                  `data:image/${fig.format};base64,${fig.data}` : 
+                                  `/artifacts/${fig.path}`
+                                }
+                                alt={`Figure ${i + 1}`}
+                                class="max-w-full cursor-zoom-in"
+                              />
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : null}
+              </div>
+            ))
+          })()}
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      // Copy code function
+      window.copyCode = function(button) {
+        const code = button.getAttribute('data-code');
+        navigator.clipboard.writeText(code).then(() => {
+          const span = button.querySelector('span');
+          const originalText = span.textContent;
+          span.textContent = 'Copied!';
+          
+          setTimeout(() => {
+            span.textContent = originalText;
+          }, 2000);
+        }).catch(err => {
+          console.error('Failed to copy:', err);
+        });
+      };
+      
+      // Keyboard shortcuts for layout and image sizing
+      let isColumnView = localStorage.getItem('columnView') === 'true';
+      let imageScale = 100; // Always use 100% for now, ignore saved preference
+      let showPdf = false;
+      
+      // Apply saved preferences
+      if (isColumnView) {
+        document.querySelector('.cells-container')?.classList.add('column-view');
+      }
+      if (imageScale !== 100) {
+        document.querySelectorAll('.result-image').forEach(img => {
+          img.style.maxWidth = `${imageScale}%`;
+        });
+      }
+      
+      // Create indicator element
+      const indicator = document.createElement('div');
+      indicator.style.cssText = 'position: fixed; bottom: 20px; right: 20px; background: black; color: white; padding: 8px 12px; border-radius: 4px; font-size: 12px; opacity: 0; transition: opacity 0.2s; z-index: 9999;';
+      document.body.appendChild(indicator);
+      
+      function showIndicator(text) {
+        indicator.textContent = text;
+        indicator.style.opacity = '0.8';
+        setTimeout(() => {
+          indicator.style.opacity = '0';
+        }, 1500);
+      }
+      
+      document.addEventListener('keydown', (e) => {
+        const container = document.querySelector('.cells-container');
+        const images = document.querySelectorAll('.result-image');
+        
+        // Removed l/k and o/p shortcuts
+        
+        // R - Toggle PDF
+        if (e.key === 'r') {
+          togglePdf();
+        }
+      });
+      
+      // Show help on load
+      setTimeout(() => {
+        showIndicator('R: toggle PDF');
+      }, 1000);
+      
+      // PDF toggle functionality
+      function togglePdf() {
+        const viewBtn = document.querySelector('.pdf-view-btn');
+        const sidebarContent = document.querySelector('.pdf-sidebar-content');
+        const contentWrapper = document.querySelector('.content-wrapper');
+        const pdfEmbed = document.querySelector('.pdf-embed');
+        
+        if (!showPdf) {
+          // Show PDF
+          viewBtn.style.display = 'none';
+          sidebarContent.style.display = 'block';
+          contentWrapper.classList.add('show-pdf');
+          
+          // Load PDF if not already loaded
+          if (!pdfEmbed.src) {
+            const pdfUrl = pdfEmbed.dataset.pdfUrl;
+            pdfEmbed.src = pdfUrl + '#toolbar=1&navpanes=0&scrollbar=1';
+          }
+          
+          showPdf = true;
+          showIndicator('PDF: ON');
+        } else {
+          // Hide PDF
+          viewBtn.style.display = 'block';
+          sidebarContent.style.display = 'none';
+          contentWrapper.classList.remove('show-pdf');
+          showPdf = false;
+          showIndicator('PDF: OFF');
+        }
+      }
+      
+      // Handle view button
+      const viewBtn = document.querySelector('.pdf-view-btn');
+      viewBtn?.addEventListener('click', togglePdf);
+      
+      // Handle close button
+      const closeBtn = document.querySelector('.pdf-close-btn');
+      closeBtn?.addEventListener('click', togglePdf);
+    </script>
+    
+    <script>
+      // Handle deep linking to methods
+      function handleMethodDeepLink() {
+        const hash = window.location.hash;
+        if (!hash) return;
+        
+        const methodName = decodeURIComponent(hash.substring(1));
+        
+        // Find all code cells
+        const codeCells = document.querySelectorAll('.code-section pre code');
+        
+        for (const cell of codeCells) {
+          const content = cell.textContent || '';
+          
+          // Check if this code contains the method
+          if (content.includes(methodName)) {
+            // Scroll to the code block
+            const container = cell.closest('.cell-container');
+            if (container) {
+              container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              
+              // Highlight the code block temporarily
+              container.style.background = '#fef3c7';
+              setTimeout(() => {
+                container.style.transition = 'background 1s ease';
+                container.style.background = '';
+              }, 1000);
+              
+              break;
+            }
+          }
+        }
+      }
+      
+      // Handle on load and hash change
+      window.addEventListener('load', handleMethodDeepLink);
+      window.addEventListener('hashchange', handleMethodDeepLink);
+    </script>
+    
+    <script>
+      // Tab functionality
+      document.addEventListener('DOMContentLoaded', () => {
+        const tabGroupWrappers = document.querySelectorAll('.tab-group-wrapper');
+        
+        tabGroupWrappers.forEach(wrapper => {
+          const buttons = wrapper.querySelectorAll('.tab-button');
+          const panels = wrapper.querySelectorAll('.tab-panel');
+          
+          buttons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+              // Remove active class from all buttons and panels
+              buttons.forEach(b => b.classList.remove('active'));
+              panels.forEach(p => p.classList.remove('active'));
+              
+              // Add active class to clicked button and corresponding panel
+              button.classList.add('active');
+              panels[index].classList.add('active');
+            });
+          });
+        });
+      });
+    </script>
+    
+    <ImageLightbox />
+    <Footer />
+  </body>
+  <style>
+    @reference "../../styles/global.css";
+    
+    /* Better dataframe styling */
+    .dataframe-container table {
+      @apply border-collapse w-full text-sm;
+    }
+    
+    .dataframe-container table.dataframe {
+      @apply w-full border-collapse bg-white shadow-sm rounded-lg overflow-hidden;
+    }
+    
+    .dataframe-container table.dataframe thead {
+      @apply bg-gray-50;
+    }
+    
+    .dataframe-container table.dataframe thead tr th {
+      @apply px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider;
+      text-align: left !important;
+      border: 1px solid #e5e7eb !important;
+      background-color: #f9fafb !important;
+    }
+    
+    .dataframe-container table.dataframe tbody tr {
+      @apply border-t border-gray-200;
+    }
+    
+    .dataframe-container table.dataframe tbody tr:nth-child(even) {
+      @apply bg-gray-50;
+    }
+    
+    .dataframe-container table.dataframe tbody tr:hover {
+      @apply bg-gray-100 transition-colors;
+    }
+    
+    .dataframe-container table.dataframe tbody tr th,
+    .dataframe-container table.dataframe tbody tr td {
+      @apply px-4 py-3 text-sm text-gray-900;
+      border: 1px solid #e5e7eb !important;
+    }
+    
+    /* Hide pandas index column if it's just numbers */
+    .dataframe-container table.dataframe tbody tr th:first-child {
+      @apply text-gray-500 font-normal;
+    }
+    
+    /* PDF Preview subtle border */
+    .header-preview img {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      border-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Prose content in results */
+    .dataframe-container ul {
+      @apply list-disc pl-5 space-y-1;
+    }
+    
+    .dataframe-container ol {
+      @apply list-decimal pl-5 space-y-1;
+    }
+    
+    .dataframe-container h1,
+    .dataframe-container h2,
+    .dataframe-container h3 {
+      @apply font-bold mt-4 mb-2;
+    }
+    
+    .dataframe-container h1 {
+      @apply text-xl;
+    }
+    
+    .dataframe-container h2 {
+      @apply text-lg;
+    }
+    
+    .dataframe-container h3 {
+      @apply text-base;
+    }
+    
+    /* Code wrapping */
+    pre {
+      max-width: 100%;
+      overflow-x: auto;
+    }
+    
+    pre code {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      display: block;
+    }
+    
+    /* Image transitions */
+    .result-image {
+      transition: max-width 0.2s ease-in-out;
+      max-height: 80vh;
+      width: auto;
+      height: auto;
+    }
+    
+    /* Column view layout */
+    .cells-container.column-view {
+      max-width: 1600px;
+    }
+    
+    .cells-container.column-view .cell-container:not(.markdown-cell) .code-output-container {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    
+    .cells-container.column-view .code-section {
+      position: sticky;
+      top: 1rem;
+    }
+    
+    /* Responsive - disable column view on small screens */
+    @media (max-width: 1024px) {
+      .cells-container.column-view .cell-container:not(.markdown-cell) .code-output-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Content wrapper flexbox layout */
+    .content-wrapper {
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+      width: 100%;
+    }
+    
+    /* PDF View Button */
+    .pdf-view-btn {
+      width: 100%;
+      background: white;
+      border: 1px solid #e5e7eb;
+      padding: 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      color: #374151;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    
+    .pdf-view-btn:hover {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* PDF Sidebar */
+    .pdf-sidebar {
+      flex: 0 0 auto;
+      width: 150px;
+      position: sticky;
+      top: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .content-wrapper.show-pdf .pdf-sidebar {
+      flex: 0 0 50%;
+      width: auto;
+    }
+    
+    .pdf-sidebar-content {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      position: relative;
+    }
+    
+    /* Close button */
+    .pdf-close-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 0.375rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: #6b7280;
+      z-index: 10;
+    }
+    
+    .pdf-close-btn:hover {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+      color: #374151;
+    }
+    
+    .pdf-preview-wrapper {
+      position: relative;
+      height: calc(100vh - 4rem); /* Viewport height minus header and padding */
+      max-height: 800px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    
+    /* PDF Embed */
+    .pdf-embed {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 4px;
+      background: #f9fafb;
+    }
+    
+    /* Main content area */
+    .main-content {
+      flex: 1;
+      min-width: 0; /* Prevent flex items from overflowing */
+      max-width: 56rem; /* Keep original max-width when PDF is hidden */
+      margin: 0 auto;
+    }
+    
+    .content-wrapper.show-pdf .main-content {
+      flex: 1; /* Take remaining space (50%) */
+      max-width: none; /* Remove max-width constraint when PDF is shown */
+      margin: 0;
+    }
+    
+    /* Hide PDF sidebar on smaller screens */
+    @media (max-width: 1200px) {
+      .pdf-sidebar {
+        display: none !important;
+      }
+      
+      .content-wrapper.show-pdf .main-content {
+        flex: 1;
+      }
+    }
+
+    /* Related Tutorials Section */
+    .related-tutorials {
+      margin-top: 1rem;
+    }
+
+    .related-tutorials-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+    }
+
+    .related-tutorial-item {
+      font-size: 0.875rem;
+      padding-left: 1rem;
+    }
+
+    .related-tutorial-item.current {
+      font-weight: 500;
+    }
+
+    .tutorial-link-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .you-are-here {
+      color: #4f46e5;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .tutorial-link {
+      color: #374151;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.15s ease;
+    }
+
+    .tutorial-link:hover {
+      color: #4f46e5;
+    }
+
+    .tutorial-link.current-tutorial {
+      color: #111827;
+      font-weight: 500;
+    }
+
+    /* Adjust content wrapper */
+    .content-wrapper {
+      margin-top: 2rem;
+    }
+    
+    /* Tab Styles */
+    .tab-group-wrapper {
+      position: relative;
+      margin: 2rem 0;
+      margin-left: 0;
+    }
+    
+    .multiple-approaches-indicator {
+      position: absolute;
+      left: -130px;
+      top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      width: 120px;
+    }
+    
+    .swirly-arrow {
+      flex-shrink: 0;
+    }
+    
+    .approaches-text {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #6366f1;
+      font-style: italic;
+      white-space: nowrap;
+    }
+    
+    .tab-group {
+      border: none;
+      background: transparent;
+      box-shadow: none;
+    }
+    
+    .tab-nav {
+      display: flex;
+      gap: 0;
+      padding: 0;
+      background: transparent;
+      border-bottom: 2px solid #e5e7eb;
+      position: relative;
+    }
+    
+    .tab-button {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      position: relative;
+      margin-right: 4px;
+    }
+    
+    .tab-button:hover {
+      color: #374151;
+      background: #e5e7eb;
+    }
+    
+    .tab-button.active {
+      color: #1f2937;
+      background: white;
+      border-color: #e5e7eb;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .tab-button.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: white;
+    }
+    
+    .tab-button.active::before {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 8px;
+      right: 8px;
+      height: 3px;
+      background: #6366f1;
+      border-radius: 2px;
+    }
+    
+    .tab-panels {
+      position: relative;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0 8px 8px 8px;
+      padding: 1.5rem;
+      margin-top: -1px;
+    }
+    
+    .tab-panel {
+      display: none;
+    }
+    
+    .tab-panel.active {
+      display: block;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .tab-cell {
+      /* Tab content spacing handled by inner elements */
+    }
+    
+    /* Responsive adjustments for tabs */
+    @media (max-width: 1280px) {
+      .multiple-approaches-indicator {
+        display: none;
+      }
+    }
+    
+    /* Responsive adjustments for tab indicator */
+    @media (max-width: 768px) {
+      .tab-group-wrapper {
+        margin-left: -0.5rem;
+      }
+      
+      .multiple-approaches-indicator {
+        margin-left: 0;
+      }
+    }
+    
+    /* Copy button and execution time styles */
+    .code-section .copy-btn {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      z-index: 10;
+    }
+    
+    .code-section:hover .copy-btn {
+      opacity: 1;
+    }
+    
+    .code-section .copy-btn:focus {
+      opacity: 1;
+    }
+    
+    /* Execution time display */
+    .code-section .execution-time {
+      font-size: 0.75rem;
+      color: #6b7280;
+      position: absolute;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      pointer-events: none;
+    }
+    
+    /* Adjust for bash blocks */
+    .code-section .bg-gray-900:has(.copy-btn) {
+      min-height: 3rem;
+    }
+  </style>
+</html>

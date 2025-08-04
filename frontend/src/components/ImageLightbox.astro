@@ -1,0 +1,47 @@
+---
+// This component sets up PhotoSwipe for image lightbox functionality
+---
+
+<script>
+  // PhotoSwipe setup - using proper module imports for Astro
+  import PhotoSwipeLightbox from 'photoswipe/lightbox';
+  
+  // Initialize on DOM ready
+  document.addEventListener('DOMContentLoaded', () => {
+    // First, set up image dimensions on all result images
+    const links = document.querySelectorAll('a.result-image');
+    links.forEach(link => {
+      const img = link.querySelector('img');
+      if (img) {
+        // Set dimensions when image loads
+        const setDimensions = () => {
+          if (img.naturalWidth && img.naturalHeight) {
+            link.setAttribute('data-pswp-width', img.naturalWidth);
+            link.setAttribute('data-pswp-height', img.naturalHeight);
+          }
+        };
+        
+        // If already loaded, set now
+        if (img.complete) {
+          setDimensions();
+        } else {
+          // Otherwise wait for load
+          img.addEventListener('load', setDimensions);
+        }
+      }
+    });
+    
+    // Initialize PhotoSwipe
+    const lightbox = new PhotoSwipeLightbox({
+      gallery: '.cells-container',
+      children: 'a.result-image',
+      pswpModule: () => import('photoswipe'),
+      bgOpacity: 0.95,
+      showHideAnimationType: 'zoom',
+      zoom: true,
+      maxWidthToAnimate: 4000,
+    });
+    
+    lightbox.init();
+  });
+</script>

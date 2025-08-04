@@ -1,0 +1,560 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import DarkModeToggle from '../components/DarkModeToggle.astro';
+
+// Get query from URL params
+const url = new URL(Astro.request.url);
+const searchQuery = url.searchParams.get('q') || '';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{searchQuery ? `Search: ${searchQuery}` : 'Search'} | bad pdfs</title>
+    <meta name="description" content="Search for PDFs and methods in the bad pdfs gallery" />
+  </head>
+  <body>
+    <Header currentPage="search" />
+    
+    <main class="search-page">
+      <div class="container">
+        <div class="page-header">
+          <h1>Search Results</h1>
+          {searchQuery && <p>Results for "{searchQuery}"</p>}
+        </div>
+        
+        <div id="search-results-container" class="search-results-container">
+          {searchQuery ? (
+            <div class="loading">Searching...</div>
+          ) : (
+            <div class="empty-state">
+              <p>No search query provided</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+    
+    <Footer />
+    <DarkModeToggle />
+  </body>
+</html>
+
+<script>
+  import FlexSearch from 'flexsearch';
+  
+  let searchIndex = null;
+  let methodIndex = null;
+  let documents = {};
+  let allMetadata = [];
+  let methodUsageMap = {};
+  
+  // Load search index and metadata
+  async function loadSearchIndex() {
+    try {
+      // Load search index
+      const response = await fetch('/artifacts/search_index.compact.json');
+      const data = await response.json();
+      
+      // Store documents
+      data.documents.forEach(doc => {
+        documents[doc.id] = doc;
+      });
+      
+      // Store method index
+      methodIndex = data.methodIndex;
+      
+      // Load all metadata for method usage snippets
+      const metadataResponse = await fetch('/artifacts/all_metadata.json');
+      allMetadata = await metadataResponse.json();
+      
+      // Build method usage map
+      allMetadata.forEach(item => {
+        if (item.method_usage) {
+          item.method_usage.forEach(usage => {
+            const method = usage.method;
+            if (!methodUsageMap[method]) {
+              methodUsageMap[method] = [];
+            }
+            methodUsageMap[method].push({
+              example: item.id,
+              title: item.title,
+              slug: item.slug,
+              usage: usage
+            });
+          });
+        }
+      });
+      
+      // Create FlexSearch index
+      searchIndex = new FlexSearch.Document({
+        document: {
+          id: 'id',
+          index: ['title', 'description', 'content', 'methods', 'tags'],
+          store: ['id', 'slug', 'title', 'description', 'methods']
+        },
+        tokenize: 'forward',
+        threshold: 0,
+        resolution: 9,
+        depth: 3
+      });
+      
+      // Add documents to index
+      data.documents.forEach(doc => {
+        searchIndex.add(doc);
+      });
+      
+    } catch (error) {
+      console.error('Failed to load search index:', error);
+    }
+  }
+  
+  // Helper function to format method usage as code snippet
+  function formatMethodUsage(usage) {
+    const args = usage.args || [];
+    const kwargs = usage.kwargs || {};
+    
+    // Format arguments
+    const argStrings = [];
+    args.forEach(arg => {
+      if (Array.isArray(arg)) {
+        argStrings.push(`[${arg.map(item => typeof item === 'string' ? `"${item}"` : item).join(', ')}]`);
+      } else if (typeof arg === 'string' && arg !== '<Lambda>') {
+        argStrings.push(`"${arg}"`);
+      } else if (arg === '<Lambda>') {
+        argStrings.push('lambda ...');
+      } else {
+        argStrings.push(String(arg));
+      }
+    });
+    
+    // Format keyword arguments
+    const kwargStrings = [];
+    for (const [key, value] of Object.entries(kwargs)) {
+      if (typeof value === 'string') {
+        kwargStrings.push(`${key}="${value}"`);
+      } else if (typeof value === 'boolean') {
+        kwargStrings.push(`${key}=${value ? 'True' : 'False'}`);
+      } else {
+        kwargStrings.push(`${key}=${value}`);
+      }
+    }
+    
+    // Combine all parameters
+    const allParams = [...argStrings, ...kwargStrings];
+    const paramString = allParams.length > 0 ? allParams.join(', ') : '';
+    
+    return `.${usage.method}(${paramString})`;
+  }
+  
+  // Search function
+  function performSearch(query) {
+    if (!searchIndex || query.length < 2) {
+      return { documents: [], methods: {} };
+    }
+    
+    // Search documents
+    const docResults = searchIndex.search(query, {
+      limit: 20,
+      enrich: true
+    });
+    
+    // Flatten results (FlexSearch returns results grouped by field)
+    const seenIds = new Set();
+    const uniqueResults = [];
+    
+    docResults.forEach(fieldResult => {
+      fieldResult.result.forEach(item => {
+        if (!seenIds.has(item.id)) {
+          seenIds.add(item.id);
+          uniqueResults.push(item.doc);
+        }
+      });
+    });
+    
+    // Search for exact method matches and group by method with snippets
+    const methodGroups = {};
+    const queryLower = query.toLowerCase();
+    
+    if (methodUsageMap) {
+      for (const [method, usageExamples] of Object.entries(methodUsageMap)) {
+        if (method.toLowerCase().includes(queryLower)) {
+          if (!methodGroups[method]) {
+            methodGroups[method] = {
+              method,
+              usageExamples: []
+            };
+          }
+          
+          // Add usage examples with snippets, but deduplicate by PDF
+          const seenPdfs = new Set();
+          usageExamples.forEach(example => {
+            if (!seenPdfs.has(example.slug)) {
+              seenPdfs.add(example.slug);
+              const snippet = formatMethodUsage(example.usage);
+              methodGroups[method].usageExamples.push({
+                title: example.title,
+                slug: example.slug,
+                snippet: snippet
+              });
+            }
+          });
+        }
+      }
+    }
+    
+    return {
+      documents: uniqueResults,
+      methods: methodGroups
+    };
+  }
+  
+  // Render search results
+  function renderResults(results, query) {
+    const container = document.getElementById('search-results-container');
+    
+    const methodCount = Object.keys(results.methods).length;
+    
+    if (!results.documents.length && methodCount === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <p>No results found for "${escapeHtml(query)}"</p>
+          <p class="help-text">Try searching for methods like "extract_text" or PDF titles</p>
+        </div>
+      `;
+      return;
+    }
+    
+    let html = '';
+    
+    // Method matches section - grouped by method
+    if (methodCount > 0) {
+      html += '<div class="results-section">';
+      html += `<h2 class="results-header">Methods <span class="count">(${methodCount})</span></h2>`;
+      html += '<div class="method-results">';
+      
+      // Sort methods by relevance
+      const sortedMethods = Object.values(results.methods)
+        .sort((a, b) => {
+          // Prioritize exact matches
+          const aExact = a.method.toLowerCase() === query.toLowerCase();
+          const bExact = b.method.toLowerCase() === query.toLowerCase();
+          if (aExact && !bExact) return -1;
+          if (!aExact && bExact) return 1;
+          
+          // Then by number of usage examples
+          return b.usageExamples.length - a.usageExamples.length;
+        });
+      
+      sortedMethods.forEach(({ method, usageExamples }) => {
+        const encodedMethod = encodeURIComponent(method.toLowerCase());
+        const methodId = `method-${method.replace(/[^a-zA-Z0-9]/g, '-')}`;
+        const initialSnippets = 3;
+        
+        html += `
+          <a href="/methods/${encodedMethod}" class="method-group">
+            <div class="method-header">
+              <h3 class="method-name">${escapeHtml(method)}</h3>
+              <span class="method-count">${usageExamples.length} usage${usageExamples.length !== 1 ? 's' : ''}</span>
+            </div>
+            <div class="method-examples">
+              <span class="examples-label">Used in:</span>
+              ${usageExamples.slice(0, 3).map((example, index) => 
+                `<span class="example-name">${escapeHtml(example.title)}</span>` +
+                (index < Math.min(3, usageExamples.length) - 1 ? '<span class="separator">, </span>' : '')
+              ).join('')}
+              ${usageExamples.length > 3 ? '<span class="more">...</span>' : ''}
+            </div>
+          </a>
+        `;
+      });
+      html += '</div>';
+      html += '</div>';
+    }
+    
+    // Document matches section
+    if (results.documents.length > 0) {
+      html += '<div class="results-section">';
+      html += `<h2 class="results-header">PDFs <span class="count">(${results.documents.length})</span></h2>`;
+      html += '<div class="pdf-results">';
+      results.documents.forEach(doc => {
+        html += `
+          <a href="/pdfs/${doc.slug}" class="result-item">
+            <div class="result-title">${highlightMatch(doc.title, query)}</div>
+            <div class="result-description">${highlightMatch(doc.description, query)}</div>
+            <div class="result-methods">
+              ${doc.methods.slice(0, 3).map(m => 
+                `<span class="method-tag">${escapeHtml(m)}</span>`
+              ).join('')}
+              ${doc.methods.length > 3 ? `<span class="more-methods">+${doc.methods.length - 3} more</span>` : ''}
+            </div>
+          </a>
+        `;
+      });
+      html += '</div>';
+      html += '</div>';
+    }
+    
+    container.innerHTML = html;
+  }
+  
+  // Highlight matching text
+  function highlightMatch(text, query) {
+    const escaped = escapeHtml(text);
+    const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+    return escaped.replace(regex, '<mark>$1</mark>');
+  }
+  
+  // Escape HTML
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  
+  // Escape regex special characters
+  function escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+  
+  // Setup search
+  async function setupSearch() {
+    await loadSearchIndex();
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialQuery = urlParams.get('q') || '';
+    
+    // Perform initial search if query exists
+    if (initialQuery && searchIndex) {
+      const results = performSearch(initialQuery);
+      renderResults(results, initialQuery);
+    }
+  }
+  
+  // Initialize on load
+  setupSearch();
+</script>
+
+<style is:global>
+  .search-page {
+    min-height: calc(100vh - 80px);
+  }
+  
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    background: linear-gradient(135deg, var(--color-gradient-start) 0%, var(--color-gradient-end) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .page-header p {
+    font-size: 1.125rem;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+  
+  .search-results-container {
+    margin-top: 2rem;
+  }
+  
+  .loading, .empty-state {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: 4rem 2rem;
+  }
+  
+  .empty-state p {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.125rem;
+  }
+  
+  .help-text {
+    font-size: 0.875rem;
+    opacity: 0.8;
+  }
+  
+  .results-section {
+    margin-bottom: 2rem;
+  }
+  
+  .results-section:first-child {
+    margin-top: 2rem;
+  }
+  
+  .results-header {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin: 0 0 1rem 0;
+    border-top: 1px solid var(--color-border);
+    padding-top: 2rem;
+  }
+  
+  .results-header .count {
+    font-weight: 400;
+    color: var(--color-text-muted);
+    font-size: 1rem;
+  }
+  
+  /* Method results */
+  .method-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+  
+  .method-group {
+    display: block;
+    padding: 1.25rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  
+  .method-group:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+  }
+  
+  .method-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+  
+  .method-name {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+  }
+  
+  .method-count {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    background: var(--color-background);
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+  }
+  
+  .method-examples {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-wrap: wrap;
+  }
+  
+  .examples-label {
+    font-weight: 500;
+  }
+  
+  .example-name {
+    color: var(--color-primary);
+  }
+  
+  .separator {
+    color: var(--color-border);
+  }
+  
+  .more {
+    color: var(--color-text-muted);
+  }
+  
+  /* PDF results */
+  .pdf-results {
+    display: grid;
+    gap: 1rem;
+  }
+  
+  .result-item {
+    display: block;
+    padding: 1.25rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  
+  .result-item:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+  }
+  
+  .result-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 0.5rem;
+  }
+  
+  .result-description {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+  }
+  
+  .result-methods {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  
+  .more-methods {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+  
+  mark {
+    background: var(--color-primary);
+    color: white;
+    font-weight: 700;
+    padding: 0.0625rem 0.25rem;
+    border-radius: 0.1875rem;
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      padding: 0 1rem;
+    }
+    
+    .search-header h1 {
+      font-size: 2rem;
+    }
+    
+    .search-box {
+      flex-direction: column;
+    }
+    
+    .search-button {
+      width: 100%;
+    }
+  }
+</style>

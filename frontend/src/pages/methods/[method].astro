@@ -1,0 +1,618 @@
+---
+import '../../styles/global.css';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import DarkModeToggle from '../../components/DarkModeToggle.astro';
+import Prism from 'prismjs';
+import 'prismjs/components/prism-python';
+import 'prismjs/themes/prism-tomorrow.css';
+import { checkArtifacts } from '../../middleware/artifact-check.js';
+
+// Run pre-flight checks
+checkArtifacts();
+
+export async function getStaticPaths() {
+  // Import the metadata directly
+  const allMetadata = (await import('../../../public/artifacts/all_metadata.json')).default;
+  
+  // Collect all unique methods (case-insensitive)
+  const methodsMap = new Map(); // lowercase -> original case
+  allMetadata.forEach(item => {
+    if (item.method_usage) {
+      item.method_usage.forEach(usage => {
+        const lowerMethod = usage.method.toLowerCase();
+        if (!methodsMap.has(lowerMethod)) {
+          methodsMap.set(lowerMethod, usage.method);
+        }
+      });
+    }
+  });
+  
+  // Create paths for each method with lowercase URLs
+  return Array.from(methodsMap.entries()).map(([lowerMethod, originalMethod]) => ({
+    params: { method: lowerMethod },
+    props: { method: originalMethod }
+  }));
+}
+
+const { method } = Astro.props;
+
+// Load all metadata and execution data
+const allMetadata = (await import('../../../public/artifacts/all_metadata.json')).default;
+
+// Collect all usages of this method with code context
+const methodUsages = [];
+const failedPDFs = [];
+
+for (const item of allMetadata) {
+  if (item.method_usage) {
+    // Case-insensitive comparison
+    const usages = item.method_usage.filter(usage => 
+      usage.method.toLowerCase() === method.toLowerCase()
+    );
+
+    if (usages.length > 0) {
+      // Load the execution data for this PDF
+      const executionPath = `../../../public/artifacts/executions/pdfs/${item.id}/${item.approaches[0].replace('.md', '.json')}`;
+      const executionData = (await import(executionPath)).default;
+
+      // For each usage, find the code cell containing it
+      for (const usage of usages) {
+        // Check if this is a class instantiation (PDF, Guides, Flow) or a method call
+        const isClass = ['PDF', 'Guides', 'Flow'].includes(usage.method);
+        
+        // Track global code cell index for proper deep-linking
+        let globalCodeCellIndex = 0;
+        
+        // Function to process code cells and find method usages
+        const processCodeCell = (cell, codeCellIndex) => {
+          const lines = cell.content.split('\n');
+
+          // Find lines containing the method call
+          lines.forEach((line, lineIndex) => {
+            // For classes, look for Class( pattern
+            // For methods, look for .method( pattern (with any variable name before the dot)
+            const methodRegex = isClass 
+              ? new RegExp(`\\b${usage.method}\\s*\\(`)
+              : new RegExp(`\\.${usage.method}\\s*\\(`);
+            
+          console.log(executionPath)
+            if(methodRegex.test(line)) {
+              // Extract context (3 lines before and after)
+              const startLine = Math.max(0, lineIndex - 3);
+              const endLine = Math.min(lines.length - 1, lineIndex + 3);
+              const contextLines = lines.slice(startLine, endLine + 1);
+              
+              methodUsages.push({
+                pdf: item,
+                usage,
+                code: cell.content,
+                contextLines,
+                lineNumber: lineIndex + 1,
+                startLine: startLine + 1,
+                cellIndex: codeCellIndex,
+                highlightLine: lineIndex - startLine
+              });
+            }
+          });
+        };
+        
+        // Search through all cells
+        executionData.cells.forEach((cell, cellIndex) => {
+          if (cell.type === 'code') {
+            processCodeCell(cell, globalCodeCellIndex);
+            globalCodeCellIndex++;
+          } else if (cell.type === 'tab' && cell.cells) {
+            // Process each cell within the tabbed cell
+            cell.cells.forEach((tabbedCell) => {
+              if (tabbedCell.type === 'code') {
+                processCodeCell(tabbedCell, globalCodeCellIndex);
+                globalCodeCellIndex++;
+              }
+            });
+          }
+        });
+      }
+    }
+  }
+}
+
+// Log debugging info
+console.log(`Method ${method}: Found ${methodUsages.length} usages across PDFs`);
+if (failedPDFs.length > 0) {
+  console.error('Failed to load execution data for:', failedPDFs);
+}
+
+// Sort by PDF title
+methodUsages.sort((a, b) => a.pdf.title.localeCompare(b.pdf.title));
+
+// Debug: Check what PDFs we have
+const uniquePdfIds = new Set(methodUsages.map(u => u.pdf.id));
+console.log(`Unique PDF IDs found: ${Array.from(uniquePdfIds).join(', ')}`);
+console.log(`Total methodUsages: ${methodUsages.length}`);
+
+// Group usages by PDF and deduplicate identical contexts
+const groupedUsages = methodUsages.reduce((groups, usage) => {
+  const pdfId = usage.pdf.id;
+  if (!groups[pdfId]) {
+    groups[pdfId] = {
+      pdf: usage.pdf,
+      usages: []
+    };
+  }
+  
+  // Check if we already have this exact context
+  const contextString = usage.contextLines.join('\n');
+  const isDuplicate = groups[pdfId].usages.some(existing => 
+    existing.contextLines.join('\n') === contextString
+  );
+  
+  if (!isDuplicate) {
+    groups[pdfId].usages.push(usage);
+  }
+  
+  return groups;
+}, {});
+
+// Convert to array for rendering
+const pdfGroups = Object.values(groupedUsages);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{method} - Method Usage | bad pdfs</title>
+    <meta name="description" content={`View all usages of the ${method} method in natural-pdf examples`} />
+  </head>
+  <body>
+    <Header />
+    
+    <div class="method-page">
+    <div class="method-hero">
+      <div class="container">
+        <h1 class="method-name">{method}</h1>
+        <p class="method-stats">{methodUsages.length} usage{methodUsages.length !== 1 ? 's' : ''} across {pdfGroups.length} PDF{pdfGroups.length !== 1 ? 's' : ''}</p>
+      </div>
+    </div>
+
+    <main class="container">
+      {methodUsages.length === 0 ? (
+        <div class="no-usages">
+          <p>No usages found for this method.</p>
+          <a href="/" class="back-to-gallery">Back to Gallery</a>
+        </div>
+      ) : (
+        <div class="usage-list">
+          {pdfGroups.map((group) => (
+          <div class="pdf-group" key={group.pdf.id}>
+            <div class="pdf-info">
+              <a href={`/pdfs/${group.pdf.slug}`} class="pdf-link">
+                <h2 class="pdf-title">{group.pdf.title}</h2>
+              </a>
+              <p class="pdf-description">{group.pdf.description}</p>
+            </div>
+            
+            <div class="code-snippets" data-pdf-id={group.pdf.id}>
+              {group.usages.slice(0, 3).map((usage, index) => (
+              <div class="code-snippet" key={index}>
+                <pre class="code-content"><code class="language-python">{usage.contextLines.map((line, idx) => {
+                  const isHighlighted = idx === usage.highlightLine;
+                  if (isHighlighted) {
+                    return <><span class="highlight-line">{line}</span>{idx < usage.contextLines.length - 1 ? '\n' : ''}</>;
+                  }
+                  return <>{line}{idx < usage.contextLines.length - 1 ? '\n' : ''}</>;
+                })}</code></pre>
+                <a href={`/pdfs/${group.pdf.slug}#code-${usage.cellIndex}`} class="view-full">
+                  View full example →
+                </a>
+              </div>
+              ))}
+              {group.usages.slice(3).map((usage, index) => (
+              <div class="code-snippet hidden" key={index + 3} data-hidden="true">
+                <pre class="code-content"><code class="language-python">{usage.contextLines.map((line, idx) => {
+                  const isHighlighted = idx === usage.highlightLine;
+                  if (isHighlighted) {
+                    return <><span class="highlight-line">{line}</span>{idx < usage.contextLines.length - 1 ? '\n' : ''}</>;
+                  }
+                  return <>{line}{idx < usage.contextLines.length - 1 ? '\n' : ''}</>;
+                })}</code></pre>
+                <a href={`/pdfs/${group.pdf.slug}#code-${usage.cellIndex}`} class="view-full">
+                  View full example →
+                </a>
+              </div>
+              ))}
+              {group.usages.length > 3 && (
+                <button class="show-more-btn" onclick={`toggleMethodUsages('${group.pdf.id}', this)`} data-count={group.usages.length - 3}>
+                  <svg class="show-more-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                  <span class="show-more-text">Show {group.usages.length - 3} more {group.usages.length - 3 === 1 ? 'usage' : 'usages'}</span>
+                </button>
+              )}
+            </div>
+          </div>
+          ))}
+        </div>
+      )}
+    </main>
+  </div>
+  
+  <Footer />
+  <DarkModeToggle />
+  </body>
+</html>
+
+<script>
+  // Apply Prism syntax highlighting after page loads
+  import Prism from 'prismjs';
+  import 'prismjs/components/prism-python';
+  
+  // Toggle show more/less functionality
+  window.toggleMethodUsages = function(pdfId, button) {
+    const container = document.querySelector(`[data-pdf-id="${pdfId}"]`);
+    const hiddenItems = container.querySelectorAll('.code-snippet[data-hidden="true"]');
+    const isExpanded = button.dataset.expanded === 'true';
+    
+    hiddenItems.forEach(item => {
+      if (isExpanded) {
+        item.classList.add('hidden');
+      } else {
+        item.classList.remove('hidden');
+      }
+    });
+    
+    button.dataset.expanded = !isExpanded;
+    const count = button.dataset.count;
+    const text = button.querySelector('.show-more-text');
+    const icon = button.querySelector('.show-more-icon');
+    
+    if (isExpanded) {
+      text.textContent = `Show ${count} more ${count === '1' ? 'usage' : 'usages'}`;
+      icon.style.transform = 'rotate(0deg)';
+    } else {
+      text.textContent = 'Show less';
+      icon.style.transform = 'rotate(180deg)';
+    }
+  };
+  
+  // Wait for DOM to be ready
+  document.addEventListener('DOMContentLoaded', () => {
+    Prism.highlightAll();
+  });
+</script>
+
+<style>
+  .method-page {
+    min-height: 100vh;
+  }
+
+  .method-hero {
+    background: linear-gradient(135deg, var(--color-gradient-start) 0%, var(--color-gradient-end) 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 3rem;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    transition: color 0.2s ease;
+  }
+
+  .back-link:hover {
+    color: white;
+  }
+
+  .method-name {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: white;
+  }
+
+  .method-stats {
+    font-size: 1.125rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+
+  .usage-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .pdf-group {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+    padding: 1.5rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .pdf-group:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .pdf-info {
+    flex-shrink: 0;
+  }
+
+  .code-snippets {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .pdf-link {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .pdf-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.5rem 0;
+    transition: color 0.2s ease;
+  }
+
+  .pdf-link:hover .pdf-title {
+    color: #667eea;
+  }
+
+  .pdf-description {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+  }
+
+  .code-snippet {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.875rem;
+  }
+
+  .code-content {
+    padding: 0.75rem 1rem;
+    margin: 0;
+    overflow-x: auto;
+    background: #f8fafc;
+    border-radius: 0.375rem;
+    border: 1px solid #e5e7eb;
+  }
+
+  .code-content code {
+    display: block;
+    color: #1e293b;
+    line-height: 1.5;
+    white-space: pre;
+  }
+  
+  /* Prism syntax highlighting will be applied via global.css */
+
+  .highlight-line {
+    display: inline-block;
+    width: 100%;
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.15) 0%, rgba(102, 126, 234, 0.05) 100%);
+    box-shadow: inset 3px 0 0 #667eea;
+    margin-left: -1rem;
+    padding-left: calc(1rem - 3px);
+    margin-right: -1rem;
+    padding-right: 1rem;
+  }
+
+  /* snippet-footer removed - no longer needed */
+
+  .view-full {
+    display: inline-block;
+    margin-top: 0.375rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .view-full:hover {
+    color: #764ba2;
+  }
+
+  .no-usages {
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+
+  .no-usages p {
+    font-size: 1.125rem;
+    color: #6b7280;
+    margin-bottom: 2rem;
+  }
+
+  .back-to-gallery {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .back-to-gallery:hover {
+    color: #764ba2;
+    text-decoration: underline;
+  }
+
+  /* Show more button */
+  .show-more-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.75rem;
+    padding: 0.375rem 0.75rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-primary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .show-more-btn:hover {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+  }
+
+  .show-more-icon {
+    transition: transform 0.2s ease;
+  }
+
+  .code-snippet.hidden {
+    display: none;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .pdf-group {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .pdf-group {
+      background: #1f2937;
+      border-color: #374151;
+    }
+    
+    /* Prism dark mode handled by global.css */
+
+    .pdf-header {
+      border-bottom-color: #374151;
+    }
+
+    .code-snippets {
+      background: #374151;
+    }
+
+    .pdf-title {
+      color: #f3f4f6;
+    }
+
+    .pdf-description {
+      color: #9ca3af;
+    }
+
+    .code-snippet {
+      background: #1f2937;
+    }
+
+    .code-content {
+      background: #111827;
+    }
+
+    .line-numbers {
+      background: #0f172a;
+      border-right-color: #1f2937;
+    }
+
+    .line-number {
+      color: #64748b;
+    }
+
+    .line-number.highlight {
+      background: linear-gradient(90deg, transparent 0%, rgba(139, 92, 246, 0.15) 100%);
+      color: #a78bfa;
+    }
+
+    .code-content code {
+      color: #f1f5f9;
+    }
+
+    .code-line.highlight {
+      background: rgba(139, 92, 246, 0.15);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    }
+
+    .snippet-footer {
+      background: #1a202c;
+      border-top-color: #374151;
+    }
+
+    .view-full {
+      color: #a78bfa;
+    }
+
+    .view-full:hover {
+      color: #c4b5fd;
+    }
+
+    .no-usages p {
+      color: #9ca3af;
+    }
+
+    .back-to-gallery {
+      color: #a78bfa;
+    }
+
+    .back-to-gallery:hover {
+      color: #c4b5fd;
+    }
+
+    .show-more-btn {
+      background: #1f2937;
+      border-color: #374151;
+      color: #a78bfa;
+    }
+
+    .show-more-btn:hover {
+      background: #a78bfa;
+      color: #111827;
+      border-color: #a78bfa;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .method-name {
+      font-size: 2rem;
+    }
+
+    .container {
+      padding: 0 1rem;
+    }
+
+    .code-snippet {
+      font-size: 0.75rem;
+    }
+
+    .line-number {
+      min-width: 2.5rem;
+      padding: 0 0.5rem;
+    }
+
+    .code-content {
+      padding: 1rem 0.5rem;
+    }
+  }
+</style>

@@ -1,0 +1,28 @@
+{
+  "name": "frontend",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "predev": "node scripts/copy-artifacts.js",
+    "dev": "concurrently \"npm:watch-artifacts\" \"npm:astro-dev\"",
+    "astro-dev": "astro dev",
+    "watch-artifacts": "node scripts/watch-artifacts.js",
+    "prebuild": "node scripts/copy-artifacts.js",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@tailwindcss/typography": "^0.5.16",
+    "@tailwindcss/vite": "^4.1.11",
+    "astro": "^5.12.6",
+    "flexsearch": "^0.8.205",
+    "marked": "^16.1.1",
+    "photoswipe": "^5.4.4",
+    "prismjs": "^1.30.0",
+    "tailwindcss": "^4.1.11"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  }
+}
