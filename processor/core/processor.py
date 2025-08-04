@@ -495,6 +495,55 @@ class GalleryProcessor:
         self.log(f"Processed: {processed}")
         self.log(f"Failed: {failed}")
         
+        # Check for validation report and display validation errors
+        validation_report = self.config.artifacts_dir / "validation_report.json"
+        validation_errors_found = False
+        if validation_report.exists():
+            try:
+                with open(validation_report) as f:
+                    report = json.load(f)
+                
+                validation_errors_found = report.get("invalid_count", 0) > 0
+                if validation_errors_found:
+                    self.log("\n" + "=" * 60)
+                    self.log("VALIDATION ERRORS")
+                    self.log("=" * 60)
+                    self.log(f"\nFound {report['invalid_count']} PDFs with validation errors:")
+                    
+                    for invalid_item in report.get("invalid_items", []):
+                        pdf_info = invalid_item.get("item", {})
+                        pdf_id = pdf_info.get("id", "unknown")
+                        self.log(f"\n❌ {pdf_id}:", "ERROR")
+                        
+                        for error in invalid_item.get("errors", []):
+                            error_type = error.get("type", "unknown")
+                            error_msg = error.get("message", "No message")
+                            details = error.get("details", "")
+                            
+                            self.log(f"  Error Type: {error_type}")
+                            self.log(f"  Message: {error_msg}")
+                            
+                            if details:
+                                # Extract the most relevant error from traceback
+                                lines = details.strip().split('\n')
+                                if lines:
+                                    # Get the last line which usually has the actual error
+                                    last_line = lines[-1].strip()
+                                    self.log(f"  Details: {last_line}")
+                                    
+                                    # Provide specific fixes
+                                    if "ImportError" in details and "pikepdf" in details:
+                                        self.log("  💡 Fix: pip install \"natural-pdf[ocr-export]\"")
+                                    elif "TypeError" in details and "Region" in details:
+                                        self.log("  💡 Fix: Check .merge() usage - ensure you're calling it on the correct object")
+                                    elif "NameError" in details:
+                                        # Extract the undefined variable
+                                        if "name '" in last_line:
+                                            var_name = last_line.split("name '")[1].split("'")[0]
+                                            self.log(f"  💡 Fix: Variable '{var_name}' is not defined - check your code for typos")
+            except Exception as e:
+                self.log(f"\nCouldn't read validation report: {e}")
+        
         if self.failed_pdfs:
             self.log("\nFailed PDFs:")
             for pdf_id, error in self.failed_pdfs.items():
@@ -510,10 +559,13 @@ class GalleryProcessor:
                 elif "execution" in error.lower():
                     self.log("    💡 Check Python code in markdown for syntax errors")
         
-        if failed == 0:
+        if failed == 0 and not validation_errors_found:
             self.log("\nBuild completed successfully!", "SUCCESS")
             self.log("\n🎉 Your PDFs are ready at http://localhost:4321")
         else:
             self.log("\nBuild completed with errors", "ERROR")
             self.log("\n⚠️  Some PDFs failed to process. Check the errors above.")
-            self.log("💡 To diagnose issues, run: python build.py diagnose")
+            if validation_errors_found:
+                self.log("💡 Fix the validation errors above and run: python build.py rebuild")
+            else:
+                self.log("💡 To diagnose issues, run: python build.py diagnose")

@@ -3,7 +3,6 @@ import '../styles/global.css'
 import PDFCard from '../components/PDFCard.astro'
 import Header from '../components/Header.astro'
 import Footer from '../components/Footer.astro'
-import DarkModeToggle from '../components/DarkModeToggle.astro'
 import fs from 'fs'
 import path from 'path'
 import { checkArtifacts } from '../middleware/artifact-check.js'
@@ -24,11 +23,12 @@ const allMetadata = JSON.parse(fs.readFileSync(allMetadataPath, 'utf-8'))
 // Deduplicate by PDF id - show only one entry per unique PDF
 const pdfMap = new Map()
 for (const item of allMetadata) {
-  if (validIds.includes(item.id)) {
-    if (!pdfMap.has(item.id)) {
-      // Use the first approach as the primary one for display
-      pdfMap.set(item.id, item)
-    }
+  // Show ALL PDFs, not just valid ones
+  if (!pdfMap.has(item.id)) {
+    // Use the first approach as the primary one for display
+    // Mark if the PDF has validation errors
+    item.hasErrors = !validIds.includes(item.id)
+    pdfMap.set(item.id, item)
   }
 }
 
@@ -70,6 +70,5 @@ if (fs.existsSync(errorPath)) {
 		</main>
 		
 		<Footer />
-		<DarkModeToggle />
 	</body>
 </html>

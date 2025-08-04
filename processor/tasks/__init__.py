@@ -8,6 +8,7 @@ from .execution import ExecutionTask
 from .screenshots import ScreenshotTask
 from .search import SearchIndexTask
 from .validation import ValidationTask
+from .validation_incremental import IncrementalValidationTask
 from .notebooks import NotebookTask
 __all__ = [
     # Base classes
@@ -22,5 +23,6 @@ __all__ = [
     'ScreenshotTask',
     'SearchIndexTask',
     'ValidationTask',
+    'IncrementalValidationTask',
     'NotebookTask',
 ]

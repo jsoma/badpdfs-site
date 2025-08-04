@@ -49,6 +49,21 @@ source .venv/bin/activate  # On macOS/Linux
 pip install -e ~/Development/natural-pdf
 ```
 
+**Keeping natural-pdf up to date:**
+```bash
+# Check natural-pdf status
+python check_natural_pdf.py
+
+# Update natural-pdf to latest
+./update_natural_pdf.sh
+
+# Or build with automatic update
+python build_with_update.py --update-pdf build
+
+# Set to always update before builds
+python build_with_update.py --always-update build
+```
+
 **Full Processing Pipeline (Recommended):**
 ```bash
 python build.py build

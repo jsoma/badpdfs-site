@@ -151,7 +151,7 @@ def main():
         print("\n📋 Environment Check:")
         print(f"  Python: {sys.version.split()[0]}")
         print(f"  Working Directory: {os.getcwd()}")
-        print(f"  Config Root: {config.root_dir}")
+        print(f"  Config Root: {config.project_root}")
         print(f"  Content Directory: {config.content_dir}")
         print(f"  Artifacts Directory: {config.artifacts_dir}")
         print(f"  Frontend Directory: {config.frontend_dir}")

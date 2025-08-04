@@ -27,6 +27,15 @@ const thumbnailPath = `${BASE_URL}artifacts/screenshots/${pdf.id}/${pdfName}-1-t
     <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-4">
       <span class="text-white text-xs font-medium">{pdf.pdf}</span>
     </div>
+    {/* Error indicator */}
+    {pdf.hasErrors && (
+      <div class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Has Errors</span>
+      </div>
+    )}
   </div>
   <div class="p-4">
     <h3 class="pdf-title font-semibold mb-2 line-clamp-2">{pdf.title}</h3>

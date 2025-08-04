@@ -33,7 +33,7 @@ pdf.show(cols=3, limit=9)
 
 We only want the spreadsheet pages, which start on page 5.
 
-```python 
+```python
 pages = pdf.pages[4:]
 pages.show(cols=6)
 ```

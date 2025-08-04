@@ -250,7 +250,8 @@ class ExecutionTask(Task):
     
     def _parse_regular_cells(self, content: str) -> List[Dict[str, Any]]:
         """Parse regular markdown content."""
-        pattern = r'```(\w+)\n(.*?)\n```'
+        # More flexible pattern that allows spaces after language identifier
+        pattern = r'```(\w+)(?:\s*)\n(.*?)\n```'
         cells = []
         last_end = 0
         
@@ -265,7 +266,7 @@ class ExecutionTask(Task):
                     })
             
             # Add code block
-            language = match.group(1)
+            language = match.group(1).strip()  # Strip any whitespace from language
             code_content = match.group(2).strip()
             
             if language == 'python':

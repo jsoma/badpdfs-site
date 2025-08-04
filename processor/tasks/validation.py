@@ -55,6 +55,9 @@ class ValidationTask(BatchTask):
             for metadata in metadata_list:
                 errors = self._validate_approach(pdf, metadata, context)
                 
+                # Add ALL metadata to all_metadata, not just valid ones
+                all_metadata.append(metadata)
+                
                 if errors:
                     invalid_items.append({
                         "item": metadata,
@@ -68,10 +71,9 @@ class ValidationTask(BatchTask):
                         context.log(f"  - {error['type']}: {error['message']}", "ERROR")
                 else:
                     valid_items.append(metadata)
-                    all_metadata.append(metadata)
                     context.log(f"✓ {pdf.id}/{metadata['slug']} validated", "SUCCESS")
         
-        # Save all_metadata.json (combining all valid approaches)
+        # Save all_metadata.json (combining ALL approaches, valid and invalid)
         all_metadata_path = context.artifacts_dir / "all_metadata.json"
         context.write_artifact(all_metadata_path, all_metadata)
         

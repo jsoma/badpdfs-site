@@ -2,7 +2,7 @@
   "files": {
     "/Users/soma/Development/badpdfs-analysis/content/pdfs/cia-document/cia-document-extraction.md": "6b0630cb165a1a1d72f6a63c02af654f",
     "/Users/soma/Development/badpdfs-analysis/content/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1.md": "a5dd62796a0010e61c2b6a6e9fef599b",
-    "/Users/soma/Development/badpdfs-analysis/content/pdfs/24480polcompleted/24480polcompleted.md": "54b257be3cc1bd463048e4dab18b8796",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/24480polcompleted/24480polcompleted.md": "9d9fd06d3c145ad9ae449044ceee5e13",
     "/Users/soma/Development/badpdfs-analysis/content/pdfs/focus/focus.md": "d0c84e954e17ff0da5cf34f6d80b9214",
     "/Users/soma/Development/badpdfs-analysis/content/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a.md": "32bc0aca407f7ee873923ff860a97e54",
     "/Users/soma/Development/badpdfs-analysis/content/pdfs/mednine/mednine.md": "c40b3bf92bb4b4b763683e43304e1196",
@@ -11,13 +11,16 @@
     "/Users/soma/Development/badpdfs-analysis/content/pdfs/24480polcompleted/24480polcompleted.pdf": "271ae898fd98d5624792d8afdc3f5f90",
     "/Users/soma/Development/badpdfs-analysis/content/pdfs/focus/focus.pdf": "124981dd2f115f92575b97aec2e4175f",
     "/Users/soma/Development/badpdfs-analysis/content/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a.pdf": "f222eb2c0e8053fae62f4563505b0064",
-    "/Users/soma/Development/badpdfs-analysis/content/pdfs/mednine/mednine.pdf": "91388a1568de941b121610b30183d1a9"
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/mednine/mednine.pdf": "91388a1568de941b121610b30183d1a9",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/20252026-236232/20252026-236232.md": "8289b1532b1f5a55f3e6589c2f153b56",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/20252026-236232/20252026-236232.pdf": "eb1c9218f80e4c77b0ed9352c2acf9ce",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/cia-document/diagrams.pdf": "200d47f5479aaed7419c4f5564b54a54"
   },
   "builds": {},
   "tasks": {
     "cia-document": {
       "metadata": {
-        "timestamp": "2025-08-04T00:23:44.528205",
+        "timestamp": "2025-08-04T10:19:37.113148",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -32,7 +35,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-04T00:23:48.168792",
+        "timestamp": "2025-08-04T10:19:41.146971",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -68,7 +71,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-04T00:25:26.862017",
+        "timestamp": "2025-08-04T10:21:22.137721",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -88,11 +91,32 @@
             "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/cia-document/notebooks/manifest.json"
           ]
         }
+      },
+      "execution": {
+        "timestamp": "2025-08-04T10:20:09.359727",
+        "result": {
+          "task_name": "execution",
+          "success": true,
+          "data": {
+            "executed": 1,
+            "results": [
+              {
+                "approach": "cia-document-extraction",
+                "status": "success",
+                "code_errors": 0
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/cia-document/executions/cia-document-extraction.json"
+          ]
+        }
       }
     },
     "k046682-111320-opa-lea-database-install_1": {
       "metadata": {
-        "timestamp": "2025-08-04T00:23:44.535305",
+        "timestamp": "2025-08-04T10:19:37.120349",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -107,7 +131,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-04T00:23:50.752566",
+        "timestamp": "2025-08-04T10:19:43.552488",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -133,7 +157,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-04T00:25:26.863175",
+        "timestamp": "2025-08-04T10:21:22.138929",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -153,11 +177,32 @@
             "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/k046682-111320-opa-lea-database-install_1/notebooks/manifest.json"
           ]
         }
+      },
+      "execution": {
+        "timestamp": "2025-08-04T10:20:12.806426",
+        "result": {
+          "task_name": "execution",
+          "success": true,
+          "data": {
+            "executed": 1,
+            "results": [
+              {
+                "approach": "k046682-111320-opa-lea-database-install_1",
+                "status": "success",
+                "code_errors": 0
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/k046682-111320-opa-lea-database-install_1/executions/k046682-111320-opa-lea-database-install_1.json"
+          ]
+        }
       }
     },
     "24480polcompleted": {
       "metadata": {
-        "timestamp": "2025-08-04T00:23:44.537709",
+        "timestamp": "2025-08-04T10:19:37.123038",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -172,7 +217,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-04T00:23:57.456017",
+        "timestamp": "2025-08-04T10:19:48.997441",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -208,7 +253,7 @@
         }
       },
       "execution": {
-        "timestamp": "2025-08-04T00:25:21.219897",
+        "timestamp": "2025-08-04T10:21:15.470547",
         "result": {
           "task_name": "execution",
           "success": true,
@@ -229,7 +274,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-04T00:25:26.863934",
+        "timestamp": "2025-08-04T10:21:22.139616",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -253,7 +298,7 @@
     },
     "focus": {
       "metadata": {
-        "timestamp": "2025-08-04T00:23:44.541387",
+        "timestamp": "2025-08-04T10:19:37.127454",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -268,7 +313,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-04T00:23:58.928113",
+        "timestamp": "2025-08-04T10:19:50.405319",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -288,7 +333,7 @@
         }
       },
       "execution": {
-        "timestamp": "2025-08-04T00:25:22.802927",
+        "timestamp": "2025-08-04T10:21:16.717056",
         "result": {
           "task_name": "execution",
           "success": true,
@@ -309,7 +354,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-04T00:25:26.864823",
+        "timestamp": "2025-08-04T10:21:22.140387",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -333,7 +378,7 @@
     },
     "czech-republic-pisa2012_zakovsky_dotaznik_a": {
       "metadata": {
-        "timestamp": "2025-08-04T00:23:44.543800",
+        "timestamp": "2025-08-04T10:19:37.130084",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -348,7 +393,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-04T00:24:02.280543",
+        "timestamp": "2025-08-04T10:19:53.368422",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -384,7 +429,7 @@
         }
       },
       "execution": {
-        "timestamp": "2025-08-04T00:25:26.254891",
+        "timestamp": "2025-08-04T10:21:19.283776",
         "result": {
           "task_name": "execution",
           "success": true,
@@ -405,7 +450,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-04T00:25:26.865725",
+        "timestamp": "2025-08-04T10:21:22.141221",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -429,7 +474,7 @@
     },
     "mednine": {
       "metadata": {
-        "timestamp": "2025-08-04T00:23:44.544954",
+        "timestamp": "2025-08-04T10:19:37.134184",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -444,7 +489,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-04T00:24:03.655774",
+        "timestamp": "2025-08-04T10:19:57.954441",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -468,7 +513,7 @@
         }
       },
       "execution": {
-        "timestamp": "2025-08-04T00:25:26.861154",
+        "timestamp": "2025-08-04T10:21:22.137089",
         "result": {
           "task_name": "execution",
           "success": true,
@@ -489,7 +534,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-04T00:25:26.866916",
+        "timestamp": "2025-08-04T10:21:22.142757",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -507,6 +552,98 @@
           "outputs_created": [
             "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/mednine/notebooks/mednine.ipynb",
             "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/mednine/notebooks/manifest.json"
+          ]
+        }
+      }
+    },
+    "20252026-236232": {
+      "metadata": {
+        "timestamp": "2025-08-04T10:19:37.132921",
+        "result": {
+          "task_name": "metadata",
+          "success": true,
+          "data": {
+            "metadata_count": 1
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/20252026-236232/20252026-236232.json",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/20252026-236232/metadata.json"
+          ]
+        }
+      },
+      "execution": {
+        "timestamp": "2025-08-04T10:21:21.696233",
+        "result": {
+          "task_name": "execution",
+          "success": true,
+          "data": {
+            "executed": 1,
+            "results": [
+              {
+                "approach": "20252026-236232",
+                "status": "success",
+                "code_errors": 0
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/20252026-236232/executions/20252026-236232.json"
+          ]
+        }
+      },
+      "screenshots": {
+        "timestamp": "2025-08-04T10:19:56.579085",
+        "result": {
+          "task_name": "screenshots",
+          "success": true,
+          "data": {
+            "status": "success",
+            "pdf_file": "20252026-236232.pdf",
+            "page_count": 8,
+            "screenshots_generated": 8
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/20252026-236232/20252026-236232-3-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/20252026-236232/20252026-236232-8-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/20252026-236232/20252026-236232-5-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/20252026-236232/20252026-236232-2-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/20252026-236232/20252026-236232-8.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/20252026-236232/20252026-236232-4-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/20252026-236232/20252026-236232-4.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/20252026-236232/20252026-236232-5.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/20252026-236232/20252026-236232-1-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/20252026-236232/20252026-236232-7.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/20252026-236232/20252026-236232-6.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/20252026-236232/20252026-236232-2.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/20252026-236232/20252026-236232-3.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/20252026-236232/20252026-236232-1.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/20252026-236232/20252026-236232-7-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/20252026-236232/20252026-236232-6-thumb.png"
+          ]
+        }
+      },
+      "notebooks": {
+        "timestamp": "2025-08-04T10:21:22.141966",
+        "result": {
+          "task_name": "notebooks",
+          "success": true,
+          "data": {
+            "notebooks_created": 1,
+            "results": [
+              {
+                "approach": "20252026-236232",
+                "status": "success",
+                "path": "pdfs/20252026-236232/notebooks/20252026-236232.ipynb"
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/20252026-236232/notebooks/20252026-236232.ipynb",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/20252026-236232/notebooks/manifest.json"
           ]
         }
       }

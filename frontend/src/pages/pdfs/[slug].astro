@@ -32,12 +32,11 @@ export async function getStaticPaths() {
   // Group by PDF id
   const pdfGroups = new Map()
   for (const item of allMetadata) {
-    if (validIds.includes(item.id)) {
-      if (!pdfGroups.has(item.id)) {
-        pdfGroups.set(item.id, [])
-      }
-      pdfGroups.get(item.id).push(item)
+    // Include ALL PDFs, not just valid ones
+    if (!pdfGroups.has(item.id)) {
+      pdfGroups.set(item.id, [])
     }
+    pdfGroups.get(item.id).push(item)
   }
   
   // Create a path for each approach
@@ -129,7 +128,7 @@ execution.cells = execution.cells.map(cell => {
     <div class="container mx-auto px-4 py-8 max-w-7xl">
 
       <!-- PDF Preview and Info Header -->
-      <header class="bg-white mb-8 border-b">
+      <header class="mb-8 border-b">
         <div class="md:grid md:grid-cols-3 gap-6 p-6">
           <!-- PDF Preview -->
           <div class="md:col-span-1 mb-6 md:mb-0 header-preview">
@@ -143,8 +142,8 @@ execution.cells = execution.cells.map(cell => {
           
           <!-- Title and Description -->
           <div class="md:col-span-2">
-            <h1 class="text-4xl font-bold text-gray-900 mb-3">{pdf.title}</h1>
-            <p class="text-lg text-gray-600 mb-4">{pdf.description}</p>
+            <h1 class="text-4xl font-bold mb-3">{pdf.title}</h1>
+            <p class="text-lg mb-4">{pdf.description}</p>
             
             <!-- Methods -->
             <div class="mb-4">

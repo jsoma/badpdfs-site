@@ -117,7 +117,12 @@ class Config:
     def content_dir(self) -> Path:
         """Get content directory path."""
         return self.project_root / "content"
-    
+
+    @property
+    def frontend_dir(self) -> Path:
+        """Get content directory path."""
+        return self.project_root / "frontend"
+
     @property
     def artifacts_dir(self) -> Path:
         """Get artifacts directory path."""
