@@ -120,7 +120,7 @@ guide.show()
 
 Notice how we used a **lambda** in the approach above. This means we don't just want the `NF-` content on the first page, we want it for *any page the guide is applied to.*
 
-We then say, apply this guide to every single page!
+We then say, apply this guide to every single page! Since the headers are only on the first page, we use `header="first"`.
 
 ```python
 table_result = guide.extract_table(pages, header="first")
@@ -128,7 +128,6 @@ df = table_result.to_df()
 df.head()
 ```
 
-Since the headers are only on the first page, we use `header="first"`.
 ///
 
 /// tab | Guides with loops
