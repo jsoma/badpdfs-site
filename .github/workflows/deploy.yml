@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: 'Force rebuild all artifacts'
+        required: false
+        default: false
+        type: boolean
 
 # Prevent concurrent deployments
 concurrency:
@@ -94,11 +100,36 @@ jobs:
           pip install boto3
           python scripts/download_pdfs_from_r2_sync.py
       
+      - name: Check if processor rebuild needed
+        id: check-rebuild
+        run: |
+          # Check manual force rebuild input
+          if [[ "${{ inputs.force_rebuild }}" == "true" ]]; then
+            echo "REBUILD_NEEDED=true" >> $GITHUB_OUTPUT
+            echo "Manual force rebuild requested"
+          # For non-push events or initial commits, always rebuild
+          elif [[ "${{ github.event_name }}" != "push" ]] || [[ "${{ github.event.before }}" == "0000000000000000000000000000000000000000" ]]; then
+            echo "REBUILD_NEEDED=true" >> $GITHUB_OUTPUT
+            echo "Non-push event or initial commit, will force rebuild"
+          # Check if any processor Python files have changed
+          elif git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "processor/.*\.py$"; then
+            echo "REBUILD_NEEDED=true" >> $GITHUB_OUTPUT
+            echo "Processor files changed, will force rebuild"
+          else
+            echo "REBUILD_NEEDED=false" >> $GITHUB_OUTPUT
+            echo "No processor changes detected"
+          fi
+      
       - name: Build processor artifacts
         working-directory: processor
         run: |
           source .venv/bin/activate
-          python build.py build
+          if [[ "${{ steps.check-rebuild.outputs.REBUILD_NEEDED }}" == "true" ]]; then
+            echo "Force rebuilding due to processor changes..."
+            python build.py rebuild
+          else
+            python build.py build
+          fi
       
       - name: Build frontend
         working-directory: frontend
