@@ -452,16 +452,13 @@ class GalleryProcessor:
                 shutil.copy2(src, dst)
                 self.log(f"Synced {filename}", "SUCCESS")
         
-        # Sync directories
-        dirs_to_sync = ["screenshots", "executions", "notebooks"]
-        for dirname in dirs_to_sync:
-            src_dir = self.config.artifacts_dir / dirname
-            dst_dir = frontend_artifacts / dirname
-            
-            if src_dir.exists():
-                # Use copytree with dirs_exist_ok for merging
-                shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
-                self.log(f"Synced {dirname} directory", "SUCCESS")
+        # Sync PDF artifacts (executions, screenshots, notebooks)
+        pdfs_dir = self.config.artifacts_dir / "pdfs"
+        if pdfs_dir.exists():
+            dst_pdfs_dir = frontend_artifacts / "pdfs"
+            # Use copytree with dirs_exist_ok for merging
+            shutil.copytree(pdfs_dir, dst_pdfs_dir, dirs_exist_ok=True)
+            self.log(f"Synced PDF artifacts", "SUCCESS")
         
         return True
     

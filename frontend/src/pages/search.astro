@@ -7,6 +7,7 @@ import DarkModeToggle from '../components/DarkModeToggle.astro';
 // Get query from URL params
 const url = new URL(Astro.request.url);
 const searchQuery = url.searchParams.get('q') || '';
+const BASE_URL = import.meta.env.BASE_URL;
 ---
 
 <html lang="en">
@@ -43,7 +44,7 @@ const searchQuery = url.searchParams.get('q') || '';
   </body>
 </html>
 
-<script>
+<script define:vars={{ BASE_URL }}>
   import FlexSearch from 'flexsearch';
   
   let searchIndex = null;
@@ -56,7 +57,7 @@ const searchQuery = url.searchParams.get('q') || '';
   async function loadSearchIndex() {
     try {
       // Load search index
-      const response = await fetch('/artifacts/search_index.compact.json');
+      const response = await fetch(`${BASE_URL}artifacts/search_index.compact.json`);
       const data = await response.json();
       
       // Store documents
@@ -68,7 +69,7 @@ const searchQuery = url.searchParams.get('q') || '';
       methodIndex = data.methodIndex;
       
       // Load all metadata for method usage snippets
-      const metadataResponse = await fetch('/artifacts/all_metadata.json');
+      const metadataResponse = await fetch(`${BASE_URL}artifacts/all_metadata.json`);
       allMetadata = await metadataResponse.json();
       
       // Build method usage map
@@ -255,7 +256,7 @@ const searchQuery = url.searchParams.get('q') || '';
         const initialSnippets = 3;
         
         html += `
-          <a href="/methods/${encodedMethod}" class="method-group">
+          <a href="${BASE_URL}methods/${encodedMethod}" class="method-group">
             <div class="method-header">
               <h3 class="method-name">${escapeHtml(method)}</h3>
               <span class="method-count">${usageExamples.length} usage${usageExamples.length !== 1 ? 's' : ''}</span>
@@ -282,7 +283,7 @@ const searchQuery = url.searchParams.get('q') || '';
       html += '<div class="pdf-results">';
       results.documents.forEach(doc => {
         html += `
-          <a href="/pdfs/${doc.slug}" class="result-item">
+          <a href="${BASE_URL}pdfs/${doc.slug}" class="result-item">
             <div class="result-title">${highlightMatch(doc.title, query)}</div>
             <div class="result-description">${highlightMatch(doc.description, query)}</div>
             <div class="result-methods">

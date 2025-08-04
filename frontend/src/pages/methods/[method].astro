@@ -11,6 +11,8 @@ import { checkArtifacts } from '../../middleware/artifact-check.js';
 // Run pre-flight checks
 checkArtifacts();
 
+const BASE_URL = import.meta.env.BASE_URL;
+
 export async function getStaticPaths() {
   // Import the metadata directly
   const allMetadata = (await import('../../../public/artifacts/all_metadata.json')).default;
@@ -55,7 +57,9 @@ for (const item of allMetadata) {
       // Load the execution data for this PDF
       let executionData;
       try {
-        const executionPath = `../../../public/artifacts/executions/pdfs/${item.id}/${item.id}.json`;
+        // Use the slug from the first approach (or the main slug from metadata)
+        const slug = item.slug || item.approaches[0].replace('.md', '');
+        const executionPath = `../../../public/artifacts/pdfs/${item.id}/executions/${slug}.json`;
         executionData = (await import(executionPath)).default;
       } catch (e) {
         console.error(`Failed to load execution data for ${item.id}:`, e);
@@ -83,7 +87,6 @@ for (const item of allMetadata) {
               ? new RegExp(`\\b${usage.method}\\s*\\(`)
               : new RegExp(`\\.${usage.method}\\s*\\(`);
             
-          console.log(executionPath)
             if(methodRegex.test(line)) {
               // Extract context (3 lines before and after)
               const startLine = Math.max(0, lineIndex - 3);
@@ -187,14 +190,14 @@ const pdfGroups = Object.values(groupedUsages);
       {methodUsages.length === 0 ? (
         <div class="no-usages">
           <p>No usages found for this method.</p>
-          <a href="/" class="back-to-gallery">Back to Gallery</a>
+          <a href={BASE_URL} class="back-to-gallery">Back to Gallery</a>
         </div>
       ) : (
         <div class="usage-list">
           {pdfGroups.map((group) => (
           <div class="pdf-group" key={group.pdf.id}>
             <div class="pdf-info">
-              <a href={`/pdfs/${group.pdf.slug}`} class="pdf-link">
+              <a href={`${BASE_URL}pdfs/${group.pdf.slug}`} class="pdf-link">
                 <h2 class="pdf-title">{group.pdf.title}</h2>
               </a>
               <p class="pdf-description">{group.pdf.description}</p>
@@ -210,7 +213,7 @@ const pdfGroups = Object.values(groupedUsages);
                   }
                   return <>{line}{idx < usage.contextLines.length - 1 ? '\n' : ''}</>;
                 })}</code></pre>
-                <a href={`/pdfs/${group.pdf.slug}#code-${usage.cellIndex}`} class="view-full">
+                <a href={`${BASE_URL}pdfs/${group.pdf.slug}#code-${usage.cellIndex}`} class="view-full">
                   View full example →
                 </a>
               </div>
@@ -224,7 +227,7 @@ const pdfGroups = Object.values(groupedUsages);
                   }
                   return <>{line}{idx < usage.contextLines.length - 1 ? '\n' : ''}</>;
                 })}</code></pre>
-                <a href={`/pdfs/${group.pdf.slug}#code-${usage.cellIndex}`} class="view-full">
+                <a href={`${BASE_URL}pdfs/${group.pdf.slug}#code-${usage.cellIndex}`} class="view-full">
                   View full example →
                 </a>
               </div>

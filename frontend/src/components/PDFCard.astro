@@ -5,14 +5,15 @@ export interface Props {
 
 const { pdf } = Astro.props
 const slug = pdf.primary_slug || pdf.slug
+const BASE_URL = import.meta.env.BASE_URL;
 
 // Build the correct screenshot path: screenshots/{id}/{pdf-name}-1-thumb.png
 const pdfName = pdf.pdf.replace('.pdf', '')
-const thumbnailPath = `/artifacts/screenshots/${pdf.id}/${pdfName}-1-thumb.png`
+const thumbnailPath = `${BASE_URL}artifacts/screenshots/${pdf.id}/${pdfName}-1-thumb.png`
 ---
 
 <a 
-  href={`/pdfs/${slug}`} 
+  href={`${BASE_URL}pdfs/${slug}`} 
   class="pdf-card group block rounded-lg shadow hover:shadow-lg transition-all"
 >
   <div class="aspect-[8.5/11] bg-gray-100 rounded-t-lg overflow-hidden relative">

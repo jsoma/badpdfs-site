@@ -1,6 +1,10 @@
 ---
 // Search.astro - Global search component with FlexSearch
+const BASE_URL = import.meta.env.BASE_URL;
 ---
+
+<!-- Pass BASE_URL to client-side JavaScript -->
+<meta name="base-url" content={BASE_URL} style="display: none;" />
 
 <div class="search-wrapper">
   <div class="search-container">
@@ -33,11 +37,14 @@
   let methodUsageMap = {};
   let isSearchOpen = false;
   
+  // Get BASE_URL from meta tag or default to '/'
+  const BASE_URL = document.querySelector('meta[name="base-url"]')?.content || '/';
+  
   // Load search index and metadata
   async function loadSearchIndex() {
     try {
       // Load search index
-      const response = await fetch('/artifacts/search_index.compact.json');
+      const response = await fetch(`${BASE_URL}artifacts/search_index.compact.json`);
       const data = await response.json();
       
       // Store documents
@@ -49,7 +56,7 @@
       methodIndex = data.methodIndex;
       
       // Load all metadata for method usage snippets
-      const metadataResponse = await fetch('/artifacts/all_metadata.json');
+      const metadataResponse = await fetch(`${BASE_URL}artifacts/all_metadata.json`);
       allMetadata = await metadataResponse.json();
       
       // Build method usage map
@@ -236,14 +243,14 @@
         
         html += `
           <div class="method-group" data-method="${method}">
-            <a href="/methods/${encodedMethod}" class="method-group-header">
+            <a href="${BASE_URL}methods/${encodedMethod}" class="method-group-header">
               <span class="method-name">${escapeHtml(method)}</span>
               <span class="method-count">${usageExamples.length} example${usageExamples.length !== 1 ? 's' : ''}</span>
             </a>
             <div class="method-snippets" id="${methodId}">
               ${usageExamples.slice(0, initialSnippets).map(example => `
                 <div class="snippet-item">
-                  <a href="/pdfs/${example.slug}#${encodedMethod}" class="snippet-link">
+                  <a href="${BASE_URL}pdfs/${example.slug}#${encodedMethod}" class="snippet-link">
                     <span class="snippet-title">${escapeHtml(example.title)}</span>
                     <code class="snippet-code">${escapeHtml(example.snippet)}</code>
                   </a>
@@ -251,7 +258,7 @@
               `).join('')}
             </div>
             ${usageExamples.length > initialSnippets ? `
-              <a href="/methods/${encodedMethod}" class="show-more-btn">
+              <a href="${BASE_URL}methods/${encodedMethod}" class="show-more-btn">
                 <svg class="show-more-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
@@ -270,7 +277,7 @@
       html += '<div class="results-header">PDFs</div>';
       results.documents.forEach(doc => {
         html += `
-          <a href="/pdfs/${doc.slug}" class="result-item">
+          <a href="${BASE_URL}pdfs/${doc.slug}" class="result-item">
             <div class="result-title">${highlightMatch(doc.title, query)}</div>
             <div class="result-description">${highlightMatch(doc.description, query)}</div>
             <div class="result-methods">
@@ -287,7 +294,7 @@
     // Add "View all results" link at the bottom if there are results
     if (results.documents.length > 0 || methodCount > 0) {
       html += `
-        <a href="/search?q=${encodeURIComponent(query)}" class="view-all-results">
+        <a href="${BASE_URL}search?q=${encodeURIComponent(query)}" class="view-all-results">
           View all results for "${escapeHtml(query)}" →
         </a>
       `;
@@ -398,7 +405,7 @@
           e.preventDefault();
           const query = input.value.trim();
           if (query) {
-            window.location.href = `/search?q=${encodeURIComponent(query)}`;
+            window.location.href = `${BASE_URL}search?q=${encodeURIComponent(query)}`;
           }
         }
       }

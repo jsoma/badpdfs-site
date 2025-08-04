@@ -4,6 +4,8 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import DarkModeToggle from '../../components/DarkModeToggle.astro';
 
+const BASE_URL = import.meta.env.BASE_URL;
+
 // Load all metadata to get method information
 const allMetadata = (await import('../../../public/artifacts/all_metadata.json')).default;
 
@@ -108,7 +110,7 @@ const groupedMethods = sortedMethods.reduce((groups, method) => {
               <h2 class="letter-header">{letter}</h2>
               <div class="methods-list">
                 {methods.map(method => (
-                  <a href={`/methods/${encodeURIComponent(method.toLowerCase())}`} class="method-card">
+                  <a href={`${BASE_URL}methods/${encodeURIComponent(method.toLowerCase())}`} class="method-card">
                     <div class="method-header">
                       <h3 class="method-name">{method}</h3>
                       <span class="usage-count">{methodCounts[method]} usage{methodCounts[method] !== 1 ? 's' : ''}</span>

@@ -3,6 +3,8 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import DarkModeToggle from '../components/DarkModeToggle.astro';
+const BASE_URL = import.meta.env.BASE_URL;
+
 ---
 
 <html lang="en">
@@ -57,7 +59,7 @@ import DarkModeToggle from '../components/DarkModeToggle.astro';
           <section>
             <h2>How to Use This Gallery</h2>
             <p>
-              <strong><a href="/">Browse Examples</a></strong><br>
+              <strong><a href={BASE_URL}>Browse Examples</a></strong><br>
               Find PDFs similar to the ones you're working with. Each example includes the original PDF 
               and extraction approaches.
             </p>
@@ -67,9 +69,9 @@ import DarkModeToggle from '../components/DarkModeToggle.astro';
               and ready to use.
             </p>
             <p>
-              <strong><a href="/methods">Search by Method</a></strong><br>
-              Use the search to find examples of specific natural-pdf methods like <code><a href="/methods/extract_table">extract_table()</a></code> 
-              or <code><a href="/methods/apply_ocr">apply_ocr()</a></code>.
+              <strong><a href="${BASE_URL}methods">Search by Method</a></strong><br>
+              Use the search to find examples of specific natural-pdf methods like <code><a href="${BASE_URL}methods/extract_table">extract_table()</a></code> 
+              or <code><a href="${BASE_URL}methods/apply_ocr">apply_ocr()</a></code>.
             </p>
             <p>
               <strong>Export to Colab</strong><br>

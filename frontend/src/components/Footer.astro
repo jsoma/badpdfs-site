@@ -1,5 +1,6 @@
 ---
 const currentYear = new Date().getFullYear();
+const BASE_URL = import.meta.env.BASE_URL;
 ---
 
 <footer class="site-footer">
@@ -22,16 +23,16 @@ const currentYear = new Date().getFullYear();
         <h3>Resources</h3>
         <ul>
           <li><a href="https://jsoma.github.io/natural-pdf/">natural-pdf Documentation</a></li>
-          <li><a href="/methods">All Methods Reference</a></li>
+          <li><a href={`${BASE_URL}methods/`}>All Methods Reference</a></li>
           <li><a href="https://github.com/jsoma/natural-pdf/issues">Report an Issue</a></li>
-          <li><a href="/about">About This Gallery</a></li>
+          <li><a href={`${BASE_URL}about/`}>About This Gallery</a></li>
         </ul>
       </div>
       
       <div class="footer-section">
         <h3>Contribute</h3>
         <ul>
-          <li><a href="/submit">Submit a PDF Example</a></li>
+          <li><a href={`${BASE_URL}submit/`}>Submit a PDF Example</a></li>
           <li><a href="https://github.com/jsoma/badpdfs-analysis">Gallery Source Code</a></li>
           <li><a href="https://github.com/jsoma/natural-pdf#contributing">Contributing Guide</a></li>
         </ul>
