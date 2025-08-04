@@ -19,12 +19,24 @@ export async function getStaticPaths() {
   
   // Collect all unique methods (case-insensitive)
   const methodsMap = new Map(); // lowercase -> original case
+  
   allMetadata.forEach(item => {
+    // Collect from method_usage (detailed usage)
     if (item.method_usage) {
       item.method_usage.forEach(usage => {
         const lowerMethod = usage.method.toLowerCase();
         if (!methodsMap.has(lowerMethod)) {
           methodsMap.set(lowerMethod, usage.method);
+        }
+      });
+    }
+    
+    // Also collect from methods array (includes chained methods)
+    if (item.methods) {
+      item.methods.forEach(method => {
+        const lowerMethod = method.toLowerCase();
+        if (!methodsMap.has(lowerMethod)) {
+          methodsMap.set(lowerMethod, method);
         }
       });
     }
@@ -45,6 +57,7 @@ const allMetadata = (await import('../../../public/artifacts/all_metadata.json')
 // Collect all usages of this method with code context
 const methodUsages = [];
 const failedPDFs = [];
+const simplePDFs = []; // PDFs that have the method in methods array but not in method_usage
 
 for (const item of allMetadata) {
   if (item.method_usage) {
@@ -182,12 +195,16 @@ const pdfGroups = Object.values(groupedUsages);
     <div class="method-hero">
       <div class="container">
         <h1 class="method-name">{method}</h1>
-        <p class="method-stats">{methodUsages.length} usage{methodUsages.length !== 1 ? 's' : ''} across {pdfGroups.length} PDF{pdfGroups.length !== 1 ? 's' : ''}</p>
+        <p class="method-stats">
+          {methodUsages.length > 0 && `${methodUsages.length} detailed usage${methodUsages.length !== 1 ? 's' : ''} across ${pdfGroups.length} PDF${pdfGroups.length !== 1 ? 's' : ''}`}
+          {methodUsages.length > 0 && simplePDFs.length > 0 && ' • '}
+          {simplePDFs.length > 0 && `${simplePDFs.length} additional PDF${simplePDFs.length !== 1 ? 's' : ''} using this method`}
+        </p>
       </div>
     </div>
 
     <main class="container">
-      {methodUsages.length === 0 ? (
+      {methodUsages.length === 0 && simplePDFs.length === 0 ? (
         <div class="no-usages">
           <p>No usages found for this method.</p>
           <a href={BASE_URL} class="back-to-gallery">Back to Gallery</a>
@@ -499,6 +516,78 @@ const pdfGroups = Object.values(groupedUsages);
 
   .code-snippet.hidden {
     display: none;
+  }
+  
+  /* Section divider */
+  .section-divider {
+    margin: 3rem 0 2rem;
+    border: none;
+    border-top: 1px solid var(--color-border);
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 0.5rem;
+  }
+  
+  .section-description {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Info banner */
+  .info-banner {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .info-banner p {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+  }
+  
+  /* Simple PDFs grid */
+  .simple-pdfs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+  
+  .simple-pdf-card {
+    display: block;
+    padding: 1.25rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  
+  .simple-pdf-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+  }
+  
+  .simple-pdf-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .simple-pdf-description {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin: 0;
+    line-height: 1.5;
   }
 
   /* Mobile responsiveness */

@@ -17,7 +17,7 @@
   "tasks": {
     "cia-document": {
       "metadata": {
-        "timestamp": "2025-08-03T23:32:04.752738",
+        "timestamp": "2025-08-04T00:23:44.528205",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -32,7 +32,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-03T23:32:08.786766",
+        "timestamp": "2025-08-04T00:23:48.168792",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -68,7 +68,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-03T23:34:52.007555",
+        "timestamp": "2025-08-04T00:25:26.862017",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -88,32 +88,11 @@
             "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/cia-document/notebooks/manifest.json"
           ]
         }
-      },
-      "execution": {
-        "timestamp": "2025-08-03T23:32:58.070891",
-        "result": {
-          "task_name": "execution",
-          "success": true,
-          "data": {
-            "executed": 1,
-            "results": [
-              {
-                "approach": "cia-document-extraction",
-                "status": "success",
-                "code_errors": 3
-              }
-            ]
-          },
-          "error": null,
-          "outputs_created": [
-            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/cia-document/executions/cia-document-extraction.json"
-          ]
-        }
       }
     },
     "k046682-111320-opa-lea-database-install_1": {
       "metadata": {
-        "timestamp": "2025-08-03T23:32:04.761007",
+        "timestamp": "2025-08-04T00:23:44.535305",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -128,7 +107,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-03T23:32:10.817758",
+        "timestamp": "2025-08-04T00:23:50.752566",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -154,7 +133,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-03T23:34:52.009515",
+        "timestamp": "2025-08-04T00:25:26.863175",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -174,32 +153,11 @@
             "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/k046682-111320-opa-lea-database-install_1/notebooks/manifest.json"
           ]
         }
-      },
-      "execution": {
-        "timestamp": "2025-08-03T23:33:04.130937",
-        "result": {
-          "task_name": "execution",
-          "success": true,
-          "data": {
-            "executed": 1,
-            "results": [
-              {
-                "approach": "k046682-111320-opa-lea-database-install_1",
-                "status": "success",
-                "code_errors": 0
-              }
-            ]
-          },
-          "error": null,
-          "outputs_created": [
-            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/k046682-111320-opa-lea-database-install_1/executions/k046682-111320-opa-lea-database-install_1.json"
-          ]
-        }
       }
     },
     "24480polcompleted": {
       "metadata": {
-        "timestamp": "2025-08-03T23:32:04.764202",
+        "timestamp": "2025-08-04T00:23:44.537709",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -214,7 +172,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-03T23:32:15.926893",
+        "timestamp": "2025-08-04T00:23:57.456017",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -250,7 +208,7 @@
         }
       },
       "execution": {
-        "timestamp": "2025-08-03T23:34:46.712089",
+        "timestamp": "2025-08-04T00:25:21.219897",
         "result": {
           "task_name": "execution",
           "success": true,
@@ -271,7 +229,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-03T23:34:52.010204",
+        "timestamp": "2025-08-04T00:25:26.863934",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -295,7 +253,7 @@
     },
     "focus": {
       "metadata": {
-        "timestamp": "2025-08-03T23:32:04.767905",
+        "timestamp": "2025-08-04T00:23:44.541387",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -310,7 +268,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-03T23:32:17.041042",
+        "timestamp": "2025-08-04T00:23:58.928113",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -330,7 +288,7 @@
         }
       },
       "execution": {
-        "timestamp": "2025-08-03T23:34:48.029567",
+        "timestamp": "2025-08-04T00:25:22.802927",
         "result": {
           "task_name": "execution",
           "success": true,
@@ -351,7 +309,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-03T23:34:52.011317",
+        "timestamp": "2025-08-04T00:25:26.864823",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -375,7 +333,7 @@
     },
     "czech-republic-pisa2012_zakovsky_dotaznik_a": {
       "metadata": {
-        "timestamp": "2025-08-03T23:32:04.771257",
+        "timestamp": "2025-08-04T00:23:44.543800",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -390,7 +348,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-03T23:32:19.923755",
+        "timestamp": "2025-08-04T00:24:02.280543",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -426,7 +384,7 @@
         }
       },
       "execution": {
-        "timestamp": "2025-08-03T23:34:51.329222",
+        "timestamp": "2025-08-04T00:25:26.254891",
         "result": {
           "task_name": "execution",
           "success": true,
@@ -447,7 +405,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-03T23:34:52.012020",
+        "timestamp": "2025-08-04T00:25:26.865725",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -471,7 +429,7 @@
     },
     "mednine": {
       "metadata": {
-        "timestamp": "2025-08-03T23:32:04.772699",
+        "timestamp": "2025-08-04T00:23:44.544954",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -486,7 +444,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-03T23:32:20.923677",
+        "timestamp": "2025-08-04T00:24:03.655774",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -510,7 +468,7 @@
         }
       },
       "execution": {
-        "timestamp": "2025-08-03T23:34:51.993566",
+        "timestamp": "2025-08-04T00:25:26.861154",
         "result": {
           "task_name": "execution",
           "success": true,
@@ -531,7 +489,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-03T23:34:52.012900",
+        "timestamp": "2025-08-04T00:25:26.866916",
         "result": {
           "task_name": "notebooks",
           "success": true,

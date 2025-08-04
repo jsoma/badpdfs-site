@@ -220,41 +220,27 @@ class NaturalPDFVisitor(ast.NodeVisitor):
         """Track method calls on natural-pdf objects."""
         if isinstance(node.func, ast.Attribute):
             obj_name = self._get_object_name(node.func.value)
+            method_name = node.func.attr
             
-            # Known natural-pdf methods
-            natural_pdf_methods = {
-                'find_all', 'find', 'filter', 'pages', 'dissolve', 'extract_table',
-                'extract_text', 'groupby', 'classify', 'classify_pages', 'select',
-                'exclude', 'merge', 'split', 'crop', 'rotate', 'scale', 'show',
-                'save_pdf', 'to_df', 'inspect', 'add_exclusion', 'from_content',
-                'extract_each_text', 'extract_each_table', 'info'
-            }
-            
-            if node.func.attr in natural_pdf_methods:
-                self.methods.add(node.func.attr)
-            elif obj_name in self.natural_pdf_vars or obj_name in ['pdf', 'page', 'table']:
-                method_name = f"{obj_name}.{node.func.attr}"
+            # Track all method calls on natural-pdf objects or chained calls
+            if obj_name in self.natural_pdf_vars or obj_name in ['pdf', 'page', 'table']:
                 self.methods.add(method_name)
-            
-            # Handle chained calls
             elif isinstance(node.func.value, ast.Call):
+                # Handle chained calls
                 self._handle_chained_call(node.func.value)
-                self.methods.add(f"{node.func.attr}")
+                self.methods.add(method_name)
         
         self.generic_visit(node)
     
     def _handle_chained_call(self, node):
         """Recursively handle chained method calls."""
         if isinstance(node.func, ast.Attribute):
-            obj_name = self._get_object_name(node.func.value)
+            method_name = node.func.attr
+            self.methods.add(method_name)
             
-            if obj_name in self.natural_pdf_vars or obj_name in ['pdf', 'page', 'table']:
-                self.methods.add(f"{obj_name}.{node.func.attr}")
-            elif isinstance(node.func.value, ast.Call):
+            # Continue recursing if there are more chained calls
+            if isinstance(node.func.value, ast.Call):
                 self._handle_chained_call(node.func.value)
-                self.methods.add(f"{node.func.attr}")
-            else:
-                self.methods.add(f"{node.func.attr}")
     
     def _get_object_name(self, node):
         """Get the name of an object from an AST node."""
@@ -312,37 +298,26 @@ class DetailedUsageVisitor(NaturalPDFVisitor):
         """Track method calls with their arguments."""
         if isinstance(node.func, ast.Attribute):
             method_name = node.func.attr
+            obj_name = self._get_object_name(node.func.value)
             
-            natural_pdf_methods = {
-                'find_all', 'find', 'filter', 'pages', 'dissolve', 'extract_table',
-                'extract_text', 'groupby', 'classify', 'classify_pages', 'select',
-                'exclude', 'merge', 'split', 'crop', 'rotate', 'scale', 'show',
-                'save_pdf', 'to_df', 'inspect', 'add_exclusion', 'from_content',
-                'extract_each_text', 'extract_each_table', 'info'
-            }
+            # Track all method calls, not just a predefined list
+            args = [self._extract_arg_value(arg) for arg in node.args]
+            kwargs = {kw.arg: self._extract_arg_value(kw.value) for kw in node.keywords}
             
-            if method_name in natural_pdf_methods:
-                args = [self._extract_arg_value(arg) for arg in node.args]
-                kwargs = {kw.arg: self._extract_arg_value(kw.value) for kw in node.keywords}
-                
+            # Determine if this is likely a natural-pdf related call
+            is_natural_pdf = (
+                obj_name in self.natural_pdf_vars or 
+                obj_name in ['pdf', 'page', 'table'] or
+                isinstance(node.func.value, ast.Call)  # Chained calls
+            )
+            
+            if is_natural_pdf:
                 self.usage_details.append({
                     'method': method_name,
-                    'method_full': method_name,
+                    'method_full': f"{obj_name}.{method_name}" if obj_name else method_name,
                     'args': args,
                     'kwargs': kwargs
                 })
-            else:
-                obj_name = self._get_object_name(node.func.value)
-                if obj_name in self.natural_pdf_vars or obj_name in ['pdf', 'page', 'table']:
-                    args = [self._extract_arg_value(arg) for arg in node.args]
-                    kwargs = {kw.arg: self._extract_arg_value(kw.value) for kw in node.keywords}
-                    
-                    self.usage_details.append({
-                        'method': method_name,
-                        'method_full': f"{obj_name}.{method_name}",
-                        'args': args,
-                        'kwargs': kwargs
-                    })
         
         super().visit_Call(node)
     
