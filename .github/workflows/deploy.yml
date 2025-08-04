@@ -29,6 +29,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils
+      
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
@@ -75,11 +80,19 @@ jobs:
           source .venv/bin/activate
           pip install --upgrade pip
           pip install -e .
-          pip install --upgrade "natural-pdf @ git+https://github.com/jsoma/natural-pdf.git"
-      
+          pip install --upgrade "natural-pdf[all] @ git+https://github.com/jsoma/natural-pdf.git"
+          pip install easyocr
+          pip install doclayout_yolo
+          pip install surya-ocr
+          
       - name: Download missing PDFs
         working-directory: processor
-        run: python scripts/download_pdfs_from_r2.py
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: |
+          pip install boto3
+          python scripts/download_pdfs_from_r2_sync.py
       
       - name: Build processor artifacts
         working-directory: processor
