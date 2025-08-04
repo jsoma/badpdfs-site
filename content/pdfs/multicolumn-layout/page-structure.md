@@ -1,9 +1,21 @@
 ---
 slug: "page-structure"
-title: "Page structure"
-description: "Workshop example: Page structure"
+title: "Working with page structure"
+description: "Extract text from complex multi-column layouts while maintaining proper reading order. Learn techniques for handling academic papers, newsletters, and documents with intricate column structures using Natural PDF's layout detection features."
 pdf: "multicolumn.pdf"
-tags: ["workshop"]
+tags:
+- Multi-Column Layout
+- Reading Order
+- Text Flow
+- Academic Papers
+- Layout Detection
+- Table Extraction
+- YOLO
+- TATR
+file_size_mb: 0.8
+page_count: 1
+submitted_by: Natural PDF Team
+published: true
 ---
 
 ```bash

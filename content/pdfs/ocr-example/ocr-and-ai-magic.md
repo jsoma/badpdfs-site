@@ -1,17 +1,19 @@
 ---
 slug: "ocr-and-ai-magic"
 title: "OCR and AI magic"
-description: "Workshop example: OCR and AI magic"
+description: "Master OCR techniques with Natural PDF - from basic text recognition to advanced LLM-powered corrections. Learn to extract text from image-based PDFs, handle tables without proper boundaries, and leverage AI for accuracy improvements."
 pdf: "needs-ocr.pdf"
-tags: ["workshop"]
+tags:
+- OCR
+- LLM Integration
+- Text Extraction
+- Table Detection
+- AI Correction
+file_size_mb: 0.5
+page_count: 1
+submitted_by: Natural PDF Team
+published: true
 ---
-
-```bash
-pip install --upgrade --quiet "natural-pdf[ai,ocr-export] @ git+https://github.com/jsoma/natural-pdf.git"
-pip install --upgrade --quiet easyocr
-pip install --upgrade --quiet surya-ocr
-# If you're on colab, Runtime > Restart Session, then move to the next cell
-```
 
 # OCR: Recognizing text
 
@@ -26,7 +28,7 @@ page = pdf.pages[0]
 page.show(width=700)
 ```
 
-Looks the same as the last one, right? But when we try to extract the text...
+Looks like it's full of text, right? But when we try to extract the text...
 
 ```python
 text = page.extract_text()
@@ -53,8 +55,7 @@ I'm very iritated by the "Durham's Pure Leaf Lardl" instead of "Durham's Pure Le
 I don't need to know why, though, really, because I can just try some other engine! You can also fool around with the options - some of the the lowest-hanging fruit is increasing the resolution of the OCR. The default at the moment is 150, you can try upping to 300 for (potentially) better results.
 
 ```python
-# Commenting this out because for some reason surya is being very slow on colab?
-# page.apply_ocr('surya', resolution=192)
+page.apply_ocr('surya', resolution=192)
 ```
 
 ```python
@@ -118,18 +119,14 @@ df
 df.to_csv("output.csv", index=False)
 ```
 
-But if you want to actually do things with specific columns or have more control, you can use `build_grid` to create regions for the table, columns, rows and cells.
+But if you want to actually do things with specific columns or have more control, you can ask the guides for specific columns or rows.
 
 ```python
-guides.build_grid()
+guides.columns[-1].show()
 ```
 
 ```python
-page.find_all('table_column')[-1].show()
-```
-
-```python
-page.find_all('table_row')[3].show()
+guides.rows[3].show()
 ```
 
 ### Figuring out information about things that are *not* text
@@ -137,12 +134,12 @@ page.find_all('table_row')[3].show()
 In a tiny preview of the next notebook: **what about those checkboxes?** Turns out we can use **image classification AI** to do it for us!
 
 ```python
-last_col = table_area.find_all('table_column')[-1].expand(top=-40)
+last_col = guides.columns[-1].expand(top=-40)
 last_col.show(crop=True)
 ```
 
 ```python
-cells = last_col.find_all("table_cell")
+cells = guides.cells[-1][:]
 cells = cells.expand(left=-60, right=-175, top=-16, bottom=-16)
 cells.show(crop=True)
 ```
@@ -155,38 +152,11 @@ cells.classify_all(['X', 'empty'], using='vision')
 cells.apply(lambda cell: (cell.category, cell.category_confidence))
 ```
 
-It's like magic! We'll look at it more in the next notebook.
+It's like magic! We'll look at it more in another notebook.
 
 ## Correcting OCR
 
 While we love OCR when it works, it often does *not* work great. We have a few solutions: send humans after it, or use LLMs or spell check to correct it.
-
-### With humans
-
-Let's ignore this for now. Some *stuff* out in the world got updated so it's kind of a wreck at the moment. I'm leaving it here so we can talk about it, though!
-
-```python
-# from natural_pdf.utils.packaging import create_correction_task_package
-# from natural_pdf import PDF
-# import natural_pdf as npdf
-# npdf.options.image.width = 500
-
-# pdf = npdf.PDF("needs-ocr.pdf")
-
-# page = pdf.pages[0]
-# page.apply_ocr()
-```
-
-After we apply OCR we can export to a magic format that we can display and fix up separately!
-
-```python
-# text = page.extract_text()
-# print(text)
-```
-
-```python
-# create_correction_task_package(pdf, "correction_package.zip", overwrite=True, resolution=300)
-```
 
 ### With LLMs
 
