@@ -53,8 +53,15 @@ for (const item of allMetadata) {
 
     if (usages.length > 0) {
       // Load the execution data for this PDF
-      const executionPath = `../../../public/artifacts/executions/pdfs/${item.id}/${item.approaches[0].replace('.md', '.json')}`;
-      const executionData = (await import(executionPath)).default;
+      let executionData;
+      try {
+        const executionPath = `../../../public/artifacts/executions/pdfs/${item.id}/${item.id}.json`;
+        executionData = (await import(executionPath)).default;
+      } catch (e) {
+        console.error(`Failed to load execution data for ${item.id}:`, e);
+        failedPDFs.push(item.id);
+        continue;
+      }
 
       // For each usage, find the code cell containing it
       for (const usage of usages) {
