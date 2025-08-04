@@ -1,12 +1,7 @@
 ---
 slug: 24480polcompleted
 title: Animal 911 Calls Extraction from Rainforest Cafe Report
-description: This PDF is a service call report covering 911 incidents related to animals
-  at the Rainforest Cafe in Niagara Falls, NY. The data is formatted as a spreadsheet
-  within the PDF, and column truncation makes extraction difficult. Challenges include
-  incomplete call descriptions and selective redactions, compromising data clarity.
-  Key information, like incident location specificity, is often lost, making accurate
-  extraction tough.
+description: This PDF is a service call report covering 911 incidents at the Rainforest Cafe in Niagara Falls, NY. We're hunting for animals! The data is formatted as a spreadsheet within the PDF, and challenges include varied column widths, borderless tables, and large swaths of missing data.
 pdf: 24480polcompleted.pdf
 tags:
 - Animal 911 Logs
@@ -20,7 +15,7 @@ published: true
 ---
 # Animal 911 Calls Extraction from Rainforest Cafe Report
 
-This PDF is a service call report covering 911 incidents related to animals at the Rainforest Cafe in Niagara Falls, NY. The data is formatted as a spreadsheet within the PDF, and challenges include varied column widths, borderless tables, and large swaths of missing data.
+This PDF is a service call report covering 911 incidents at the Rainforest Cafe in Niagara Falls, NY. We're hunting for animals! The data is formatted as a spreadsheet within the PDF, and challenges include varied column widths, borderless tables, and large swaths of missing data.
 
 ```python
 from natural_pdf import PDF
