@@ -321,7 +321,6 @@ class ExecutionTask(Task):
         result = {
             'status': 'success',
             'output': '',
-            'stderr': '',
             'error': None,
             'figures': [],
             'result': None
@@ -355,8 +354,16 @@ class ExecutionTask(Task):
                 if rich_output:
                     result['result'] = rich_output
             
-            result['output'] = stdout_capture.getvalue()
-            result['stderr'] = stderr_capture.getvalue()
+            # For successful executions, combine stdout and stderr
+            stdout_content = stdout_capture.getvalue()
+            stderr_content = stderr_capture.getvalue()
+            
+            # Combine stdout and stderr for display
+            combined_output = stdout_content
+            if stderr_content:
+                combined_output += stderr_content
+            
+            result['output'] = combined_output
             
             # Add captured figures
             result['figures'] = self.figures.copy()

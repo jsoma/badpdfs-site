@@ -299,19 +299,13 @@ execution.cells = execution.cells.map(cell => {
                                       <pre class="text-base overflow-x-auto"><code class="language-python" set:html={tabCell.highlightedCode}></code></pre>
                                     </div>
                                   </div>
-                                  {tabCell.execution && (tabCell.execution.output || tabCell.execution.stderr || tabCell.execution.result || tabCell.execution.error || (tabCell.execution.figures && tabCell.execution.figures.length > 0)) && (
+                                  {tabCell.execution && (tabCell.execution.output || tabCell.execution.result || tabCell.execution.error || (tabCell.execution.figures && tabCell.execution.figures.length > 0)) && (
                                     <div class="output-section">
                                       <div class="bg-gray-50">
                                         {tabCell.execution.output && (
                                           <div class="p-4 font-mono text-base">
                                             <div class="text-xs text-gray-500 mb-2 uppercase tracking-wider">Output</div>
                                             <pre class="whitespace-pre-wrap text-gray-700">{tabCell.execution.output}</pre>
-                                          </div>
-                                        )}
-                                        {tabCell.execution.stderr && (
-                                          <div class="p-4 bg-red-50 font-mono text-base">
-                                            <div class="text-xs text-red-600 mb-2 uppercase tracking-wider font-sans">Stderr</div>
-                                            <pre class="whitespace-pre-wrap text-red-700">{tabCell.execution.stderr}</pre>
                                           </div>
                                         )}
                                         {tabCell.execution.result && (
@@ -413,19 +407,13 @@ execution.cells = execution.cells.map(cell => {
                   </div>
                   
                   <!-- Output -->
-                  {cell.execution && (cell.execution.output || cell.execution.stderr || cell.execution.result || cell.execution.error || (cell.execution.figures && cell.execution.figures.length > 0)) && (
+                  {cell.execution && (cell.execution.output || cell.execution.result || cell.execution.error || (cell.execution.figures && cell.execution.figures.length > 0)) && (
                     <div class="output-section">
                       <div class="bg-gray-50">
                       {cell.execution.output && (
                         <div class="p-4 font-mono text-base">
                           <div class="text-xs text-gray-500 mb-2 uppercase tracking-wider">Output</div>
                           <pre class="whitespace-pre-wrap text-gray-700">{cell.execution.output}</pre>
-                        </div>
-                      )}
-                      {cell.execution.stderr && (
-                        <div class="p-4 bg-red-50 font-mono text-base">
-                          <div class="text-xs text-red-600 mb-2 uppercase tracking-wider font-sans">Stderr</div>
-                          <pre class="whitespace-pre-wrap text-red-700">{cell.execution.stderr}</pre>
                         </div>
                       )}
                       {cell.execution.result && (
