@@ -216,6 +216,10 @@ table = (
     .expand(top=-20)
     .clip(data)
 )
+table.show()
+```
+
+```python
 df_2026 = table.expand(top=-5).extract_table('stream').to_df(header=False).dropna(axis=0, how='all')
 df_2026.insert(0, 'year', 2026)
 df_2026.insert(0, 'value', headers)
