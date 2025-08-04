@@ -22,73 +22,34 @@ def download_pdfs():
     failed = 0
     failed_pdfs = []
     
-    # Special case mappings for PDFs with different names
-    pdf_name_overrides = {
-        'ocr-example': 'needs-ocr.pdf',
-        'simple-text': 'practice.pdf',
-        'multicolumn-layout': 'multicolumn.pdf',
-        'inspection-form': 'practice.pdf',
-        'example-tabs': 'example-tabs.pdf',  # Might need adjustment
-        'cia-document': 'cia-doc.pdf'  # Common abbreviation
-    }
-    
     # Read all PDF directories
     for pdf_dir in sorted(content_dir.iterdir()):
         if pdf_dir.is_dir() and pdf_dir.name != '.ipynb_checkpoints':
             md_files = list(pdf_dir.glob('*.md'))
             if md_files:
                 pdf_id = pdf_dir.name
+                pdf_url = f"{r2_base}/pdfs/{pdf_id}/{pdf_id}.pdf"
+                pdf_path = pdf_dir / f"{pdf_id}.pdf"
                 
-                # Check for existing PDFs in the directory
-                existing_pdfs = list(pdf_dir.glob('*.pdf'))
-                if existing_pdfs:
-                    skipped += len(existing_pdfs)
-                    continue
-                
-                # Determine the PDF filename to download
-                if pdf_id in pdf_name_overrides:
-                    pdf_filename = pdf_name_overrides[pdf_id]
-                else:
-                    pdf_filename = f"{pdf_id}.pdf"
-                
-                pdf_url = f"{r2_base}/pdfs/{pdf_id}/{pdf_filename}"
-                pdf_path = pdf_dir / pdf_filename
-                
-                print(f"Downloading {pdf_id}/{pdf_filename}...")
-                try:
-                    # Try to download with a user agent header
-                    req = urllib.request.Request(
-                        pdf_url,
-                        headers={'User-Agent': 'Mozilla/5.0 (compatible; BadPDFs/1.0)'}
-                    )
-                    with urllib.request.urlopen(req) as response:
-                        pdf_path.write_bytes(response.read())
-                    downloaded += 1
-                except Exception as e:
-                    # If override didn't work, try default name
-                    if pdf_id in pdf_name_overrides:
-                        try:
-                            default_url = f"{r2_base}/pdfs/{pdf_id}/{pdf_id}.pdf"
-                            req = urllib.request.Request(
-                                default_url,
-                                headers={'User-Agent': 'Mozilla/5.0 (compatible; BadPDFs/1.0)'}
-                            )
-                            with urllib.request.urlopen(req) as response:
-                                (pdf_dir / f"{pdf_id}.pdf").write_bytes(response.read())
-                            downloaded += 1
-                            print(f"  ✓ Downloaded using default name instead")
-                        except:
-                            print(f"⚠️  Could not download {pdf_id}: {e}")
-                            failed += 1
-                            failed_pdfs.append(pdf_id)
-                            # Create a placeholder PDF
-                            pdf_path.write_bytes(b'%PDF-1.4\nPDF not available')
-                    else:
-                        print(f"⚠️  Could not download {pdf_id}: {e}")
+                if not pdf_path.exists():
+                    print(f"Downloading {pdf_id}...")
+                    try:
+                        # Try to download with a user agent header
+                        req = urllib.request.Request(
+                            pdf_url,
+                            headers={'User-Agent': 'Mozilla/5.0 (compatible; BadPDFs/1.0)'}
+                        )
+                        with urllib.request.urlopen(req) as response:
+                            pdf_path.write_bytes(response.read())
+                        downloaded += 1
+                    except Exception as e:
+                        print(f"⚠️  Could not download {pdf_url}: {e}")
                         failed += 1
                         failed_pdfs.append(pdf_id)
-                        # Create a placeholder PDF
+                        # Create a placeholder PDF so build can continue
                         pdf_path.write_bytes(b'%PDF-1.4\nPDF not available')
+                else:
+                    skipped += 1
     
     print(f"\n📊 Summary: Downloaded {downloaded}, Skipped {skipped} (cached), Failed {failed}")
     

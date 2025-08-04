@@ -85,7 +85,7 @@ class R2Uploader:
         file_size = pdf_path.stat().st_size
         local_md5 = self.calculate_md5(pdf_path)
         
-        # R2 key path - use the actual filename, not directory name
+        # R2 key path
         key = f"pdfs/{pdf_id}/{pdf_path.name}"
         public_url = f"{self.r2_public_url}/{key}"
         
