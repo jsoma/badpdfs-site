@@ -15,7 +15,7 @@ const BASE_URL = import.meta.env.BASE_URL;
 
 export async function getStaticPaths() {
   // Import the metadata directly
-  const allMetadata = (await import('../../../public/artifacts/all_metadata.json', { assert: { type: 'json' } })).default;
+  const allMetadata = (await import('../../../public/artifacts/all_metadata.json', { with: { type: 'json' } })).default;
   
   // Collect all unique methods (case-insensitive)
   const methodsMap = new Map(); // lowercase -> original case
@@ -52,7 +52,7 @@ export async function getStaticPaths() {
 const { method } = Astro.props;
 
 // Load all metadata and execution data
-const allMetadata = (await import('../../../public/artifacts/all_metadata.json', { assert: { type: 'json' } })).default;
+const allMetadata = (await import('../../../public/artifacts/all_metadata.json', { with: { type: 'json' } })).default;
 
 // Debug logging
 console.log(`\n=== Loading method page for: ${method} ===`);
@@ -80,7 +80,7 @@ for (const item of allMetadata) {
         // Use the slug from the first approach (or the main slug from metadata)
         const slug = item.slug || item.approaches[0].replace('.md', '');
         const executionPath = `../../../public/artifacts/pdfs/${item.id}/executions/${slug}.json`;
-        executionData = (await import(executionPath, { assert: { type: 'json' } })).default;
+        executionData = (await import(executionPath, { with: { type: 'json' } })).default;
       } catch (e) {
         console.error(`Failed to load execution data for ${item.id}:`, e);
         failedPDFs.push(item.id);
@@ -203,15 +203,13 @@ const pdfGroups = Object.values(groupedUsages);
       <div class="container">
         <h1 class="method-name">{method}</h1>
         <p class="method-stats">
-          {methodUsages.length > 0 && `${methodUsages.length} detailed usage${methodUsages.length !== 1 ? 's' : ''} across ${pdfGroups.length} PDF${pdfGroups.length !== 1 ? 's' : ''}`}
-          {methodUsages.length > 0 && simplePDFs.length > 0 && ' • '}
-          {simplePDFs.length > 0 && `${simplePDFs.length} additional PDF${simplePDFs.length !== 1 ? 's' : ''} using this method`}
+          {methodUsages.length} usage{methodUsages.length !== 1 ? 's' : ''} across {pdfGroups.length} PDF{pdfGroups.length !== 1 ? 's' : ''}
         </p>
       </div>
     </div>
 
     <main class="container">
-      {methodUsages.length === 0 && simplePDFs.length === 0 ? (
+      {methodUsages.length === 0 ? (
         <div class="no-usages">
           <p>No usages found for this method.</p>
           <a href={BASE_URL} class="back-to-gallery">Back to Gallery</a>

@@ -7,7 +7,7 @@ import DarkModeToggle from '../../components/DarkModeToggle.astro';
 const BASE_URL = import.meta.env.BASE_URL;
 
 // Load all metadata to get method information
-const allMetadata = (await import('../../../public/artifacts/all_metadata.json', { assert: { type: 'json' } })).default;
+const allMetadata = (await import('../../../public/artifacts/all_metadata.json', { with: { type: 'json' } })).default;
 
 // Collect all unique methods with their usage counts
 const methodCounts = {};
