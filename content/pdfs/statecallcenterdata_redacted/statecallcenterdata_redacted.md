@@ -42,7 +42,7 @@ I love [surya](https://github.com/datalab-to/surya) so I'm going to use it inste
 
 ```python
 page.apply_ocr('surya')
-page.find_all('text').show()
+page.find_all('text').show(crop=True)
 ```
 
 And now we'll look at what the text is.
@@ -87,7 +87,7 @@ table_area.show(crop='wide')
 Now we can see all the text in our area.
 
 ```python
-table_area.find_all('text').show()
+table_area.find_all('text').show(crop=True)
 ```
 
 For some reason we can't just use `.extract_table('stream')` on this, even though there are some nice gaps between each column. Oh well!
@@ -114,6 +114,7 @@ df = (
     header=['value', 'amount', 'comments']
   )
 )
+df
 ```
 
 The next page is....... too hard for now.
