@@ -15,7 +15,7 @@ const BASE_URL = import.meta.env.BASE_URL;
 
 export async function getStaticPaths() {
   // Import the metadata directly
-  const allMetadata = (await import('../../../public/artifacts/all_metadata.json')).default;
+  const allMetadata = (await import('../../../public/artifacts/all_metadata.json', { assert: { type: 'json' } })).default;
   
   // Collect all unique methods (case-insensitive)
   const methodsMap = new Map(); // lowercase -> original case
@@ -52,12 +52,15 @@ export async function getStaticPaths() {
 const { method } = Astro.props;
 
 // Load all metadata and execution data
-const allMetadata = (await import('../../../public/artifacts/all_metadata.json')).default;
+const allMetadata = (await import('../../../public/artifacts/all_metadata.json', { assert: { type: 'json' } })).default;
+
+// Debug logging
+console.log(`\n=== Loading method page for: ${method} ===`);
+console.log(`Total PDFs in metadata: ${allMetadata.length}`);
 
 // Collect all usages of this method with code context
 const methodUsages = [];
 const failedPDFs = [];
-const simplePDFs = []; // PDFs that have the method in methods array but not in method_usage
 
 for (const item of allMetadata) {
   if (item.method_usage) {
@@ -65,6 +68,10 @@ for (const item of allMetadata) {
     const usages = item.method_usage.filter(usage => 
       usage.method.toLowerCase() === method.toLowerCase()
     );
+    
+    if (method.toLowerCase() === 'add_exclusion' && item.method_usage.some(u => u.method.toLowerCase() === 'add_exclusion')) {
+      console.log(`Found add_exclusion in ${item.id}:`, item.method_usage.filter(u => u.method.toLowerCase() === 'add_exclusion'));
+    }
 
     if (usages.length > 0) {
       // Load the execution data for this PDF
@@ -73,7 +80,7 @@ for (const item of allMetadata) {
         // Use the slug from the first approach (or the main slug from metadata)
         const slug = item.slug || item.approaches[0].replace('.md', '');
         const executionPath = `../../../public/artifacts/pdfs/${item.id}/executions/${slug}.json`;
-        executionData = (await import(executionPath)).default;
+        executionData = (await import(executionPath, { assert: { type: 'json' } })).default;
       } catch (e) {
         console.error(`Failed to load execution data for ${item.id}:`, e);
         failedPDFs.push(item.id);
@@ -516,78 +523,6 @@ const pdfGroups = Object.values(groupedUsages);
 
   .code-snippet.hidden {
     display: none;
-  }
-  
-  /* Section divider */
-  .section-divider {
-    margin: 3rem 0 2rem;
-    border: none;
-    border-top: 1px solid var(--color-border);
-  }
-  
-  .section-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--color-text);
-    margin-bottom: 0.5rem;
-  }
-  
-  .section-description {
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
-    margin-bottom: 1.5rem;
-  }
-  
-  /* Info banner */
-  .info-banner {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 0.5rem;
-    padding: 1rem 1.5rem;
-    margin-bottom: 2rem;
-  }
-  
-  .info-banner p {
-    margin: 0;
-    color: var(--color-text-muted);
-    font-size: 0.875rem;
-  }
-  
-  /* Simple PDFs grid */
-  .simple-pdfs-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1rem;
-  }
-  
-  .simple-pdf-card {
-    display: block;
-    padding: 1.25rem;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 0.5rem;
-    text-decoration: none;
-    transition: all 0.2s ease;
-  }
-  
-  .simple-pdf-card:hover {
-    border-color: var(--color-primary);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    transform: translateY(-2px);
-  }
-  
-  .simple-pdf-title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--color-text);
-    margin: 0 0 0.5rem 0;
-  }
-  
-  .simple-pdf-description {
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
-    margin: 0;
-    line-height: 1.5;
   }
 
   /* Mobile responsiveness */
