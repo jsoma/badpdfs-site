@@ -34,10 +34,16 @@ def download_pdfs():
                 if not pdf_path.exists():
                     print(f"Downloading {pdf_id}...")
                     try:
-                        urllib.request.urlretrieve(pdf_url, pdf_path)
+                        # Try to download with a user agent header
+                        req = urllib.request.Request(
+                            pdf_url,
+                            headers={'User-Agent': 'Mozilla/5.0 (compatible; BadPDFs/1.0)'}
+                        )
+                        with urllib.request.urlopen(req) as response:
+                            pdf_path.write_bytes(response.read())
                         downloaded += 1
                     except Exception as e:
-                        print(f"⚠️  Could not download {pdf_id}: {e}")
+                        print(f"⚠️  Could not download {pdf_url}: {e}")
                         failed += 1
                         failed_pdfs.append(pdf_id)
                         # Create a placeholder PDF so build can continue
