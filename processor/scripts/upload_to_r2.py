@@ -106,9 +106,31 @@ class R2Uploader:
                     print(f"⏭️  {pdf_id}: unchanged (MD5 match)")
                     self.skipped += 1
                     needs_upload = False
-            except client.exceptions.ClientError as e:
-                if e.response['Error']['Code'] != '404':
-                    raise
+            except Exception as e:
+                # Try to determine if this is a 404 error
+                is_404 = False
+                error_str = str(e).lower()
+                
+                # Check various ways boto3 might report a 404
+                if '404' in error_str or 'not found' in error_str:
+                    is_404 = True
+                elif hasattr(e, 'response'):
+                    try:
+                        # Try to access error code from response
+                        if isinstance(e.response, dict):
+                            error_code = e.response.get('Error', {}).get('Code', '')
+                            if error_code == '404':
+                                is_404 = True
+                    except:
+                        # If we can't parse the response, assume it needs upload
+                        pass
+                
+                if not is_404:
+                    # Log the error but continue with upload attempt
+                    print(f"⚠️  {pdf_id}: Could not check if file exists (will attempt upload) - {type(e).__name__}: {e}")
+                
+                # Always try to upload if we can't determine the file exists
+                needs_upload = True
             
             if needs_upload:
                 # Upload to R2
@@ -129,7 +151,23 @@ class R2Uploader:
             return True
             
         except Exception as e:
-            print(f"❌ {pdf_id}: failed - {e}")
+            error_msg = str(e)
+            # Add more context for debugging
+            if hasattr(e, '__class__'):
+                error_msg = f"{e.__class__.__name__}: {error_msg}"
+            print(f"❌ {pdf_id}: failed - {error_msg}")
+            
+            # Print additional debug info for problematic PDFs
+            if pdf_id in ['20252026-236232', '24480polcompleted']:
+                print(f"   Debug info for {pdf_id}:")
+                print(f"   - PDF path: {pdf_path}")
+                print(f"   - File exists: {pdf_path.exists()}")
+                print(f"   - File size: {file_size / 1024 / 1024:.1f} MB")
+                print(f"   - Key: {key}")
+                if hasattr(e, 'response'):
+                    print(f"   - Response type: {type(e.response)}")
+                    print(f"   - Response: {e.response}")
+            
             self.failed += 1
             return False
     
@@ -138,14 +176,20 @@ class R2Uploader:
         metadata_path = self.config.artifacts_dir / "pdfs" / pdf_id / "metadata.json"
         if metadata_path.exists():
             with open(metadata_path) as f:
-                metadata = json.load(f)
+                metadata_list = json.load(f)
             
-            metadata["pdf_size"] = file_size
-            # Remove hardcoded URL if present
-            metadata.pop("pdf_url", None)
+            # Standard format is a list - update all approaches
+            if isinstance(metadata_list, list):
+                for metadata in metadata_list:
+                    metadata["pdf_size"] = file_size
+                    metadata.pop("pdf_url", None)
+            else:
+                # This shouldn't happen with standard format
+                print(f"⚠️  Warning: {pdf_id} has non-standard metadata format")
+                return
             
             with open(metadata_path, "w") as f:
-                json.dump(metadata, f, indent=2)
+                json.dump(metadata_list, f, indent=2)
     
     def upload_all(self, pdf_id: Optional[str] = None, dry_run: bool = False):
         """Upload all PDFs or a specific PDF."""

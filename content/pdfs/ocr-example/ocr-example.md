@@ -1,5 +1,5 @@
 ---
-slug: "ocr-and-ai-magic"
+slug: "ocr-example"
 title: "OCR and AI magic"
 description: "Master OCR techniques with Natural PDF - from basic text recognition to advanced LLM-powered corrections. Learn to extract text from image-based PDFs, handle tables without proper boundaries, and leverage AI for accuracy improvements."
 pdf: "needs-ocr.pdf"
@@ -22,7 +22,7 @@ Sometimes you can't actually get the text off of the page. It's an *image* of te
 ```python
 from natural_pdf import PDF
 
-pdf = PDF("needs-ocr.pdf")
+pdf = PDF("ocr-example.pdf")
 
 page = pdf.pages[0]
 page.show(width=700)

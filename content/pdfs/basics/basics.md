@@ -1,8 +1,8 @@
 ---
-slug: "simple-text-extraction"
+slug: "basics"
 title: "Natural PDF basics with text and tables"
 description: "Learn the fundamentals of Natural PDF - opening PDFs, extracting text with layout preservation, selecting elements by criteria, spatial navigation, and managing exclusion zones. Perfect starting point for PDF data extraction."
-pdf: "practice.pdf"
+pdf: "basics.pdf"
 tags:
 - Text Extraction
 - Basic Usage
@@ -23,7 +23,7 @@ Let's start by opening a PDF. Natural PDF can work with local files or URLs.
 ```python
 from natural_pdf import PDF
 
-pdf = PDF("practice.pdf")
+pdf = PDF("basics.pdf")
 page = pdf.pages[0]
 page.show()
 ```

@@ -4,6 +4,7 @@ Untitled*.ipynb
 .\#*
 venv/
 virtualenv/
+.build_cache.json
 
 # Environment variables
 .env
