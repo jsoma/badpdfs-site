@@ -84,7 +84,7 @@ complainant = (
   .right(until='text')
 )
 print("Complainant is", complainant.extract_text())
-complainant.show(crop=section)
+complainant.show(crop=100)
 ```
 
 Note that date of birth and some other fields are *missing*. Usually this means we'd have to use `right(100)` or pick some manual pixel value, but it turns out even the missing data includes text elements - they're just empty! That means we can use `until='text'` instead of magic numbers.
@@ -96,7 +96,7 @@ dob = (
   .right(until='text')
 )
 print("DOB is", dob.extract_text())
-dob.show(crop=section)
+dob.show(crop=100)
 ```
 
 For the above/below pieces it's slightly more problematic. By default when you expand downwards, it doesn't select the *entire* piece of text, it only grabs the ones that intersect with your search area.
@@ -108,7 +108,7 @@ number = (
     .below(until='text', width='element')
 )
 print("Number is", number.extract_text())
-number.show(crop=section)
+number.show(crop=100)
 ```
 
 In order to be sure you get the entire thing you need to ask for text that even partially overlaps the area you have selected. This makes the area expand to cover all of the number.
@@ -121,7 +121,7 @@ number = (
     .find('text', overlap='partial')
 )
 print("Number is", number.extract_text())
-number.show(crop=section)
+number.show(crop=100)
 ```
 
 
@@ -132,7 +132,7 @@ The elements like "Date Assigned" and "Completed" are a little more difficult, a
   section
   .find('text:contains(Date Assigned)')
   .below(width='element')
-  .show(crop=section)
+  .show(crop=100)
 )
 ```
 
