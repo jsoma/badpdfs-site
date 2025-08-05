@@ -86,7 +86,7 @@ complainant.show(crop=section)
 Note that date of birth and some other fields are *missing*. Usually this means we'd have to use `right(100)` or pick some manual pixel value, but it turns out even the missing data includes text elements - they're just empty! That means we can use `until='text'` instead of magic numbers.
 
 ```python
-dob = section.find("text:contains(Complainant)").right(until='text')
+dob = section.find("text:contains(DOB)").right(until='text')
 print("DOB is", dob.extract_text())
 dob.show(crop=section)
 ```
