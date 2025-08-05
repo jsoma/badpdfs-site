@@ -372,6 +372,9 @@ class ExecutionTask(Task):
             if stderr_content:
                 combined_output += stderr_content
             
+            # Clean up progress output
+            combined_output = self._clean_progress_output(combined_output)
+            
             result['output'] = combined_output
             
             # Add captured figures
@@ -459,6 +462,36 @@ class ExecutionTask(Task):
         
         # Return relative path from artifacts
         return str(image_path.relative_to(context.artifacts_dir))
+    
+    def _clean_progress_output(self, output: str) -> str:
+        """Clean up repetitive progress output."""
+        if not output:
+            return output
+        
+        lines = output.split('\n')
+        cleaned_lines = []
+        last_progress_line = None
+        
+        # Pattern to match progress lines
+        progress_pattern = re.compile(r'^Progress:\s*\|.*\|\s*\d+\.?\d*%\s*Complete\s*$')
+        
+        for line in lines:
+            if progress_pattern.match(line.strip()):
+                # Store the last progress line, don't add duplicates
+                last_progress_line = line
+            else:
+                # If we had progress lines before this, add the last one
+                if last_progress_line is not None:
+                    cleaned_lines.append(last_progress_line)
+                    last_progress_line = None
+                # Add the non-progress line
+                cleaned_lines.append(line)
+        
+        # Don't forget the final progress line if it exists
+        if last_progress_line is not None:
+            cleaned_lines.append(last_progress_line)
+        
+        return '\n'.join(cleaned_lines)
     
     def __del__(self):
         """Restore original plt.show."""
