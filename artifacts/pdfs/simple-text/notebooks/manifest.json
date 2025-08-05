@@ -1,0 +1,11 @@
+{
+  "pdf_id": "simple-text",
+  "notebooks": [
+    {
+      "approach": "extract",
+      "status": "success",
+      "path": "pdfs/simple-text/notebooks/extract.ipynb"
+    }
+  ],
+  "pdf_base_url": "https://pub-4e99d31d19cb404d8d4f5f7efa51ef6e.r2.dev"
+}

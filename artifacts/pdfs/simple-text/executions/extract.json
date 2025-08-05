@@ -1,0 +1,180 @@
+{
+  "file": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/simple-text/extract.md",
+  "metadata": {
+    "slug": "extract",
+    "title": "Natural PDF basics with text and tables",
+    "description": "Learn the fundamentals of Natural PDF - opening PDFs, extracting text with layout preservation, selecting elements by criteria, spatial navigation, and managing exclusion zones. Perfect starting point for PDF data extraction.",
+    "pdf": "practice.pdf",
+    "tags": [
+      "Text Extraction",
+      "Basic Usage",
+      "Element Selection",
+      "Spatial Navigation",
+      "Tables",
+      "Exclusion Zones"
+    ],
+    "file_size_mb": 0.2,
+    "page_count": 1,
+    "submitted_by": "Natural PDF Team",
+    "published": true,
+    "file": "extract.md"
+  },
+  "cells": [
+    {
+      "type": "markdown",
+      "content": "# Opening a PDF\n\nLet's start by opening a PDF. Natural PDF can work with local files or URLs."
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf import PDF\n\npdf = PDF(\"practice.pdf\")\npage = pdf.pages[0]\npage.show()",
+      "execution": {
+        "status": "success",
+        "output": "",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/simple-text/extract/images/image_1.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "# Grabbing Page Text\n\nYou can extract text while preserving the layout, which maintains the spatial arrangement of text on the page."
+    },
+    {
+      "type": "code",
+      "content": "text = page.extract_text(layout=True)\nprint(text)",
+      "execution": {
+        "status": "success",
+        "output": "                                                                                    \n                                                                                    \n                                                                                    \n                                                     Jungle Health and Safety Inspection Service\n                                                     INS-UP70N51NCL41R              \n                                                                                    \n       Site: Durham\u2019s Meatpacking Chicago, Ill.                                     \n                                                                                    \n       Date: February 3, 1905                                                       \n                                                                                    \n       Violation Count: 7                                                           \n       Summary: Worst of any, however, were the fertilizer men, and those who served in the cooking rooms.\n       These people could not be shown to the visitor - for the odor of a fertilizer man would scare any ordinary\n                                                                                    \n       visitor at a hundred yards, and as for the other men, who worked in tank rooms full of steam, and in\n       some of which there were open vats near the level of the floor, their peculiar trouble was that they fell\n       into the vats; and when they were fished out, there was never enough of them left to be worth\n       exhibiting - sometimes they would be overlooked for days, till all but the bones of them had gone out\n       to the world as Durham\u2019s Pure Leaf Lard!                                     \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n       Violations                                                                   \n                                                                                    \n        Statute Description                                    Level  Repeat?       \n        4.12.7 Unsanitary Working Conditions.                  Critical             \n                                                                                    \n        5.8.3 Inadequate Protective Equipment.                 Serious              \n        6.3.9 Ineffective Injury Prevention.                   Serious              \n                                                                                    \n        7.1.5 Failure to Properly Store Hazardous Materials.   Critical             \n        8.9.2 Lack of Adequate Fire Safety Measures.           Serious              \n                                                                                    \n        9.6.4 Inadequate Ventilation Systems.                  Serious              \n        10.2.7 Insufficient Employee Training for Safe Work Practices. Serious      \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                Jungle Health and Safety Inspection Service         \n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "# Selecting Elements and Text\n\nNatural PDF provides powerful selectors to find specific elements on the page.\n\n## Select text in a rectangle"
+    },
+    {
+      "type": "code",
+      "content": "text = page.find('rect').extract_text()\nprint(text)",
+      "execution": {
+        "status": "success",
+        "output": "Jungle Health and Safety Inspection Service\nINS-UP70N51NCL41R\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "## Find all text elements"
+    },
+    {
+      "type": "code",
+      "content": "texts = page.find_all('text').extract_each_text()\nfor t in texts[:5]:  # Show first 5\n    print(t)",
+      "execution": {
+        "status": "success",
+        "output": "Jungle Health and Safety Inspection Service\nINS-UP70N51NCL41R\nSite:\nDurham\u2019s Meatpacking\nChicago, Ill.\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "## Find colored text"
+    },
+    {
+      "type": "code",
+      "content": "# Find red text\nred_text = page.find('text[color~=red]')\nprint(red_text.extract_text())",
+      "execution": {
+        "status": "success",
+        "output": "INS-UP70N51NCL41R\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "## Find text by content"
+    },
+    {
+      "type": "code",
+      "content": "# Find text starting with specific string\ntext = page.find('text:contains(\"INS-\")')\nprint(text.extract_text())",
+      "execution": {
+        "status": "success",
+        "output": "INS-UP70N51NCL41R\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "# Spatial Navigation\n\nNatural PDF excels at spatial relationships between elements.\n\n## Extract text to the right of a label"
+    },
+    {
+      "type": "code",
+      "content": "# Extract text to the right of \"Date:\"\ndate_text = page.find(text=\"Date:\").right(height='element').extract_text()\nprint(f\"Date: {date_text}\")",
+      "execution": {
+        "status": "success",
+        "output": "Date: February 3, 1905\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "## Extract tables"
+    },
+    {
+      "type": "code",
+      "content": "table = page.extract_table()\nif table:\n    df = table.to_df()\n    print(df.head())",
+      "execution": {
+        "status": "success",
+        "output": "  Statute                                     Description     Level Repeat?\n0  4.12.7                  Unsanitary Working Conditions.  Critical    <NA>\n1   5.8.3                Inadequate Protective Equipment.   Serious    <NA>\n2   6.3.9                  Ineffective Injury Prevention.   Serious    <NA>\n3   7.1.5  Failure to Properly Store Hazardous Materials.  Critical    <NA>\n4   8.9.2          Lack of Adequate Fire Safety Measures.   Serious    <NA>\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "# Exclusion Zones\n\nSometimes you need to exclude headers, footers, or other unwanted areas from extraction.\n\n## Exclude specific regions"
+    },
+    {
+      "type": "code",
+      "content": "# Exclude top header area\ntop = page.region(top=0, left=0, height=80)\npage.add_exclusion(top)\n\n# Exclude area below last line\nbottom = page.find_all(\"line\")[-1].below()\npage.add_exclusion(bottom)\n\n# Now extract text without excluded areas\ntext = page.extract_text()\nprint(text)",
+      "execution": {
+        "status": "success",
+        "output": "Site: Durham\u2019s Meatpacking Chicago, Ill.\nDate: February 3, 1905\nViolation Count: 7\nSummary: Worst of any, however, were the fertilizer men, and those who served in the cooking rooms.\nThese people could not be shown to the visitor - for the odor of a fertilizer man would scare any ordinary\nvisitor at a hundred yards, and as for the other men, who worked in tank rooms full of steam, and in\nsome of which there were open vats near the level of the floor, their peculiar trouble was that they fell\ninto the vats; and when they were fished out, there was never enough of them left to be worth\nexhibiting - sometimes they would be overlooked for days, till all but the bones of them had gone out\nto the world as Durham\u2019s Pure Leaf Lard!\nViolations\nStatute Description Level Repeat?\n4.12.7 Unsanitary Working Conditions. Critical\n5.8.3 Inadequate Protective Equipment. Serious\n6.3.9 Ineffective Injury Prevention. Serious\n7.1.5 Failure to Properly Store Hazardous Materials. Critical\n8.9.2 Lack of Adequate Fire Safety Measures. Serious\n9.6.4 Inadequate Ventilation Systems. Serious\n10.2.7 Insufficient Employee Training for Safe Work Practices. Serious\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "## PDF-level exclusions\n\nApply exclusions to all pages in a PDF:"
+    },
+    {
+      "type": "code",
+      "content": "# Add header exclusion to all pages\npdf.add_exclusion(lambda page: page.region(top=0, left=0, height=80))",
+      "execution": {
+        "status": "success",
+        "output": "",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/plain",
+          "data": "<PDF source='practice.pdf' pages=1>"
+        }
+      }
+    }
+  ]
+}

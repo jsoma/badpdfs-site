@@ -1,0 +1,471 @@
+{
+  "total_items": 11,
+  "valid_count": 9,
+  "invalid_count": 2,
+  "valid_pdf_ids": [
+    "statecallcenterdata_redacted",
+    "20252026-236232",
+    "czech-republic-pisa2012_zakovsky_dotaznik_a",
+    "24480polcompleted",
+    "basics",
+    "mednine",
+    "focus",
+    "k046682-111320-opa-lea-database-install_1",
+    "multicolumn"
+  ],
+  "invalid_items": [
+    {
+      "item": {
+        "slug": "cia-document-extraction",
+        "title": "CIA Document Analysis",
+        "description": "Extracting information from declassified CIA documents using AI",
+        "pdf": "cia-doc.pdf",
+        "tags": [
+          "workshop",
+          "ai",
+          "government-documents"
+        ],
+        "published": true,
+        "file": "cia-document-extraction.md",
+        "id": "cia-document",
+        "methods": [
+          "PDF",
+          "classify",
+          "classify_pages",
+          "filter",
+          "groupby",
+          "info",
+          "save_pdf",
+          "show"
+        ],
+        "method_usage": [
+          {
+            "method": "PDF",
+            "method_full": "PDF",
+            "args": [
+              "cia-doc.pdf"
+            ],
+            "kwargs": {}
+          },
+          {
+            "method": "show",
+            "method_full": "pdf.show",
+            "args": [],
+            "kwargs": {
+              "cols": 6
+            }
+          },
+          {
+            "method": "classify",
+            "method_full": "pdf.classify",
+            "args": [
+              [
+                "slaughterhouse report",
+                "dolphin training manual",
+                "basketball",
+                "birding"
+              ]
+            ],
+            "kwargs": {
+              "using": "text"
+            }
+          },
+          {
+            "method": "classify_pages",
+            "method_full": "pdf.classify_pages",
+            "args": [
+              [
+                "diagram",
+                "text",
+                "invoice",
+                "blank"
+              ]
+            ],
+            "kwargs": {
+              "using": "vision"
+            }
+          },
+          {
+            "method": "show",
+            "method_full": "show",
+            "args": [],
+            "kwargs": {
+              "show_category": true
+            }
+          },
+          {
+            "method": "filter",
+            "method_full": "pdf.filter",
+            "args": [
+              "<Lambda>"
+            ],
+            "kwargs": {}
+          },
+          {
+            "method": "groupby",
+            "method_full": "pdf.groupby",
+            "args": [
+              "<Lambda>"
+            ],
+            "kwargs": {}
+          },
+          {
+            "method": "info",
+            "method_full": "groups.info",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "save_pdf",
+            "method_full": "save_pdf",
+            "args": [
+              "diagrams.pdf"
+            ],
+            "kwargs": {
+              "original": true
+            }
+          },
+          {
+            "method": "filter",
+            "method_full": "pdf.filter",
+            "args": [
+              "<Lambda>"
+            ],
+            "kwargs": {}
+          }
+        ],
+        "selectors": [],
+        "complexity": {
+          "code_blocks": 7,
+          "total_lines": 28,
+          "total_chars": 733
+        },
+        "approaches": [
+          "cia-document-extraction.md"
+        ]
+      },
+      "errors": [
+        {
+          "type": "missing_main_screenshot",
+          "message": "Expected screenshot not found: cia-doc-1.png"
+        }
+      ]
+    },
+    {
+      "item": {
+        "slug": "ocr-example",
+        "title": "OCR and AI magic",
+        "description": "Master OCR techniques with Natural PDF - from basic text recognition to advanced LLM-powered corrections. Learn to extract text from image-based PDFs, handle tables without proper boundaries, and leverage AI for accuracy improvements.",
+        "pdf": "needs-ocr.pdf",
+        "tags": [
+          "OCR",
+          "LLM Integration",
+          "Text Extraction",
+          "Table Detection",
+          "AI Correction"
+        ],
+        "file_size_mb": 0.5,
+        "page_count": 1,
+        "submitted_by": "Natural PDF Team",
+        "published": true,
+        "file": "ocr-example.md",
+        "id": "ocr-example",
+        "methods": [
+          "Guides",
+          "PDF",
+          "apply_ocr",
+          "below",
+          "correct_ocr",
+          "extract_table",
+          "extract_text",
+          "find",
+          "find_all",
+          "from_content",
+          "from_lines",
+          "inspect",
+          "show",
+          "snap_to_whitespace",
+          "to_df"
+        ],
+        "method_usage": [
+          {
+            "method": "PDF",
+            "method_full": "PDF",
+            "args": [
+              "ocr-example.pdf"
+            ],
+            "kwargs": {}
+          },
+          {
+            "method": "show",
+            "method_full": "page.show",
+            "args": [],
+            "kwargs": {
+              "width": 700
+            }
+          },
+          {
+            "method": "extract_text",
+            "method_full": "page.extract_text",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "apply_ocr",
+            "method_full": "page.apply_ocr",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "extract_text",
+            "method_full": "page.extract_text",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "apply_ocr",
+            "method_full": "page.apply_ocr",
+            "args": [
+              "surya"
+            ],
+            "kwargs": {
+              "resolution": 192
+            }
+          },
+          {
+            "method": "extract_text",
+            "method_full": "page.extract_text",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "extract_table",
+            "method_full": "page.extract_table",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "below",
+            "method_full": "below",
+            "args": [],
+            "kwargs": {
+              "until": "text:contains(Jungle)",
+              "include_endpoint": false
+            }
+          },
+          {
+            "method": "find",
+            "method_full": "page.find",
+            "args": [
+              "text:contains(Violations)"
+            ],
+            "kwargs": {}
+          },
+          {
+            "method": "Guides",
+            "method_full": "Guides",
+            "args": [
+              "<var:table_area>"
+            ],
+            "kwargs": {}
+          },
+          {
+            "method": "from_content",
+            "method_full": "guides.from_content",
+            "args": [
+              [
+                "Statute",
+                "Description",
+                "Level",
+                "Repeat"
+              ]
+            ],
+            "kwargs": {
+              "align": "between"
+            }
+          },
+          {
+            "method": "snap_to_whitespace",
+            "method_full": "guides.snap_to_whitespace",
+            "args": [],
+            "kwargs": {
+              "detection_method": "text"
+            }
+          },
+          {
+            "method": "from_lines",
+            "method_full": "guides.from_lines",
+            "args": [],
+            "kwargs": {
+              "threshold": 0.8
+            }
+          },
+          {
+            "method": "show",
+            "method_full": "guides.show",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "to_df",
+            "method_full": "to_df",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "apply_ocr",
+            "method_full": "page.apply_ocr",
+            "args": [],
+            "kwargs": {
+              "resolution": 50
+            }
+          },
+          {
+            "method": "inspect",
+            "method_full": "inspect",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "find_all",
+            "method_full": "page.find_all",
+            "args": [
+              "text"
+            ],
+            "kwargs": {}
+          },
+          {
+            "method": "correct_ocr",
+            "method_full": "page.correct_ocr",
+            "args": [
+              "<var:correct_text_region>"
+            ],
+            "kwargs": {}
+          },
+          {
+            "method": "inspect",
+            "method_full": "inspect",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "find_all",
+            "method_full": "page.find_all",
+            "args": [
+              "text"
+            ],
+            "kwargs": {}
+          },
+          {
+            "method": "apply_ocr",
+            "method_full": "page.apply_ocr",
+            "args": [
+              "surya"
+            ],
+            "kwargs": {
+              "resolution": 15
+            }
+          },
+          {
+            "method": "correct_ocr",
+            "method_full": "page.correct_ocr",
+            "args": [
+              "<var:correct_text_region>"
+            ],
+            "kwargs": {}
+          },
+          {
+            "method": "extract_text",
+            "method_full": "page.extract_text",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "apply_ocr",
+            "method_full": "page.apply_ocr",
+            "args": [
+              "surya"
+            ],
+            "kwargs": {
+              "detect_only": true
+            }
+          },
+          {
+            "method": "show",
+            "method_full": "show",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "find_all",
+            "method_full": "page.find_all",
+            "args": [
+              "text"
+            ],
+            "kwargs": {}
+          },
+          {
+            "method": "inspect",
+            "method_full": "inspect",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "find_all",
+            "method_full": "page.find_all",
+            "args": [
+              "text"
+            ],
+            "kwargs": {}
+          },
+          {
+            "method": "correct_ocr",
+            "method_full": "page.correct_ocr",
+            "args": [
+              "<var:correct_text_region>"
+            ],
+            "kwargs": {}
+          },
+          {
+            "method": "inspect",
+            "method_full": "inspect",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "find_all",
+            "method_full": "page.find_all",
+            "args": [
+              "text"
+            ],
+            "kwargs": {}
+          },
+          {
+            "method": "extract_text",
+            "method_full": "page.extract_text",
+            "args": [],
+            "kwargs": {}
+          }
+        ],
+        "selectors": [
+          "text",
+          "text:contains(Violations)"
+        ],
+        "complexity": {
+          "code_blocks": 28,
+          "total_lines": 106,
+          "total_chars": 3334
+        },
+        "approaches": [
+          "ocr-example.md"
+        ]
+      },
+      "errors": [
+        {
+          "type": "missing_main_screenshot",
+          "message": "Expected screenshot not found: needs-ocr-1.png"
+        }
+      ]
+    }
+  ]
+}
