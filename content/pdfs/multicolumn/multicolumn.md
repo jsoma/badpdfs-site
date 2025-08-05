@@ -48,6 +48,7 @@ from natural_pdf.flows import Flow
 
 stacked = [left, mid, right]
 flow = Flow(segments=stacked, arrangement="vertical")
+flow.show()
 ```
 
 Now any time we want to use spatial comparisons, like "find something below this," it *just works*.
@@ -103,6 +104,7 @@ import pandas as pd
 
 dfs = regions.apply(lambda region: region.extract_table().to_df())
 merged = pd.concat(dfs, ignore_index=True)
+merged
 ```
 
 # Layout analysis and magic table extraction

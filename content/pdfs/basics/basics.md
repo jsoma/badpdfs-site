@@ -44,11 +44,19 @@ Natural PDF provides powerful selectors to find specific elements on the page.
 ## Select text in a rectangle
 
 ```python
+page.find('rect').show()
+```
+
+```python
 text = page.find('rect').extract_text()
 print(text)
 ```
 
 ## Find all text elements
+
+```python
+page.find_all('text').show()
+```
 
 ```python
 texts = page.find_all('text').extract_each_text()
@@ -80,8 +88,12 @@ Natural PDF excels at spatial relationships between elements.
 
 ```python
 # Extract text to the right of "Date:"
-date_text = page.find(text="Date:").right(height='element').extract_text()
-print(f"Date: {date_text}")
+date = page.find(text="Date:").right(height='element')
+date.show()
+```
+
+```python
+date.extract_text()
 ```
 
 ## Extract tables
@@ -100,12 +112,16 @@ Sometimes you need to exclude headers, footers, or other unwanted areas from ext
 ## Exclude specific regions
 
 ```python
-# Exclude top header area
 top = page.region(top=0, left=0, height=80)
+bottom = page.find_all("line")[-1].below()
+(top + bottom).show()
+```
+
+```python
+# Exclude top header area
 page.add_exclusion(top)
 
 # Exclude area below last line
-bottom = page.find_all("line")[-1].below()
 page.add_exclusion(bottom)
 
 # Now extract text without excluded areas
@@ -118,6 +134,8 @@ print(text)
 Apply exclusions to all pages in a PDF:
 
 ```python
+print("BEFORE EXCLUSION:", pdf.pages[0].extract_text()[:200])
 # Add header exclusion to all pages
 pdf.add_exclusion(lambda page: page.region(top=0, left=0, height=80))
+print("AFTER EXCLUSION:", pdf.pages[0].extract_text()[:200])
 ```
