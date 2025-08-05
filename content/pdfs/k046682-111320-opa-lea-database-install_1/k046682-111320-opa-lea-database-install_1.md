@@ -78,7 +78,11 @@ This extraction is made easier since **they're all generally the same**, they al
 Up top we'll focus on grabbing the labels, then going right until we find a piece of text.
 
 ```python
-complainant = section.find("text:contains(Complainant)").right(until='text')
+complainant = (
+  section
+  .find("text:contains(Complainant)")
+  .right(until='text')
+)
 print("Complainant is", complainant.extract_text())
 complainant.show(crop=section)
 ```
@@ -86,7 +90,11 @@ complainant.show(crop=section)
 Note that date of birth and some other fields are *missing*. Usually this means we'd have to use `right(100)` or pick some manual pixel value, but it turns out even the missing data includes text elements - they're just empty! That means we can use `until='text'` instead of magic numbers.
 
 ```python
-dob = section.find("text:contains(DOB)").right(until='text')
+dob = (
+  section
+  .find("text:contains(DOB)")
+  .right(until='text')
+)
 print("DOB is", dob.extract_text())
 dob.show(crop=section)
 ```
@@ -96,8 +104,8 @@ For the above/below pieces it's slightly more problematic. By default when you e
 ```python
 number = (
     section
-        .find("text:contains(Number)")
-        .below(until='text', width='element')
+    .find("text:contains(Number)")
+    .below(until='text', width='element')
 )
 print("Number is", number.extract_text())
 number.show(crop=section)
@@ -108,9 +116,9 @@ In order to be sure you get the entire thing you need to ask for text that even 
 ```python
 number = (
     section
-        .find("text:contains(Number)")
-        .below(until='text', width='element')
-        .find('text', overlap='partial')
+    .find("text:contains(Number)")
+    .below(until='text', width='element')
+    .find('text', overlap='partial')
 )
 print("Number is", number.extract_text())
 number.show(crop=section)
@@ -145,14 +153,48 @@ If we did `until='text'` it would grab the *first text it touched*, so it would 
 With that all in line, when we start to grab them all it looks something like this:
 
 ```python
-complainant = section.find("text:contains(Complainant)").right(until='text')
-dob = section.find("text:contains(DOB)").right(until='text')
-address = section.find("text:contains(Address)").right(until='text')
-gender = section.find("text:contains(Gender)").right(until='text')
-phone = section.find("text:contains(H Phone)").right(until='text')
-date_assigned = section.find('text:contains(Date Assigned)').below(width='element').find('text')
-completed = section.find('text:contains(Completed)').below(width='element').find('text')
-recorded = section.find('text:contains(Recorded)').below(until='text', width='element')
+complainant = (
+  section
+  .find("text:contains(Complainant)")
+  .right(until='text')
+)
+dob = (
+  section
+  .find("text:contains(DOB)")
+  .right(until='text')
+)
+address = (
+  section
+  .find("text:contains(Address)")
+  .right(until='text')
+)
+gender = (
+  section
+  .find("text:contains(Gender)")
+  .right(until='text')
+)
+phone = (
+  section
+  .find("text:contains(H Phone)")
+  .right(until='text')
+)
+date_assigned = (
+  section
+  .find('text:contains(Date Assigned)')
+  .below(width='element')
+  .find('text')
+)
+completed = (
+  section
+  .find('text:contains(Completed)')
+  .below(width='element')
+  .find('text')
+)
+recorded = (
+  section
+  .find('text:contains(Recorded)')
+  .below(until='text', width='element')
+)
 
 (complainant + dob + address + gender + phone + date_assigned + completed + recorded).show(crop=section)
 ```
@@ -266,15 +308,15 @@ for section in sections:
     phone = section.find("text:contains(H Phone)").right(until='text')
     investigator = (
         section
-            .find("text:contains(Investigator)")
-            .below(until='text', width='element')
-            .find('text', overlap='partial')
+        .find("text:contains(Investigator)")
+        .below(until='text', width='element')
+        .find('text', overlap='partial')
     )
     number = (
         section
-            .find("text:contains(Number)")
-            .below(until='text', width='element')
-            .find('text', overlap='partial')
+        .find("text:contains(Number)")
+        .below(until='text', width='element')
+        .find('text', overlap='partial')
     )
     date_assigned = (
       section
@@ -360,9 +402,11 @@ for section in sections:
     guides = Guides(table)
     guides.vertical.from_lines(n=8)
     columns = ['Name', 'ID No.', 'Rank', 'Division', 'Officer Disposition', 'Action Taken', 'Body Cam']
-    officer_df = table.extract_table(
-        verticals=guides.vertical
-    ).to_df(header=columns)
+    officer_df = (
+      table
+      .extract_table(verticals=guides.vertical)
+      .to_df(header=columns)
+    )
 
     # Add to your list
     officer_df['case_number'] = case_number
