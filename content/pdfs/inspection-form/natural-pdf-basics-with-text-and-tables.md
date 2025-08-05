@@ -6,14 +6,6 @@ pdf: "practice.pdf"
 tags: ["workshop"]
 ---
 
-# Installing Natural PDF
-
-There are a LOT of possible extras (a lot of them AI-flavored) inside of Natural PDF, but we'll start by just installing the basics. You use `"natural_pdf[all]"` if you want *everything*.
-
-```bash
-pip install --upgrade --quiet "natural-pdf @ git+https://github.com/jsoma/natural-pdf.git"
-```
-
 # Opening a PDF
 
 **We'll start by opening a PDF.**

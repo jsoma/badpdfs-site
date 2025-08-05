@@ -6,10 +6,6 @@ pdf: "practice.pdf"
 tags: ["workshop", "ai", "question-answering"]
 ---
 
-```bash
-pip install --upgrade --quiet "natural-pdf[ai,ocr-export] @ git+https://github.com/jsoma/natural-pdf.git"
-```
-
 # Let's ask questions
 
 Time for some AI magic. We're using **extractive question answering**, which is different from LLMs because it pulls content *from the page*. LLMs are *generative AI*, which take your question and generates *new* text.

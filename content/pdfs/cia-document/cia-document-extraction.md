@@ -21,14 +21,22 @@ pdf.pages.show(cols=6)
 Just like we did above, we can ask what category we think the PDF belongs to.
 
 ```python
-pdf.classify(['slaughterhouse report', 'dolphin training manual', 'basketball', 'birding'], using='text')
+pdf.classify(
+    ['slaughterhouse report', 'dolphin training manual', 'basketball', 'birding'],
+    using='text'
+)
 (pdf.category, pdf.category_confidence)
 ```
 
-But notice how all of the pages look very very different: **we can also categorize each page using vision**.
+I promise birding is real! The PDF is about *using pigeons to take surveillance photos.*
+
+But beyond the text content, notice how all of the pages look very very different. **We can also categorize each page using vision!**
 
 ```python
-pdf.classify_pages(['diagram', 'text', 'invoice', 'blank'], using='vision')
+pdf.classify_pages(
+    ['diagram', 'text', 'invoice', 'blank'],
+    using='vision'
+)
 
 for page in pdf.pages:
     print(f"Page {page.number} is {page.category} - {page.category_confidence:0.3}")

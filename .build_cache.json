@@ -1,9 +1,9 @@
 {
   "files": {
-    "/Users/soma/Development/badpdfs-analysis/content/pdfs/cia-document/cia-document-extraction.md": "6b0630cb165a1a1d72f6a63c02af654f",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/cia-document/cia-document-extraction.md": "e950eb4c0de9b3fe5d47edfa521504b9",
     "/Users/soma/Development/badpdfs-analysis/content/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1.md": "a5dd62796a0010e61c2b6a6e9fef599b",
-    "/Users/soma/Development/badpdfs-analysis/content/pdfs/24480polcompleted/24480polcompleted.md": "9d9fd06d3c145ad9ae449044ceee5e13",
-    "/Users/soma/Development/badpdfs-analysis/content/pdfs/focus/focus.md": "d0c84e954e17ff0da5cf34f6d80b9214",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/24480polcompleted/24480polcompleted.md": "f835f00e94d70cd7e98ea585c3d48c5d",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/focus/focus.md": "31bddb88f1e02f68a6cc8d62d6b9ce56",
     "/Users/soma/Development/badpdfs-analysis/content/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a.md": "32bc0aca407f7ee873923ff860a97e54",
     "/Users/soma/Development/badpdfs-analysis/content/pdfs/mednine/mednine.md": "c40b3bf92bb4b4b763683e43304e1196",
     "/Users/soma/Development/badpdfs-analysis/content/pdfs/cia-document/cia-doc.pdf": "523a3b9fd68bd7907f6a84d98a2d767f",
@@ -14,13 +14,25 @@
     "/Users/soma/Development/badpdfs-analysis/content/pdfs/mednine/mednine.pdf": "91388a1568de941b121610b30183d1a9",
     "/Users/soma/Development/badpdfs-analysis/content/pdfs/20252026-236232/20252026-236232.md": "8289b1532b1f5a55f3e6589c2f153b56",
     "/Users/soma/Development/badpdfs-analysis/content/pdfs/20252026-236232/20252026-236232.pdf": "eb1c9218f80e4c77b0ed9352c2acf9ce",
-    "/Users/soma/Development/badpdfs-analysis/content/pdfs/cia-document/diagrams.pdf": "200d47f5479aaed7419c4f5564b54a54"
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/cia-document/diagrams.pdf": "5dd06c275af07d1847412da86b5eac98",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/multicolumn-layout/page-structure.md": "17e00c6b1c44cfd86ba4fa048990cb03",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/simple-text/extract.md": "d2a377f6cbf0c1b4713ee8e2297190b1",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/statecallcenterdata_redacted/statecallcenterdata_redacted.md": "440b30cb416b7b62649a2936ca739c0f",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/ocr-example/ocr-and-ai-magic.md": "b07139a007a04d981b91e49c58ab30e0",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/multicolumn-layout/needs-ocr.pdf": "56a2f9548e64fcb8276832bc71bc55d7",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/multicolumn-layout/multicolumn.pdf": "e291e4774f64f5b5734b9420170603a8",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/simple-text/practice.pdf": "aa63273a1cc652a3fa0e96fb13d05462",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/statecallcenterdata_redacted/statecallcenterdata_redacted.pdf": "1e3e3b3111592f277b9923d67b2d5214",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/ocr-example/needs-ocr.pdf": "56a2f9548e64fcb8276832bc71bc55d7",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/multicolumn/multicolumn.md": "285d399dae205a5b93e4b0bafa492b4e",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/multicolumn/multicolumn.pdf": "e291e4774f64f5b5734b9420170603a8",
+    "/Users/soma/Development/badpdfs-analysis/content/pdfs/multicolumn/needs-ocr.pdf": "56a2f9548e64fcb8276832bc71bc55d7"
   },
   "builds": {},
   "tasks": {
     "cia-document": {
       "metadata": {
-        "timestamp": "2025-08-04T10:19:37.113148",
+        "timestamp": "2025-08-04T19:47:23.367602",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -35,7 +47,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-04T10:19:41.146971",
+        "timestamp": "2025-08-04T19:47:28.797847",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -71,7 +83,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-04T10:21:22.137721",
+        "timestamp": "2025-08-04T19:52:00.760275",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -93,7 +105,7 @@
         }
       },
       "execution": {
-        "timestamp": "2025-08-04T10:20:09.359727",
+        "timestamp": "2025-08-04T19:48:14.550051",
         "result": {
           "task_name": "execution",
           "success": true,
@@ -116,7 +128,7 @@
     },
     "k046682-111320-opa-lea-database-install_1": {
       "metadata": {
-        "timestamp": "2025-08-04T10:19:37.120349",
+        "timestamp": "2025-08-04T19:47:23.376241",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -131,7 +143,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-04T10:19:43.552488",
+        "timestamp": "2025-08-04T19:47:32.169552",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -157,7 +169,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-04T10:21:22.138929",
+        "timestamp": "2025-08-04T19:52:00.763646",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -179,7 +191,7 @@
         }
       },
       "execution": {
-        "timestamp": "2025-08-04T10:20:12.806426",
+        "timestamp": "2025-08-04T19:48:18.978846",
         "result": {
           "task_name": "execution",
           "success": true,
@@ -202,7 +214,7 @@
     },
     "24480polcompleted": {
       "metadata": {
-        "timestamp": "2025-08-04T10:19:37.123038",
+        "timestamp": "2025-08-04T19:47:23.383926",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -217,7 +229,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-04T10:19:48.997441",
+        "timestamp": "2025-08-04T19:47:46.611153",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -253,7 +265,7 @@
         }
       },
       "execution": {
-        "timestamp": "2025-08-04T10:21:15.470547",
+        "timestamp": "2025-08-04T19:50:17.152306",
         "result": {
           "task_name": "execution",
           "success": true,
@@ -274,7 +286,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-04T10:21:22.139616",
+        "timestamp": "2025-08-04T19:52:00.769929",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -298,7 +310,7 @@
     },
     "focus": {
       "metadata": {
-        "timestamp": "2025-08-04T10:19:37.127454",
+        "timestamp": "2025-08-04T19:47:23.387621",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -313,7 +325,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-04T10:19:50.405319",
+        "timestamp": "2025-08-04T19:47:47.906026",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -333,7 +345,7 @@
         }
       },
       "execution": {
-        "timestamp": "2025-08-04T10:21:16.717056",
+        "timestamp": "2025-08-04T19:50:19.037329",
         "result": {
           "task_name": "execution",
           "success": true,
@@ -354,7 +366,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-04T10:21:22.140387",
+        "timestamp": "2025-08-04T19:52:00.772058",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -378,7 +390,7 @@
     },
     "czech-republic-pisa2012_zakovsky_dotaznik_a": {
       "metadata": {
-        "timestamp": "2025-08-04T10:19:37.130084",
+        "timestamp": "2025-08-04T19:47:23.393731",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -393,7 +405,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-04T10:19:53.368422",
+        "timestamp": "2025-08-04T19:47:54.051151",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -429,7 +441,7 @@
         }
       },
       "execution": {
-        "timestamp": "2025-08-04T10:21:19.283776",
+        "timestamp": "2025-08-04T19:51:57.045905",
         "result": {
           "task_name": "execution",
           "success": true,
@@ -450,7 +462,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-04T10:21:22.141221",
+        "timestamp": "2025-08-04T19:52:00.775102",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -474,7 +486,7 @@
     },
     "mednine": {
       "metadata": {
-        "timestamp": "2025-08-04T10:19:37.134184",
+        "timestamp": "2025-08-04T19:47:23.397927",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -489,7 +501,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-04T10:19:57.954441",
+        "timestamp": "2025-08-04T19:47:59.372543",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -513,7 +525,7 @@
         }
       },
       "execution": {
-        "timestamp": "2025-08-04T10:21:22.137089",
+        "timestamp": "2025-08-04T19:52:00.757779",
         "result": {
           "task_name": "execution",
           "success": true,
@@ -534,7 +546,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-04T10:21:22.142757",
+        "timestamp": "2025-08-04T19:52:00.777710",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -558,7 +570,7 @@
     },
     "20252026-236232": {
       "metadata": {
-        "timestamp": "2025-08-04T10:19:37.132921",
+        "timestamp": "2025-08-04T19:47:23.396665",
         "result": {
           "task_name": "metadata",
           "success": true,
@@ -573,7 +585,7 @@
         }
       },
       "execution": {
-        "timestamp": "2025-08-04T10:21:21.696233",
+        "timestamp": "2025-08-04T19:52:00.044417",
         "result": {
           "task_name": "execution",
           "success": true,
@@ -594,7 +606,7 @@
         }
       },
       "screenshots": {
-        "timestamp": "2025-08-04T10:19:56.579085",
+        "timestamp": "2025-08-04T19:47:57.905303",
         "result": {
           "task_name": "screenshots",
           "success": true,
@@ -626,7 +638,7 @@
         }
       },
       "notebooks": {
-        "timestamp": "2025-08-04T10:21:22.141966",
+        "timestamp": "2025-08-04T19:52:00.776846",
         "result": {
           "task_name": "notebooks",
           "success": true,
@@ -644,6 +656,416 @@
           "outputs_created": [
             "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/20252026-236232/notebooks/20252026-236232.ipynb",
             "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/20252026-236232/notebooks/manifest.json"
+          ]
+        }
+      }
+    },
+    "multicolumn-layout": {
+      "metadata": {
+        "timestamp": "2025-08-04T19:16:21.889854",
+        "result": {
+          "task_name": "metadata",
+          "success": true,
+          "data": {
+            "metadata_count": 1
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/multicolumn-layout/page-structure.json",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/multicolumn-layout/metadata.json"
+          ]
+        }
+      },
+      "screenshots": {
+        "timestamp": "2025-08-04T19:16:24.686047",
+        "result": {
+          "task_name": "screenshots",
+          "success": true,
+          "data": {
+            "status": "success",
+            "pdf_file": "needs-ocr.pdf",
+            "page_count": 1,
+            "screenshots_generated": 1
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/multicolumn-layout/needs-ocr-1.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/multicolumn-layout/needs-ocr-1-thumb.png"
+          ]
+        }
+      },
+      "notebooks": {
+        "timestamp": "2025-08-04T19:21:20.247147",
+        "result": {
+          "task_name": "notebooks",
+          "success": true,
+          "data": {
+            "notebooks_created": 1,
+            "results": [
+              {
+                "approach": "page-structure",
+                "status": "success",
+                "path": "pdfs/multicolumn-layout/notebooks/page-structure.ipynb"
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/multicolumn-layout/notebooks/page-structure.ipynb",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/multicolumn-layout/notebooks/manifest.json"
+          ]
+        }
+      },
+      "execution": {
+        "timestamp": "2025-08-04T19:17:36.353065",
+        "result": {
+          "task_name": "execution",
+          "success": true,
+          "data": {
+            "executed": 1,
+            "results": [
+              {
+                "approach": "page-structure",
+                "status": "success",
+                "code_errors": 0
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/multicolumn-layout/executions/page-structure.json"
+          ]
+        }
+      }
+    },
+    "simple-text": {
+      "metadata": {
+        "timestamp": "2025-08-04T19:47:23.369574",
+        "result": {
+          "task_name": "metadata",
+          "success": true,
+          "data": {
+            "metadata_count": 1
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/simple-text/extract.json",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/simple-text/metadata.json"
+          ]
+        }
+      },
+      "screenshots": {
+        "timestamp": "2025-08-04T19:47:29.595128",
+        "result": {
+          "task_name": "screenshots",
+          "success": true,
+          "data": {
+            "status": "success",
+            "pdf_file": "practice.pdf",
+            "page_count": 1,
+            "screenshots_generated": 1
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/simple-text/practice-1-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/simple-text/practice-1.png"
+          ]
+        }
+      },
+      "notebooks": {
+        "timestamp": "2025-08-04T19:52:00.761403",
+        "result": {
+          "task_name": "notebooks",
+          "success": true,
+          "data": {
+            "notebooks_created": 1,
+            "results": [
+              {
+                "approach": "extract",
+                "status": "success",
+                "path": "pdfs/simple-text/notebooks/extract.ipynb"
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/simple-text/notebooks/extract.ipynb",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/simple-text/notebooks/manifest.json"
+          ]
+        }
+      },
+      "execution": {
+        "timestamp": "2025-08-04T19:48:14.728934",
+        "result": {
+          "task_name": "execution",
+          "success": true,
+          "data": {
+            "executed": 1,
+            "results": [
+              {
+                "approach": "extract",
+                "status": "success",
+                "code_errors": 0
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/simple-text/executions/extract.json"
+          ]
+        }
+      }
+    },
+    "statecallcenterdata_redacted": {
+      "metadata": {
+        "timestamp": "2025-08-04T19:47:23.378340",
+        "result": {
+          "task_name": "metadata",
+          "success": true,
+          "data": {
+            "metadata_count": 1
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/statecallcenterdata_redacted/statecallcenterdata_redacted.json",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/statecallcenterdata_redacted/metadata.json"
+          ]
+        }
+      },
+      "screenshots": {
+        "timestamp": "2025-08-04T19:47:38.066852",
+        "result": {
+          "task_name": "screenshots",
+          "success": true,
+          "data": {
+            "status": "success",
+            "pdf_file": "statecallcenterdata_redacted.pdf",
+            "page_count": 66,
+            "screenshots_generated": 10
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-1.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-3-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-3.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-2.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-6.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-7.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-8-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-5.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-4.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-5-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-2-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-9-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-10-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-4-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-1-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-7-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-9.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-8.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-6-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/statecallcenterdata_redacted/statecallcenterdata_redacted-10.png"
+          ]
+        }
+      },
+      "notebooks": {
+        "timestamp": "2025-08-04T19:52:00.765911",
+        "result": {
+          "task_name": "notebooks",
+          "success": true,
+          "data": {
+            "notebooks_created": 1,
+            "results": [
+              {
+                "approach": "statecallcenterdata_redacted",
+                "status": "success",
+                "path": "pdfs/statecallcenterdata_redacted/notebooks/statecallcenterdata_redacted.ipynb"
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/statecallcenterdata_redacted/notebooks/statecallcenterdata_redacted.ipynb",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/statecallcenterdata_redacted/notebooks/manifest.json"
+          ]
+        }
+      },
+      "execution": {
+        "timestamp": "2025-08-04T19:48:56.050207",
+        "result": {
+          "task_name": "execution",
+          "success": true,
+          "data": {
+            "executed": 1,
+            "results": [
+              {
+                "approach": "statecallcenterdata_redacted",
+                "status": "success",
+                "code_errors": 0
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/statecallcenterdata_redacted/executions/statecallcenterdata_redacted.json"
+          ]
+        }
+      }
+    },
+    "ocr-example": {
+      "metadata": {
+        "timestamp": "2025-08-04T19:47:23.390918",
+        "result": {
+          "task_name": "metadata",
+          "success": true,
+          "data": {
+            "metadata_count": 1
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/ocr-example/ocr-and-ai-magic.json",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/ocr-example/metadata.json"
+          ]
+        }
+      },
+      "screenshots": {
+        "timestamp": "2025-08-04T19:47:50.025785",
+        "result": {
+          "task_name": "screenshots",
+          "success": true,
+          "data": {
+            "status": "success",
+            "pdf_file": "needs-ocr.pdf",
+            "page_count": 1,
+            "screenshots_generated": 1
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/ocr-example/needs-ocr-1.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/ocr-example/needs-ocr-1-thumb.png"
+          ]
+        }
+      },
+      "execution": {
+        "timestamp": "2025-08-04T19:51:51.518749",
+        "result": {
+          "task_name": "execution",
+          "success": true,
+          "data": {
+            "executed": 1,
+            "results": [
+              {
+                "approach": "ocr-and-ai-magic",
+                "status": "success",
+                "code_errors": 5
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/ocr-example/executions/ocr-and-ai-magic.json"
+          ]
+        }
+      },
+      "notebooks": {
+        "timestamp": "2025-08-04T19:52:00.773795",
+        "result": {
+          "task_name": "notebooks",
+          "success": true,
+          "data": {
+            "notebooks_created": 1,
+            "results": [
+              {
+                "approach": "ocr-and-ai-magic",
+                "status": "success",
+                "path": "pdfs/ocr-example/notebooks/ocr-and-ai-magic.ipynb"
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/ocr-example/notebooks/ocr-and-ai-magic.ipynb",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/ocr-example/notebooks/manifest.json"
+          ]
+        }
+      }
+    },
+    "multicolumn": {
+      "metadata": {
+        "timestamp": "2025-08-04T19:47:23.381820",
+        "result": {
+          "task_name": "metadata",
+          "success": true,
+          "data": {
+            "metadata_count": 1
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/multicolumn/multicolumn.json",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/multicolumn/metadata.json"
+          ]
+        }
+      },
+      "screenshots": {
+        "timestamp": "2025-08-04T19:47:40.285812",
+        "result": {
+          "task_name": "screenshots",
+          "success": true,
+          "data": {
+            "status": "success",
+            "pdf_file": "needs-ocr.pdf",
+            "page_count": 1,
+            "screenshots_generated": 1
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/multicolumn/needs-ocr-1.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/multicolumn/multicolumn-1.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/multicolumn/needs-ocr-1-thumb.png",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/screenshots/multicolumn/multicolumn-1-thumb.png"
+          ]
+        }
+      },
+      "execution": {
+        "timestamp": "2025-08-04T19:49:14.076181",
+        "result": {
+          "task_name": "execution",
+          "success": true,
+          "data": {
+            "executed": 1,
+            "results": [
+              {
+                "approach": "multicolumn",
+                "status": "success",
+                "code_errors": 0
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/multicolumn/executions/multicolumn.json"
+          ]
+        }
+      },
+      "notebooks": {
+        "timestamp": "2025-08-04T19:52:00.767563",
+        "result": {
+          "task_name": "notebooks",
+          "success": true,
+          "data": {
+            "notebooks_created": 1,
+            "results": [
+              {
+                "approach": "multicolumn",
+                "status": "success",
+                "path": "pdfs/multicolumn/notebooks/multicolumn.ipynb"
+              }
+            ]
+          },
+          "error": null,
+          "outputs_created": [
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/multicolumn/notebooks/multicolumn.ipynb",
+            "/Users/soma/Development/badpdfs-analysis/artifacts/pdfs/multicolumn/notebooks/manifest.json"
           ]
         }
       }

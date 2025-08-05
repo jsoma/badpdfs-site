@@ -90,18 +90,27 @@ class ExecutionTask(Task):
                 
                 # Check for errors in code blocks
                 error_count = 0
-                for cell in result.get('cells', []):
+                for cell_idx, cell in enumerate(result.get('cells', [])):
                     if cell.get('type') == 'code' and cell.get('execution', {}).get('status') == 'error':
                         error_count += 1
-                        error_lines = cell['execution']['error'].splitlines()
-                        # Find the actual error message (last line before traceback)
-                        error_msg = error_lines[-1] if error_lines else "Unknown error"
-                        context.log(f"Code block error in {approach.slug}: {error_msg}", "ERROR")
+                        full_error = cell['execution']['error']
+                        context.log(f"\n{'='*60}", "ERROR")
+                        context.log(f"Code block error in {approach.slug} (cell #{cell_idx + 1}):", "ERROR")
+                        context.log(f"Code snippet: {cell.get('content', '')[:100]}...", "ERROR")
+                        context.log(f"{'='*60}", "ERROR")
+                        context.log(f"Full traceback:\n{full_error}", "ERROR")
+                        context.log(f"{'='*60}\n", "ERROR")
                     elif cell.get('type') == 'tab':
-                        for tab_cell in cell.get('cells', []):
+                        for tab_idx, tab_cell in enumerate(cell.get('cells', [])):
                             if tab_cell.get('type') == 'code' and tab_cell.get('execution', {}).get('status') == 'error':
                                 error_count += 1
-                                context.log(f"Code block error in {approach.slug} (tab): {tab_cell['execution']['error'].splitlines()[0]}", "ERROR")
+                                full_error = tab_cell['execution']['error']
+                                context.log(f"\n{'='*60}", "ERROR")
+                                context.log(f"Code block error in {approach.slug} (tab cell #{tab_idx + 1}):", "ERROR")
+                                context.log(f"Code snippet: {tab_cell.get('content', '')[:100]}...", "ERROR")
+                                context.log(f"{'='*60}", "ERROR")
+                                context.log(f"Full traceback:\n{full_error}", "ERROR")
+                                context.log(f"{'='*60}\n", "ERROR")
                 
                 if error_count > 0:
                     context.log(f"Found {error_count} code block error(s) in {approach.slug}", "WARNING")

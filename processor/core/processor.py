@@ -524,12 +524,28 @@ class GalleryProcessor:
                             self.log(f"  Message: {error_msg}")
                             
                             if details:
-                                # Extract the most relevant error from traceback
-                                lines = details.strip().split('\n')
-                                if lines:
-                                    # Get the last line which usually has the actual error
-                                    last_line = lines[-1].strip()
-                                    self.log(f"  Details: {last_line}")
+                                # For execution errors, show the full traceback
+                                if error_type == "execution_error":
+                                    # Show the failing code first
+                                    failing_code = error.get("code", "")
+                                    if failing_code:
+                                        self.log("  Failing Code:")
+                                        self.log("  " + "-" * 50)
+                                        for line in failing_code.strip().split('\n'):
+                                            self.log(f"  {line}")
+                                        self.log("  " + "-" * 50)
+                                    
+                                    self.log("  Full Traceback:")
+                                    self.log("  " + "-" * 50)
+                                    for line in details.strip().split('\n'):
+                                        self.log(f"  {line}")
+                                    self.log("  " + "-" * 50)
+                                else:
+                                    # For other errors, show just the last line
+                                    lines = details.strip().split('\n')
+                                    if lines:
+                                        last_line = lines[-1].strip()
+                                        self.log(f"  Details: {last_line}")
                                     
                                     # Provide specific fixes
                                     if "ImportError" in details and "pikepdf" in details:

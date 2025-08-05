@@ -174,18 +174,83 @@ class NotebookTask(Task):
             ]
         })
         
-        # Add code blocks from markdown
-        for code_block in approach.code_blocks:
-            if code_block.language == 'python':
-                # Split code into lines for notebook format
-                source_lines = code_block.content.split('\n')
+        # Parse the full content to preserve markdown and code order
+        content = approach.content
+        
+        # Remove frontmatter
+        if content.startswith('---'):
+            try:
+                end_index = content.index('---', 3)
+                content = content[end_index + 3:].strip()
+            except ValueError:
+                pass
+        
+        # Split content into sections (markdown and code blocks)
+        import re
+        
+        # Pattern to match code blocks (including language)
+        code_pattern = r'```(\w*)\n(.*?)\n```'
+        
+        # Split the content by code blocks
+        parts = re.split(code_pattern, content, flags=re.DOTALL)
+        
+        # Process parts: parts[0] is markdown, then alternates: lang, code, markdown, lang, code, etc.
+        i = 0
+        while i < len(parts):
+            if i % 3 == 0:  # Markdown sections
+                markdown_content = parts[i].strip()
+                if markdown_content:
+                    # Split into lines and add newlines
+                    lines = markdown_content.split('\n')
+                    source_lines = [line + '\n' for line in lines[:-1]]
+                    if lines[-1]:
+                        source_lines.append(lines[-1])
+                    
+                    notebook["cells"].append({
+                        "cell_type": "markdown",
+                        "metadata": {},
+                        "source": source_lines
+                    })
+            elif i % 3 == 1:  # Language identifier
+                lang = parts[i] or 'python'
+                code = parts[i + 1]
                 
-                notebook["cells"].append({
-                    "cell_type": "code",
-                    "execution_count": None,
-                    "metadata": {},
-                    "outputs": [],
-                    "source": source_lines
-                })
+                if lang in ['python', 'py']:
+                    # Split code into lines for notebook format, preserving newlines
+                    lines = code.split('\n')
+                    # Add newline to all lines except the last one
+                    source_lines = [line + '\n' for line in lines[:-1]]
+                    if lines[-1]:  # If last line is not empty, add it without newline
+                        source_lines.append(lines[-1])
+                    
+                    notebook["cells"].append({
+                        "cell_type": "code",
+                        "execution_count": None,
+                        "metadata": {},
+                        "outputs": [],
+                        "source": source_lines
+                    })
+                elif lang == 'bash':
+                    # For bash blocks, add them as code cells with ! prefix
+                    lines = code.split('\n')
+                    source_lines = []
+                    for line in lines[:-1]:
+                        if line.strip():
+                            source_lines.append('!' + line + '\n')
+                        else:
+                            source_lines.append('\n')
+                    if lines[-1]:
+                        source_lines.append('!' + lines[-1])
+                    
+                    notebook["cells"].append({
+                        "cell_type": "code",
+                        "execution_count": None,
+                        "metadata": {},
+                        "outputs": [],
+                        "source": source_lines
+                    })
+                # Skip i+1 since we already processed the code
+                i += 1
+            i += 1
         
         return notebook

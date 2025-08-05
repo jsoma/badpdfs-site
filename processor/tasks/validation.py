@@ -202,7 +202,8 @@ class ValidationTask(BatchTask):
                             errors.append({
                                 "type": "execution_error",
                                 "message": "Code execution failed",
-                                "details": exec_result.get('error', 'Unknown error')
+                                "details": exec_result.get('error', 'Unknown error'),
+                                "code": cell.get('content', 'Code not available')
                             })
                             break  # Only report first error
         

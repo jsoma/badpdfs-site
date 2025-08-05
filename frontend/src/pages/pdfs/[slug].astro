@@ -171,6 +171,31 @@ execution.cells = execution.cells.map(cell => {
               </div>
             )}
 
+            <!-- Colab Link -->
+            <div class="mb-4">
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">The code</h3>
+                <div class="flex flex-wrap gap-2">
+              <a 
+                href={`https://colab.research.google.com/github/jsoma/badpdfs-site/blob/gh-pages/artifacts/pdfs/${pdf.id}/notebooks/${pdf.slug}.ipynb`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-block colab-btn"
+                title="Open in Google Colab"
+              >
+                <img src="/colab-badge.svg" alt="Open in Colab" />
+              </a>
+              <a 
+                href={`https://github.com/jsoma/badpdfs-site/blob/gh-pages/artifacts/pdfs/${pdf.id}/notebooks/${pdf.slug}.ipynb`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-block gh-btn"
+                title="Open in GitHub"
+              >
+                <img src="/gh-badge.svg" alt="Read notebook" />
+              </a>
+              </div>
+            </div>
+
             <!-- Other walkthroughs using this PDF -->
             {allApproaches && allApproaches.length > 1 && (
               <div class="related-tutorials">
@@ -807,6 +832,12 @@ execution.cells = execution.cells.map(cell => {
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
     
+    /* Colab button */
+    .colab-btn img, .gh-btn img {
+      height: 20px;
+      width: auto;
+    }
+
     /* PDF Sidebar */
     .pdf-sidebar {
       flex: 0 0 auto;

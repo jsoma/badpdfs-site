@@ -89,7 +89,7 @@ jobs:
           pip install --upgrade "natural-pdf[all] @ git+https://github.com/jsoma/natural-pdf.git"
           pip install easyocr
           pip install doclayout_yolo
-          pip install surya-ocr
+          pip install surya-ocr<0.15
           
       - name: Download missing PDFs
         working-directory: processor
