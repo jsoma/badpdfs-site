@@ -122,6 +122,8 @@ jobs:
       
       - name: Build processor artifacts
         working-directory: processor
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           source .venv/bin/activate
           if [[ "${{ steps.check-rebuild.outputs.REBUILD_NEEDED }}" == "true" ]]; then
