@@ -43,7 +43,7 @@ Granted if our OCR was off we might not be able to just grab what we're looking 
 We can preview to make sure the page looks right...
 
 ```python
-pdf.find(text="FINANCIAL HIGHLIGHTS").page
+page = pdf.find(text="FINANCIAL HIGHLIGHTS").page
 page.show()
 ```
 
