@@ -28,14 +28,16 @@ page = pdf.pages[0]
 page.show(width=700)
 ```
 
-Looks like it's full of text, right? But when we try to extract the text...
+Looks like it's full of text, right? But when we try to extract the text, it doesn't go as planned.
 
 ```python
 text = page.extract_text()
 print(text)
 ```
 
-Nothing! **It's time for OCR.**
+Nothing – **it's time for OCR!**
+
+OCR stands for Optical Character Recognition, which just means *detecting characters from images*. No one ever actually says "optical character recognition," though, they always just call it "OCR."
 
 There are a looooot of OCR engines out there, and one of the things that makes Natural PDF nice is that it supports multiples. Figuring out which one is the "best" isn't as tough when you can just run them all right after each other.
 
