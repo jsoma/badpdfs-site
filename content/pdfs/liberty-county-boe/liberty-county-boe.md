@@ -53,7 +53,7 @@ page.show()
 text = page.extract_text()
 print(text)
 
-with open("content.txt") as fp:
+with open("content.txt", 'w') as fp:
     fp.write(text)
 ```
 
