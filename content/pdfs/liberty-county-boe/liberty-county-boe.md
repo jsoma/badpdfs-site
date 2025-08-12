@@ -11,6 +11,7 @@ tags:
 file_size_mb: 2.1
 page_count: 72
 submitted_by: Maggie Lee
+published: true
 ---
 # Bad OCR in a board of education annual financial report
 
