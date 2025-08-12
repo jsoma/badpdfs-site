@@ -144,7 +144,7 @@ jobs:
             python build.py rebuild
           else
             echo "🔄 Running incremental build..."
-            python build.py build -v
+            python build.py build
           fi
           
           # Show what was processed
