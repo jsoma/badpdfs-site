@@ -131,6 +131,29 @@ source ./bin/activate
 python process_all.py
 ```
 
+### GitHub Actions builds taking too long (30+ minutes)
+The caching issue has been fixed. The problem was that the cache key included ALL markdown and Python files, so any change invalidated the entire cache including `.build_cache.json`. This caused everything to rebuild from scratch.
+
+**The fix:**
+- Separated build cache (`.build_cache.json`) with a stable key from artifacts cache
+- Removed force rebuild logic that triggered on Python file changes
+- Let the incremental build system decide what needs rebuilding
+
+**How it works now:**
+- Build cache uses key: `Linux-build-cache-v2` (stable, doesn't change)
+- Artifacts cache uses key: `Linux-artifacts-{content-hash}-{run-number}`
+- When content changes, build cache is still restored, allowing incremental builds
+- Only changed files are reprocessed instead of everything
+
+**Cache restore keys:**
+The trailing `-` in restore-keys acts as a prefix matcher for fallback:
+```yaml
+restore-keys: |
+  Linux-artifacts-abc123-  # Tries same content, any run number
+  Linux-artifacts-         # Tries any Linux artifacts as last resort
+```
+This ensures we always get the best available cache even if exact match fails.
+
 ## Project Structure
 
 ```
@@ -158,3 +181,4 @@ python process_all.py
 - After front-end changes, check the website with playwright to confirm it works. Click, take screenshots, etc, whatever is necessary.
 - Methods should be displayed consistently across all pages (home, PDF detail, search)
 - Tag/method badges use vibrant colors but professional styling (no crazy gradients)
+- If you're asked to fix or update something in filename.py, don't make a filename-fixed.py. Just update the original filename.py.

@@ -68,15 +68,30 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pdfs-
       
+      # CRITICAL FIX: Use a stable cache key for the build cache file
+      # This allows the build system to track what has already been processed
+      - name: Cache build state
+        uses: actions/cache@v3
+        with:
+          path: processor/.build_cache.json
+          # Use a stable key that doesn't change with file contents
+          key: ${{ runner.os }}-build-cache-v2
+          # Always restore the most recent cache
+          restore-keys: |
+            ${{ runner.os }}-build-cache-v2
+            ${{ runner.os }}-build-cache-
+      
+      # Cache generated artifacts separately with content-based keys
       - name: Cache build artifacts
         uses: actions/cache@v3
         with:
           path: |
-            processor/.build_cache.json
             processor/artifacts/
             frontend/public/artifacts/
-          key: ${{ runner.os }}-artifacts-${{ hashFiles('content/pdfs/**/*.md', 'processor/**/*.py') }}
+          # This key changes when content changes, but doesn't affect build cache
+          key: ${{ runner.os }}-artifacts-${{ hashFiles('content/pdfs/**/*.md') }}-${{ github.run_number }}
           restore-keys: |
+            ${{ runner.os }}-artifacts-${{ hashFiles('content/pdfs/**/*.md') }}-
             ${{ runner.os }}-artifacts-
       
       - name: Setup Python environment
@@ -100,38 +115,41 @@ jobs:
           pip install boto3
           python scripts/download_pdfs_from_r2_sync.py
       
-      - name: Check if processor rebuild needed
-        id: check-rebuild
-        run: |
-          # Check manual force rebuild input
-          if [[ "${{ inputs.force_rebuild }}" == "true" ]]; then
-            echo "REBUILD_NEEDED=true" >> $GITHUB_OUTPUT
-            echo "Manual force rebuild requested"
-          # For non-push events or initial commits, always rebuild
-          elif [[ "${{ github.event_name }}" != "push" ]] || [[ "${{ github.event.before }}" == "0000000000000000000000000000000000000000" ]]; then
-            echo "REBUILD_NEEDED=true" >> $GITHUB_OUTPUT
-            echo "Non-push event or initial commit, will force rebuild"
-          # Check if any processor Python files have changed
-          elif git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "processor/.*\.py$"; then
-            echo "REBUILD_NEEDED=true" >> $GITHUB_OUTPUT
-            echo "Processor files changed, will force rebuild"
-          else
-            echo "REBUILD_NEEDED=false" >> $GITHUB_OUTPUT
-            echo "No processor changes detected"
-          fi
-      
+      # SIMPLIFIED: Let the build system decide what needs rebuilding
       - name: Build processor artifacts
         working-directory: processor
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           source .venv/bin/activate
-          if [[ "${{ steps.check-rebuild.outputs.REBUILD_NEEDED }}" == "true" ]]; then
-            echo "Force rebuilding due to processor changes..."
+          
+          # Show cache status before build
+          echo "=== Build Cache Status ==="
+          if [ -f .build_cache.json ]; then
+            echo "✅ Build cache found"
+            echo "Cache size: $(wc -c < .build_cache.json) bytes"
+            echo "Cache modified: $(stat -c %y .build_cache.json 2>/dev/null || stat -f %Sm .build_cache.json)"
+          else
+            echo "❌ No build cache found - will rebuild everything"
+          fi
+          
+          # Run diagnostics first (if available)
+          if [ -f diagnose_cache.py ]; then
+            python diagnose_cache.py || true
+          fi
+          
+          # Build with appropriate command
+          if [[ "${{ inputs.force_rebuild }}" == "true" ]]; then
+            echo "🔨 Force rebuilding all artifacts..."
             python build.py rebuild
           else
-            python build.py build
+            echo "🔄 Running incremental build..."
+            python build.py build -v
           fi
+          
+          # Show what was processed
+          echo "=== Build Summary ==="
+          python build.py status
       
       - name: Build frontend
         working-directory: frontend
