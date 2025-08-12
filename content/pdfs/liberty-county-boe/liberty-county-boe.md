@@ -20,7 +20,7 @@ So we have a reasonably long PDF (72 pages) that we want to grab a single page o
 ```python
 from natural_pdf import PDF
 
-pdf = PDF("liberty-county-boe/liberty-county-boe.pdf", text_layer=False)
+pdf = PDF("liberty-county-boe.pdf", text_layer=False)
 pdf.pages.show(cols=6)
 ```
 
