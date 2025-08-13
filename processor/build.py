@@ -58,8 +58,11 @@ def main():
     # Initialize configuration
     config = Config()
     
+    # Use cache file in processor directory for consistency
+    cache_file = Path(__file__).parent / ".build_cache.json"
+    
     # Create processor (verbose is True by default, use --quiet to disable)
-    processor = GalleryProcessor(config, verbose=not args.quiet)
+    processor = GalleryProcessor(config, cache_file=cache_file, verbose=not args.quiet)
     
     # Register all tasks
     all_tasks = {
