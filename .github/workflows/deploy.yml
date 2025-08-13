@@ -86,7 +86,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            processor/artifacts/
+            artifacts/
             frontend/public/artifacts/
           # This key changes when content changes, but doesn't affect build cache
           key: ${{ runner.os }}-artifacts-${{ hashFiles('content/pdfs/**/*.md') }}-${{ github.run_number }}
