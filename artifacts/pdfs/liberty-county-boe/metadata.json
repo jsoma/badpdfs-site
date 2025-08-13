@@ -1,0 +1,105 @@
+[
+  {
+    "slug": "liberty-county-boe",
+    "title": "Bad OCR in a board of education annual financial report",
+    "description": "This PDF is all sorts of information about the Board of Education in Liberty County, Georgia",
+    "pdf": "liberty-county-boe.pdf",
+    "tags": [
+      "financial report",
+      "multi-page",
+      "OCR",
+      "page navigation"
+    ],
+    "file_size_mb": 2.1,
+    "page_count": 72,
+    "submitted_by": "Maggie Lee",
+    "published": true,
+    "file": "liberty-county-boe.md",
+    "id": "liberty-county-boe",
+    "methods": [
+      "PDF",
+      "extract_text",
+      "find",
+      "render",
+      "save",
+      "show"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "liberty-county-boe.pdf"
+        ],
+        "kwargs": {
+          "text_layer": false
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "pdf.show",
+        "args": [],
+        "kwargs": {
+          "cols": 6
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "pdf.find",
+        "args": [],
+        "kwargs": {
+          "text": "FINANCIAL HIGHLIGHTS"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "pdf.find",
+        "args": [],
+        "kwargs": {
+          "text": "FINANCIAL HIGHLIGHTS"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "save",
+        "method_full": "save",
+        "args": [
+          "output.png"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "render",
+        "method_full": "page.render",
+        "args": [],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [],
+    "complexity": {
+      "code_blocks": 6,
+      "total_lines": 12,
+      "total_chars": 356
+    },
+    "approaches": [
+      "liberty-county-boe.md"
+    ]
+  }
+]

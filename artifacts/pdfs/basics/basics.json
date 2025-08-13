@@ -1,0 +1,242 @@
+{
+  "slug": "basics",
+  "title": "Natural PDF basics with text and tables",
+  "description": "Learn the fundamentals of Natural PDF - opening PDFs, extracting text with layout preservation, selecting elements by criteria, spatial navigation, and managing exclusion zones. Perfect starting point for PDF data extraction.",
+  "pdf": "basics.pdf",
+  "tags": [
+    "Text Extraction",
+    "Basic Usage",
+    "Element Selection",
+    "Spatial Navigation",
+    "Tables",
+    "Exclusion Zones"
+  ],
+  "file_size_mb": 0.2,
+  "page_count": 1,
+  "submitted_by": "Natural PDF Team",
+  "published": true,
+  "file": "basics.md",
+  "id": "basics",
+  "methods": [
+    "PDF",
+    "add_exclusion",
+    "extract_each_text",
+    "extract_table",
+    "extract_text",
+    "find",
+    "find_all",
+    "region",
+    "right",
+    "show",
+    "to_df"
+  ],
+  "method_usage": [
+    {
+      "method": "PDF",
+      "method_full": "PDF",
+      "args": [
+        "basics.pdf"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "page.show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "page.extract_text",
+      "args": [],
+      "kwargs": {
+        "layout": true
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "find",
+      "method_full": "page.find",
+      "args": [
+        "rect"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "extract_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "find",
+      "method_full": "page.find",
+      "args": [
+        "rect"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "find_all",
+      "method_full": "page.find_all",
+      "args": [
+        "text"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_each_text",
+      "method_full": "extract_each_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "find_all",
+      "method_full": "page.find_all",
+      "args": [
+        "text"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "find",
+      "method_full": "page.find",
+      "args": [
+        "text[color~=red]"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "red_text.extract_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "find",
+      "method_full": "page.find",
+      "args": [
+        "text:contains(\"INS-\")"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "text.extract_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "right",
+      "method_full": "right",
+      "args": [],
+      "kwargs": {
+        "height": "element"
+      }
+    },
+    {
+      "method": "find",
+      "method_full": "page.find",
+      "args": [],
+      "kwargs": {
+        "text": "Date:"
+      }
+    },
+    {
+      "method": "extract_table",
+      "method_full": "page.extract_table",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "to_df",
+      "method_full": "table.to_df",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "region",
+      "method_full": "page.region",
+      "args": [],
+      "kwargs": {
+        "top": 0,
+        "left": 0,
+        "height": 80
+      }
+    },
+    {
+      "method": "find_all",
+      "method_full": "page.find_all",
+      "args": [
+        "line"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "add_exclusion",
+      "method_full": "page.add_exclusion",
+      "args": [
+        "<var:top>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "add_exclusion",
+      "method_full": "page.add_exclusion",
+      "args": [
+        "<var:bottom>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "page.extract_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "add_exclusion",
+      "method_full": "pdf.add_exclusion",
+      "args": [
+        "<Lambda>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "region",
+      "method_full": "page.region",
+      "args": [],
+      "kwargs": {
+        "top": 0,
+        "left": 0,
+        "height": 80
+      }
+    }
+  ],
+  "selectors": [
+    "line",
+    "rect",
+    "text",
+    "text:contains(\"INS-\")",
+    "text[color~=red]"
+  ],
+  "complexity": {
+    "code_blocks": 14,
+    "total_lines": 34,
+    "total_chars": 1008
+  },
+  "approaches": [
+    "basics.md"
+  ]
+}

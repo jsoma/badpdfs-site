@@ -1,0 +1,763 @@
+[
+  {
+    "slug": "k046682-111320-opa-lea-database-install_1",
+    "title": "Complex Extraction of Law Enforcement Complaints",
+    "description": "This PDF contains a set of complaint records from a local law enforcement agency. Challenges include its relational data structure, unusual formatting common in the region, and redactions that disrupt automatic parsing.",
+    "pdf": "k046682-111320-opa-lea-database-install_1.pdf",
+    "tags": [
+      "law enforcement",
+      "PDF extraction",
+      "redactions",
+      "relational data",
+      "complex formatting"
+    ],
+    "file_size_mb": 1.02,
+    "page_count": 5,
+    "submitted_by": "Brandon Roberts",
+    "language": [
+      "English",
+      "English"
+    ],
+    "published": true,
+    "file": "k046682-111320-opa-lea-database-install_1.md",
+    "id": "k046682-111320-opa-lea-database-install_1",
+    "methods": [
+      "Guides",
+      "PDF",
+      "above",
+      "add_exclusion",
+      "below",
+      "expand",
+      "extract_table",
+      "extract_text",
+      "find",
+      "find_all",
+      "from_lines",
+      "get_sections",
+      "merge",
+      "right",
+      "show",
+      "to_df"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "k046682-111320-opa-lea-database-install_1.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "pdf.show",
+        "args": [],
+        "kwargs": {
+          "cols": 3
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "pdf.add_exclusion",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "L.E.A. Data Technologies"
+        }
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "pdf.add_exclusion",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "above",
+        "method_full": "above",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "Complaints By Date"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {
+          "exclusions": "black"
+        }
+      },
+      {
+        "method": "get_sections",
+        "method_full": "pdf.get_sections",
+        "args": [
+          "text:contains(Recorded)"
+        ],
+        "kwargs": {
+          "include_boundaries": "start"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "sections.show",
+        "args": [],
+        "kwargs": {
+          "cols": 3
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text",
+          "width": "element"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {
+          "overlap": "partial"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text",
+          "width": "element"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": 100
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text",
+          "width": "element"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": "<var:section>"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": "<var:section>"
+        }
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": 5,
+          "bottom": 7
+        }
+      },
+      {
+        "method": "merge",
+        "method_full": "merge",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": [
+            "Type of Complaint",
+            "Description",
+            "Complaint Disposition"
+          ]
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "extract_table",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": 5,
+          "bottom": 7
+        }
+      },
+      {
+        "method": "merge",
+        "method_full": "merge",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": 5,
+          "bottom": 7
+        }
+      },
+      {
+        "method": "merge",
+        "method_full": "merge",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<var:table>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "from_lines",
+        "method_full": "guides.from_lines",
+        "args": [],
+        "kwargs": {
+          "n": 4
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": [
+            "Type of Complaint",
+            "Description",
+            "Complaint Disposition"
+          ]
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "table.extract_table",
+        "args": [],
+        "kwargs": {
+          "verticals": "<Attribute>"
+        }
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": 5,
+          "bottom": 7
+        }
+      },
+      {
+        "method": "merge",
+        "method_full": "merge",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<var:table>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "from_lines",
+        "method_full": "guides.from_lines",
+        "args": [],
+        "kwargs": {
+          "n": 8
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": [
+            "Name",
+            "ID No.",
+            "Rank",
+            "Division",
+            "Officer Disposition",
+            "Action Taken",
+            "Body Cam"
+          ]
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "table.extract_table",
+        "args": [],
+        "kwargs": {
+          "verticals": "<Attribute>"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {
+          "overlap": "partial"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text",
+          "width": "element"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {
+          "overlap": "partial"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text",
+          "width": "element"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "left": 5,
+          "right": 5
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "left": 5,
+          "right": 5
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "left": 5,
+          "right": 5
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text",
+          "width": "element"
+        }
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {
+          "overlap": "partial"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text",
+          "width": "element"
+        }
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": 3,
+          "bottom": 6
+        }
+      },
+      {
+        "method": "merge",
+        "method_full": "merge",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<var:table>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "from_lines",
+        "method_full": "guides.from_lines",
+        "args": [],
+        "kwargs": {
+          "n": 8
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": "<var:columns>"
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "table.extract_table",
+        "args": [],
+        "kwargs": {
+          "verticals": "<Attribute>"
+        }
+      }
+    ],
+    "selectors": [
+      "text",
+      "text:contains(Address)",
+      "text:contains(Complainant)",
+      "text:contains(Complaint #)",
+      "text:contains(Completed)",
+      "text:contains(DOB)",
+      "text:contains(Date Assigned)",
+      "text:contains(Gender)",
+      "text:contains(H Phone)",
+      "text:contains(Investigator)",
+      "text:contains(Number)",
+      "text:contains(Officer #)",
+      "text:contains(Recorded)"
+    ],
+    "complexity": {
+      "code_blocks": 20,
+      "total_lines": 239,
+      "total_chars": 5986
+    },
+    "approaches": [
+      "k046682-111320-opa-lea-database-install_1.md"
+    ]
+  }
+]

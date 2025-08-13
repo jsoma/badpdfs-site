@@ -1,0 +1,11 @@
+{
+  "pdf_id": "statecallcenterdata_redacted",
+  "notebooks": [
+    {
+      "approach": "statecallcenterdata_redacted",
+      "status": "success",
+      "path": "pdfs/statecallcenterdata_redacted/notebooks/statecallcenterdata_redacted.ipynb"
+    }
+  ],
+  "pdf_base_url": "https://pub-4e99d31d19cb404d8d4f5f7efa51ef6e.r2.dev"
+}

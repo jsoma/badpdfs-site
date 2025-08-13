@@ -1,0 +1,11 @@
+{
+  "pdf_id": "czech-republic-pisa2012_zakovsky_dotaznik_a",
+  "notebooks": [
+    {
+      "approach": "czech-republic-pisa2012_zakovsky_dotaznik_a",
+      "status": "success",
+      "path": "pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/notebooks/czech-republic-pisa2012_zakovsky_dotaznik_a.ipynb"
+    }
+  ],
+  "pdf_base_url": "https://pub-4e99d31d19cb404d8d4f5f7efa51ef6e.r2.dev"
+}

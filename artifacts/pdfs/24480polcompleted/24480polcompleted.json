@@ -1,0 +1,191 @@
+{
+  "slug": "24480polcompleted",
+  "title": "Animal 911 Calls Extraction from Rainforest Cafe Report",
+  "description": "This PDF is a service call report covering 911 incidents at the Rainforest Cafe in Niagara Falls, NY. We're hunting for animals! The data is formatted as a spreadsheet within the PDF, and challenges include varied column widths, borderless tables, and large swaths of missing data.",
+  "pdf": "24480polcompleted.pdf",
+  "tags": [
+    "Animal 911 Logs",
+    "PDF Spreadsheet",
+    "Truncated Columns",
+    "Selective Redactions"
+  ],
+  "file_size_mb": 4.77,
+  "page_count": 47,
+  "submitted_by": "Adiel Kaplan",
+  "published": true,
+  "file": "24480polcompleted.md",
+  "id": "24480polcompleted",
+  "methods": [
+    "Guides",
+    "PDF",
+    "add_exclusion",
+    "extract_table",
+    "find_all",
+    "from_content",
+    "show",
+    "to_df"
+  ],
+  "method_usage": [
+    {
+      "method": "PDF",
+      "method_full": "PDF",
+      "args": [
+        "24480polcompleted.pdf"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "pdf.show",
+      "args": [],
+      "kwargs": {
+        "cols": 3,
+        "limit": 9
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {
+        "crop": 100
+      }
+    },
+    {
+      "method": "add_exclusion",
+      "method_full": "pdf.add_exclusion",
+      "args": [
+        "<Lambda>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "find_all",
+      "method_full": "page.find_all",
+      "args": [
+        "text:regex(\\d+ Records Found)"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "Guides",
+      "method_full": "Guides",
+      "args": [
+        "<Subscript>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "from_content",
+      "method_full": "guide.from_content",
+      "args": [
+        "<var:columns>"
+      ],
+      "kwargs": {
+        "outer": "last"
+      }
+    },
+    {
+      "method": "from_content",
+      "method_full": "guide.from_content",
+      "args": [
+        "<Lambda>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "guide.show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "Guides",
+      "method_full": "Guides",
+      "args": [
+        "<Subscript>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "from_content",
+      "method_full": "base.from_content",
+      "args": [
+        "<var:columns>"
+      ],
+      "kwargs": {
+        "outer": "last"
+      }
+    },
+    {
+      "method": "from_content",
+      "method_full": "base.from_content",
+      "args": [
+        "<Call>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "base.show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "to_df",
+      "method_full": "to_df",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "Guides",
+      "method_full": "Guides",
+      "args": [
+        "<var:page>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "from_content",
+      "method_full": "guides.from_content",
+      "args": [
+        "<Call>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "find_all",
+      "method_full": "page.find_all",
+      "args": [
+        "text:starts-with(NF-)"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "to_df",
+      "method_full": "to_df",
+      "args": [],
+      "kwargs": {
+        "header": "<var:columns>"
+      }
+    },
+    {
+      "method": "extract_table",
+      "method_full": "guides.extract_table",
+      "args": [],
+      "kwargs": {}
+    }
+  ],
+  "selectors": [
+    "text:regex(\\\\d+ Records Found)",
+    "text:starts-with(NF-)"
+  ],
+  "complexity": {
+    "code_blocks": 14,
+    "total_lines": 47,
+    "total_chars": 1613
+  },
+  "approaches": [
+    "24480polcompleted.md"
+  ]
+}

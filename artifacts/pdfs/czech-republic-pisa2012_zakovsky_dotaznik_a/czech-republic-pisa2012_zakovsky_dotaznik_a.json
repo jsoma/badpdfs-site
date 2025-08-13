@@ -1,0 +1,148 @@
+{
+  "slug": "czech-republic-pisa2012_zakovsky_dotaznik_a",
+  "title": "Complex Table Extraction from OECD Czech PISA Assessment",
+  "description": "This PDF is a document from the OECD regarding the PISA assessment, provided in Czech. The main extraction goal is to get the survey question table found on page 9. Challenges include the weird table format, making it hard to extract automatically.",
+  "pdf": "czech-republic-pisa2012_zakovsky_dotaznik_a.pdf",
+  "tags": [
+    "OECD",
+    "Czech",
+    "PISA",
+    "Survey Table",
+    "Complex Format"
+  ],
+  "file_size_mb": 0.86,
+  "page_count": 56,
+  "submitted_by": "Yuqi Liao",
+  "language": "Czech",
+  "published": true,
+  "file": "czech-republic-pisa2012_zakovsky_dotaznik_a.md",
+  "id": "czech-republic-pisa2012_zakovsky_dotaznik_a",
+  "methods": [
+    "PDF",
+    "dissolve",
+    "extract_text",
+    "find_all",
+    "inspect",
+    "show"
+  ],
+  "method_usage": [
+    {
+      "method": "PDF",
+      "method_full": "PDF",
+      "args": [
+        "czech-republic-pisa2012_zakovsky_dotaznik_a.pdf"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "dissolve",
+      "method_full": "dissolve",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "dissolve",
+      "method_full": "dissolve",
+      "args": [],
+      "kwargs": {
+        "padding": 5
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "extract_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "extract_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "inspect",
+      "method_full": "inspect",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "extract_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "extract_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "extract_text",
+      "args": [],
+      "kwargs": {
+        "layout": true,
+        "strip": true
+      }
+    },
+    {
+      "method": "extract_text",
+      "method_full": "extract_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "extract_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "extract_text",
+      "args": [],
+      "kwargs": {
+        "layout": true,
+        "strip": true
+      }
+    }
+  ],
+  "selectors": [
+    "text",
+    "text:bold",
+    "text:bold:not-empty",
+    "text:bold[size~=14][x0>100]:not-empty",
+    "text:italic:not-empty[size>8]",
+    "text:italic[size~=14]",
+    "text:not(:bold):not(:italic)[size=12]",
+    "text:not(:italic):not-empty[size>8]"
+  ],
+  "complexity": {
+    "code_blocks": 19,
+    "total_lines": 92,
+    "total_chars": 2215
+  },
+  "approaches": [
+    "czech-republic-pisa2012_zakovsky_dotaznik_a.md"
+  ]
+}
