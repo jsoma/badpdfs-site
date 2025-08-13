@@ -28,7 +28,7 @@ page = pdf.pages[0]
 page.show(width=700)
 ```
 
-Looks like it's full of text, right? But when we try to extract the text, it doesn't go as planned.
+Looks like it's full of words, right? But when we try to extract the text, it doesn't go as planned.
 
 ```python
 text = page.extract_text()
