@@ -2,7 +2,7 @@
 slug: "ocr-example"
 title: "OCR and AI magic"
 description: "Master OCR techniques with Natural PDF - from basic text recognition to advanced LLM-powered corrections. Learn to extract text from image-based PDFs, handle tables without proper boundaries, and leverage AI for accuracy improvements."
-pdf: "needs-ocr.pdf"
+pdf: "ocr-example.pdf"
 tags:
 - OCR
 - LLM Integration
@@ -11,7 +11,7 @@ tags:
 - AI Correction
 file_size_mb: 0.5
 page_count: 1
-submitted_by: Natural PDF Team
+submitted_by: Natural PDF
 published: true
 ---
 
