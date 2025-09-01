@@ -12,7 +12,7 @@ tags:
 file_size_mb: 0.5
 page_count: 1
 submitted_by: Natural PDF
-published: true
+published: false
 ---
 
 # OCR: Recognizing text
@@ -236,7 +236,7 @@ def correct_text_region(region):
 page.correct_ocr(correct_text_region) 
 ```
 
-And now we can use `.extract_text()` the magicaly same way.
+And now we can use `.extract_text()` the magical same way.
 
 The real benefit of this vs sending the whole document to the LLM is *we don't change where the text is*. An LLM might OCR something for us, but it *loses the spatial context that we find so important*.
 

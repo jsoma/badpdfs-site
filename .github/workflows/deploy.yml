@@ -75,9 +75,10 @@ jobs:
         with:
           path: processor/.build_cache.json
           # Use a stable key that doesn't change with file contents
-          key: ${{ runner.os }}-build-cache-v2
+          key: ${{ runner.os }}-build-cache-v3
           # Always restore the most recent cache
           restore-keys: |
+            ${{ runner.os }}-build-cache-v3
             ${{ runner.os }}-build-cache-v2
             ${{ runner.os }}-build-cache-
       

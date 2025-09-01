@@ -23,7 +23,7 @@ class ValidationTask(BatchTask):
     def __init__(self):
         super().__init__(
             name="validation", 
-            dependencies=["metadata", "execution", "screenshots", "search_index"]
+            dependencies=["metadata", "execution", "screenshots"]
         )
     
     def process_batch(self, pdfs: List[PDFExample], context: TaskContext) -> Dict[str, Any]:
@@ -114,8 +114,12 @@ class ValidationTask(BatchTask):
     
     def get_inputs(self, pdf: PDFExample) -> List[Path]:
         """Inputs are all generated artifacts."""
-        # Note: This is called per-PDF but we're a batch task
-        return []
+        # Return the markdown files so validation re-runs when they change
+        inputs = []
+        for approach in pdf.approaches:
+            if approach.is_published():
+                inputs.append(approach.file)
+        return inputs
     
     def get_outputs(self, pdf: PDFExample, context: TaskContext) -> List[Path]:
         """Output files - not used for batch tasks."""

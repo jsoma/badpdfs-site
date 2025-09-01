@@ -99,9 +99,12 @@ class SearchIndexTask(BatchTask):
     
     def get_inputs(self, pdf: PDFExample) -> List[Path]:
         """Inputs are metadata and execution results."""
-        # Note: This is called per-PDF but we're a batch task
-        # Return empty list since we handle inputs in process_batch
-        return []
+        # Return markdown files so search index rebuilds when they change
+        inputs = []
+        for approach in pdf.approaches:
+            if approach.is_published():
+                inputs.append(approach.file)
+        return inputs
     
     def get_outputs(self, pdf: PDFExample, context: TaskContext) -> List[Path]:
         """Output files - not used for batch tasks."""

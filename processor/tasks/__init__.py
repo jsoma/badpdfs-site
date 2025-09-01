@@ -10,6 +10,7 @@ from .search import SearchIndexTask
 from .validation import ValidationTask
 from .validation_incremental import IncrementalValidationTask
 from .notebooks import NotebookTask
+from .dashboard import DashboardTask
 __all__ = [
     # Base classes
     'Task',
@@ -25,4 +26,5 @@ __all__ = [
     'ValidationTask',
     'IncrementalValidationTask',
     'NotebookTask',
+    'DashboardTask',
 ]

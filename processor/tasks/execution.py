@@ -313,6 +313,9 @@ class ExecutionTask(Task):
         # Clear figures
         self.figures = []
         
+        # Log the code being executed
+        context.log(f"About to execute code block: {code[:100]}...", "DEBUG")
+        
         # Skip shell commands
         if code.strip().startswith('!'):
             return {
@@ -351,11 +354,14 @@ class ExecutionTask(Task):
             with redirect_stdout(stdout_capture), redirect_stderr(stderr_capture):
                 # Execute all but last expression
                 if code_without_last:
+                    context.log(f"Executing code: {code_without_last[:100]}...", "DEBUG")
                     exec(code_without_last, self.namespace)
                 
                 # Evaluate last expression
                 if last_expr:
-                    last_value = eval(ast.unparse(last_expr.value), self.namespace)
+                    expr_str = ast.unparse(last_expr.value)
+                    context.log(f"Evaluating expression: {expr_str[:100]}...", "DEBUG")
+                    last_value = eval(expr_str, self.namespace)
             
             # Capture rich output
             if last_expr:

@@ -18,7 +18,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 from core import Config, GalleryProcessor
 from tasks import (
     MetadataTask, ExecutionTask, ScreenshotTask,
-    SearchIndexTask, ValidationTask, NotebookTask
+    SearchIndexTask, ValidationTask, NotebookTask, DashboardTask,
+    TaskContext
 )
 
 
@@ -29,13 +30,13 @@ def main():
     )
     parser.add_argument(
         "command",
-        choices=["build", "clean", "status", "rebuild", "diagnose"],
+        choices=["build", "clean", "status", "rebuild", "diagnose", "dashboard"],
         help="Command to run"
     )
     parser.add_argument(
         "--steps",
         nargs="+",
-        choices=["metadata", "execution", "screenshots", "search_index", "validation", "notebooks"],
+        choices=["metadata", "execution", "screenshots", "search_index", "validation", "notebooks", "dashboard"],
         help="Specific steps to run (default: all)"
     )
     parser.add_argument(
@@ -71,7 +72,8 @@ def main():
         'screenshots': ScreenshotTask(),
         'search_index': SearchIndexTask(),
         'validation': ValidationTask(),
-        'notebooks': NotebookTask()
+        'notebooks': NotebookTask(),
+        'dashboard': DashboardTask()
     }
     
     # Register tasks based on steps requested
@@ -121,7 +123,8 @@ def main():
             "Valid PDFs": (config.artifacts_dir / "valid_pdfs.json").exists(),
             "Screenshots": (config.artifacts_dir / "screenshots").exists(),
             "Executions": (config.artifacts_dir / "executions").exists(),
-            "Notebooks": (config.artifacts_dir / "notebooks").exists(),
+            "Notebooks": any((config.artifacts_dir / "pdfs").glob("*/notebooks/*.ipynb")),
+            "Dashboard": (config.artifacts_dir / "dashboard.html").exists(),
         }
         
         for name, exists in artifacts_exist.items():
@@ -137,7 +140,7 @@ def main():
         
         # Show last build times
         print(f"\nLast Build Times:")
-        for step in ['metadata', 'execution', 'screenshots', 'search_index', 'validation', 'notebooks']:
+        for step in ['metadata', 'execution', 'screenshots', 'search_index', 'validation', 'notebooks', 'dashboard']:
             last_time = processor.cache.get_last_build_time(step)
             if last_time:
                 time_str = last_time.strftime("%Y-%m-%d %H:%M:%S")
@@ -319,6 +322,37 @@ def main():
         
         print("\n📌 Quick fix for all issues:")
         print("   python build.py build --force")
+    
+    elif args.command == "dashboard":
+        # Quick dashboard generation
+        from domain import Gallery
+        
+        # Create minimal context
+        context = TaskContext(
+            artifacts_dir=config.artifacts_dir,
+            config=config.to_dict(),
+            cache=processor.cache,
+            results={},
+            verbose=True
+        )
+        
+        # Get all PDFs
+        gallery = Gallery(
+            content_dir=config.content_dir,
+            artifacts_dir=config.artifacts_dir
+        )
+        # Get all PDFs (both published and unpublished)
+        all_pdfs = list(gallery.examples.values())
+        
+        # Run dashboard task
+        dashboard_task = DashboardTask()
+        result = dashboard_task.process_batch(all_pdfs, context)
+        
+        if 'dashboard_path' in result:
+            dashboard_path = Path(result['dashboard_path'])
+            print(f"\n✅ Dashboard generated: {dashboard_path}")
+            print(f"🌐 Open: file://{dashboard_path.absolute()}")
+            print(f"\n📊 {result['total_pdfs']} PDFs ({result['published']} published, {result['unpublished']} unpublished)")
 
 
 if __name__ == "__main__":
