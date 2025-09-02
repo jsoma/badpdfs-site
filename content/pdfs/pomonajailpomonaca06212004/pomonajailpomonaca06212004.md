@@ -27,7 +27,7 @@ Let's take a look at one of the form pages. **The text recognition isn't very go
 ```python
 from natural_pdf import PDF
 
-pdf = PDF("pomonajailpomonaca06212004/pomonajailpomonaca06212004.pdf", text_layer=False)
+pdf = PDF("pomonajailpomonaca06212004.pdf", text_layer=False)
 page = pdf.pages[3]
 page.show()
 ```
