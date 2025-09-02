@@ -145,12 +145,12 @@ class GalleryProcessor:
         
         self.log(f"Found {len(pdfs)} published PDFs")
         
-        # Create task context
+        # Create task context with tracking for which PDFs each task has processed
         context = TaskContext(
             artifacts_dir=self.config.artifacts_dir,
             config=self.config.to_dict(),
             cache=self.cache,
-            results={},
+            results={},  # This will track task -> set of PDF IDs processed
             verbose=self.verbose
         )
         
@@ -225,8 +225,10 @@ class GalleryProcessor:
             if force or task.needs_processing(pdf, context):
                 result = self._run_task(task, pdf, context)
                 tasks_run.append(task_name)
-                # Record that this task ran in the context
-                context.results[task_name] = result
+                # Record that this task ran for this PDF
+                if task_name not in context.results:
+                    context.results[task_name] = set()
+                context.results[task_name].add(pdf.id)
                 if not result.success:
                     success = False
                     break
@@ -287,11 +289,17 @@ class GalleryProcessor:
             skipped = 0
             failed = 0
             
+            # Track which PDFs this task processes
+            if task_name not in context.results:
+                context.results[task_name] = set()
+            
             for pdf in pdfs:
                 if force or task.needs_processing(pdf, context):
                     result = self._run_task(task, pdf, context)
                     if result.success:
                         processed += 1
+                        # Record that this task processed this PDF
+                        context.results[task_name].add(pdf.id)
                     else:
                         failed += 1
                         self.failed_pdfs[pdf.id] = result.error or "Unknown error"

@@ -108,11 +108,34 @@ class Task(ABC):
                 context.log(f"{self.name}: Input changed: {input_path}", "DEBUG")
                 return True
         
-        # Check if any dependencies have run in this session
+        # Check if any dependencies have run in this session or recently
         for dep in self.dependencies:
-            if dep in context.results:
-                context.log(f"{self.name}: Dependency '{dep}' has run, triggering reprocessing", "DEBUG")
+            # Check if dependency ran in this session for this specific PDF
+            if dep in context.results and isinstance(context.results[dep], set) and pdf.id in context.results[dep]:
+                context.log(f"{self.name}: Dependency '{dep}' has processed {pdf.id}, triggering reprocessing", "DEBUG")
                 return True
+            
+            # Check if dependency ran more recently than our outputs
+            dep_result = context.cache.get_task_result(pdf.id, dep)
+            if dep_result and "timestamp" in dep_result:
+                try:
+                    from datetime import datetime
+                    dep_time = datetime.fromisoformat(dep_result["timestamp"])
+                    
+                    # Get the oldest output modification time
+                    oldest_output = None
+                    for output in self.get_outputs(pdf, context):
+                        if output.exists():
+                            output_mtime = datetime.fromtimestamp(output.stat().st_mtime)
+                            if oldest_output is None or output_mtime < oldest_output:
+                                oldest_output = output_mtime
+                    
+                    # If dependency ran after our outputs were created, we need to rerun
+                    if oldest_output and dep_time > oldest_output:
+                        context.log(f"{self.name}: Dependency '{dep}' ran at {dep_time.isoformat()} (after our outputs), triggering reprocessing", "DEBUG")
+                        return True
+                except Exception as e:
+                    context.log(f"{self.name}: Error checking dependency timestamp: {e}", "DEBUG")
         
         # Log why we're skipping
         context.log(f"{self.name}: All outputs exist, no inputs changed, no dependencies ran", "DEBUG")
