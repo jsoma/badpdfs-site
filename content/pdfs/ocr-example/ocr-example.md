@@ -12,7 +12,7 @@ tags:
 file_size_mb: 0.5
 page_count: 1
 submitted_by: Natural PDF
-published: false
+published: true
 ---
 
 # OCR: Recognizing text
