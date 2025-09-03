@@ -314,7 +314,6 @@ class ExecutionTask(Task):
         self.figures = []
         
         # Log the code being executed
-        context.log(f"About to execute code block: {code[:100]}...", "DEBUG")
         
         # Skip shell commands
         if code.strip().startswith('!'):
