@@ -120,7 +120,8 @@ This part is the hard one. We'll find the section under **Previous Rating**, exp
 with left_col.within() as col:
     label = left_col.find("text:closest(Previous Rating)")
     answer = label.below(until='text')
-answer.expand(5).trim().show(crop=True)
+checkbox_region = answer.expand(5).trim()
+checkbox_region.show(crop=True)
 ```
 
 In an ideal world I'd have trained a nice custom checkbox analyzer, but *I did and it didn't work*. So instead we're going to train our own with a few examples. We'll start by grabbing the three checkboxes here.
