@@ -127,11 +127,11 @@ In an ideal world I'd have trained a nice custom checkbox analyzer, but *I did a
 
 ```python
 def get_checkbox(region):
-  return region.left(width=20).expand(top=3)
+  return region.left(20).expand(top=3)
 
-region1 = get_checkbox(answer.find(text='Acceptable'))
-region2 = get_checkbox(answer.find(text='Deficient'))
-region3 = get_checkbox(answer.find(text='At-Risk'))
+region1 = get_checkbox(checkbox_region.find(text='Acceptable'))
+region2 = get_checkbox(checkbox_region.find(text='Deficient'))
+region3 = get_checkbox(checkbox_region.find(text='At-Risk'))
 (region1 + region2 + region3).show(crop=True)
 ```
 
@@ -160,7 +160,7 @@ judge.add(get_checkbox(page.find(text='Field Office')))
 judge.add(get_checkbox(page.find(text='HQ Review')))
 judge.add(get_checkbox(page.find('text[text=Court Order]')))
 judge.add(get_checkbox(page.find('text[text=Major Litigation]')))
-judge.add(get_checkbox(page.find('text[text=Class Action Order]'))))
+judge.add(get_checkbox(page.find('text[text=Class Action Order]')))
 judge.add(get_checkbox(page.find('text[text=No]')))
 ```
 
