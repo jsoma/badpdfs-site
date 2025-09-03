@@ -1,0 +1,115 @@
+{
+  "file": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/use-of-force-raw/use-of-force-raw.md",
+  "metadata": {
+    "slug": "use-of-force-raw",
+    "title": "Extracting Use-of-Force Records from Vancouver Police PDF",
+    "description": "This PDF contains detailed records of Vancouver Police's use-of-force incidents, provided after a public records request by journalists. Challenges include its very very very small font size and lots of empty whitespace.",
+    "pdf": "use-of-force-raw.pdf",
+    "tags": [
+      "small font",
+      "public records",
+      "tables",
+      "sparse"
+    ],
+    "file_size_mb": 0.7,
+    "page_count": 4,
+    "submitted_by": "Brandon Roberts",
+    "language": [
+      "English"
+    ],
+    "published": true,
+    "file": "use-of-force-raw.md"
+  },
+  "cells": [
+    {
+      "type": "markdown",
+      "content": "# Extracting Use-of-Force Records from Vancouver Police PDF\n\nThis PDF contains detailed records of Vancouver Police's use-of-force incidents, provided after a public records request by journalists. Challenges include its very small font size and lots of empty whitespace."
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf import PDF\n\npdf = PDF(\"use-of-force-raw.pdf\")\npage = pdf.pages[0]\npage.show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf import PDF\npdf = PDF('use-of-force-raw.pdf')\npage = pdf.pages[0]...\n[DEBUG] Evaluating expression: page.show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/use-of-force-raw/use-of-force-raw/images/image_1.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Let's find all the headers, they're the text at the top of the pag, which means they have the smallest `y0`."
+    },
+    {
+      "type": "code",
+      "content": "headers = page.find_all('text[y0=min()]')\nheaders.extract_each_text()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: headers = page.find_all('text[y0=min()]')...\n[DEBUG] Evaluating expression: headers.extract_each_text()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/plain",
+          "data": "['OFFICER', 'DATE OF REPORT', 'DATE OF FORCE', 'TIME OF FORCE', 'PRECINCT', 'CASE #', 'SUBJECT PERSON', 'SEX', 'RACE', 'ETHNICITY', 'SUBJECT CONDITION LEADING TO FORCE', 'REASON FOR USE OF FORCE', 'OFFICER ACTIVITY PRIOR TO FORCE', 'SUBJECT WAS INJURED', 'OFFICER INJURIES', 'SUBJECT INJURIES', 'MENTAL HEALTH INDICATORS', 'FORCE OPTIONS ATTEMPTED', 'EFFECTIVE FORCE OPTIONS', 'TREATMENT RECEIVED OFFICER', 'TREATMENT RECEIVED SUBJECT', 'SUPERVISOR NOTIFIED', 'SUPERVISOR AT SCENE', 'SUPERVISOR NAME', 'CASE COUNT']"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "We can now use those headers to create guides that fit between each column."
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf.analyzers.guides import Guides\n\nguides = Guides(page)\nguides.vertical.from_headers(headers)\nguides.show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf.analyzers.guides import Guides\nguides = Guides(page)\nguides.vertical.from_headers(h...\n[DEBUG] Evaluating expression: guides.show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/use-of-force-raw/use-of-force-raw/images/image_2.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Once we've established the columns, we're free to extract the table. [pdfplumber](https://github.com/jsvine/pdfplumber) is smart enough behind the scenes to know what each row is."
+    },
+    {
+      "type": "code",
+      "content": "guides.extract_table().to_df()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: guides.extract_table().to_df()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/html",
+          "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>OFFICER</th>\n      <th>DATE OF REPORT</th>\n      <th>DATE OF FORCE</th>\n      <th>TIME OF FORCE</th>\n      <th>PRECINCT</th>\n      <th>CASE #</th>\n      <th>SUBJECT PERSON</th>\n      <th>SEX</th>\n      <th>RACE</th>\n      <th>ETHNICITY</th>\n      <th>SUBJECT CONDITION LEADING TO FORCE</th>\n      <th>REASON FOR USE OF FORCE</th>\n      <th>OFFICER ACTIVITY PRIOR TO FORCE</th>\n      <th>SUBJECT WAS INJURED</th>\n      <th>OFFICER INJURIES</th>\n      <th>SUBJECT INJURIES</th>\n      <th>MENTAL HEALTH INDICATORS</th>\n      <th>FORCE OPTIONS ATTEMPTED</th>\n      <th>EFFECTIVE FORCE OPTIONS</th>\n      <th>TREATMENT RECEIVED OFFICER</th>\n      <th>TREATMENT RECEIVED SUBJECT</th>\n      <th>SUPERVISOR NOTIFIED</th>\n      <th>SUPERVISOR AT SCENE</th>\n      <th>SUPERVISOR NAME</th>\n      <th>CASE COUNT</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>PFEIFER, TIM</td>\n      <td>12/2/2016</td>\n      <td>Dec-02-2016</td>\n      <td>22:30</td>\n      <td>WEST</td>\n      <td>23-2016-18335</td>\n      <td>SOLLERS, CECIL ARTHUR</td>\n      <td>M</td>\n      <td>U</td>\n      <td>H</td>\n      <td>FAILURE TO COMPLY, RESIST ARREST, ATTEMPT TO F...</td>\n      <td>DEFEND SELF, MAKE ARREST, PREVENT ESCAPE</td>\n      <td>FOOT PURSUIT</td>\n      <td>&lt;NA&gt;</td>\n      <td>NONE</td>\n      <td>NONE</td>\n      <td>&lt;NA&gt;</td>\n      <td>TASER, CAROTID RESTRAINT</td>\n      <td>CAROTID RESTRAINT</td>\n      <td>&lt;NA&gt;</td>\n      <td>EMS AT SCENE, HOSPITAL/RELEASED</td>\n      <td>YES</td>\n      <td>YES</td>\n      <td>SGT. GEDDRY / 1315</td>\n      <td>970</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>NICHOLSON, DUSTIN</td>\n      <td>12/3/2016</td>\n      <td>Dec-03-2016</td>\n      <td>6:45</td>\n      <td>WEST</td>\n      <td>23-2016-18348</td>\n      <td>GUTIERREZ, SAVANNAH D (DOB: Aug-14-1986)</td>\n      <td>F</td>\n      <td>W</td>\n      <td>N</td>\n      <td>FAILURE TO COMPLY, ATTEMPT TO FLEE</td>\n      <td>MAKE ARREST, PREVENT ESCAPE</td>\n      <td>FOOT PURSUIT, FIELD CONTACT</td>\n      <td>&lt;NA&gt;</td>\n      <td>NONE</td>\n      <td>NONE</td>\n      <td>&lt;NA&gt;</td>\n      <td>TAKEDOWNS</td>\n      <td>TAKEDOWNS</td>\n      <td>TREATMENT REFUSED</td>\n      <td>TREATMENT REFUSED</td>\n      <td>YES</td>\n      <td>NO</td>\n      <td>SGT MARTIN /</td>\n      <td>970</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>JENNINGS, ERIK</td>\n      <td>12/7/2016</td>\n      <td>Dec-07-2016</td>\n      <td>13:05</td>\n      <td>EAST</td>\n      <td>23-2016-18571</td>\n      <td>MCDONALD, ALEMAYOHU J APR-03-1996</td>\n      <td>M</td>\n      <td>B</td>\n      <td>U</td>\n      <td>FAILURE TO COMPLY</td>\n      <td>MAKE ARREST</td>\n      <td>HANDCUFFING</td>\n      <td>&lt;NA&gt;</td>\n      <td>NONE</td>\n      <td>NONE</td>\n      <td>&lt;NA&gt;</td>\n      <td>TAKEDOWNS</td>\n      <td>TAKEDOWNS</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>YES</td>\n      <td>NO</td>\n      <td>BURGARA / 1257</td>\n      <td>970</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>BATES, JUSTIN</td>\n      <td>12/13/2016</td>\n      <td>Dec-02-2016</td>\n      <td>22:30</td>\n      <td>WEST</td>\n      <td>23-2016-18335</td>\n      <td>SOLLERS, CECIL A (DOB: Sep-25-1989)</td>\n      <td>M</td>\n      <td>U</td>\n      <td>H</td>\n      <td>FAILURE TO COMPLY, RESIST ARREST, ATTEMPT TO FLEE</td>\n      <td>MAKE ARREST, PREVENT ESCAPE</td>\n      <td>FOOT PURSUIT</td>\n      <td>&lt;NA&gt;</td>\n      <td>NONE</td>\n      <td>NONE</td>\n      <td>&lt;NA&gt;</td>\n      <td>POINT TASER</td>\n      <td>POINT TASER</td>\n      <td>&lt;NA&gt;</td>\n      <td>EMS AT SCENE, HOSPITAL/ADMITTED, HOSPITAL/RELE...</td>\n      <td>YES</td>\n      <td>YES</td>\n      <td>CPL PARDUE/1219</td>\n      <td>970</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>GEDDRY, BLAISE</td>\n      <td>12/13/2016</td>\n      <td>Dec-13-2016</td>\n      <td>2:35</td>\n      <td>WEST</td>\n      <td>23-2016-18818</td>\n      <td>RENFRO, JOHN W</td>\n      <td>M</td>\n      <td>W</td>\n      <td>U</td>\n      <td>RESIST ARREST, DRUGS, SEE NARRATIVE</td>\n      <td>CIVIL HOLD</td>\n      <td>OTHER</td>\n      <td>&lt;NA&gt;</td>\n      <td>NONE</td>\n      <td>NONE</td>\n      <td>MENTAL ILLNESS, ADMISSION TO FACILITY, PRIOR K...</td>\n      <td>TAKEDOWNS, HANDS/FEET</td>\n      <td>TAKEDOWNS, HANDS/FEET</td>\n      <td>&lt;NA&gt;</td>\n      <td>EMS AT SCENE, HOSPITAL/ADMITTED</td>\n      <td>YES</td>\n      <td>YES</td>\n      <td>GEDDRY 1315</td>\n      <td>970</td>\n    </tr>\n    <tr>\n      <th>...</th>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n      <td>...</td>\n    </tr>\n    <tr>\n      <th>293</th>\n      <td>PARDUE, BILL</td>\n      <td>1/19/2018</td>\n      <td>1/19/2018</td>\n      <td>1:24</td>\n      <td>WEST</td>\n      <td>23-2018-967</td>\n      <td>RAULS, COURTNEY A</td>\n      <td>F</td>\n      <td>B</td>\n      <td>U</td>\n      <td>FAILURE TO COMPLY, RESIST ARREST, ALCOHOL, DRU...</td>\n      <td>MAKE ARREST</td>\n      <td>FIELD CONTACT</td>\n      <td>&lt;NA&gt;</td>\n      <td>NONE</td>\n      <td>NONE</td>\n      <td>&lt;NA&gt;</td>\n      <td>TAKEDOWNS</td>\n      <td>TAKEDOWNS</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>YES</td>\n      <td>YES</td>\n      <td>DUMAS/ 1543</td>\n      <td>970</td>\n    </tr>\n    <tr>\n      <th>294</th>\n      <td>MARBACH, NICHOLAS</td>\n      <td>1/20/2018</td>\n      <td>1/18/2018</td>\n      <td>23:20</td>\n      <td>EAST</td>\n      <td>23-2018-965</td>\n      <td>ELLIOT, DENNIS RICHARD</td>\n      <td>M</td>\n      <td>U</td>\n      <td>U</td>\n      <td>FAILURE TO COMPLY, RESIST ARREST, ALCOHOL, DRU...</td>\n      <td>CIVIL HOLD</td>\n      <td>ESCORT, HANDCUFFING, FIELD CONTACT</td>\n      <td>PRIOR TO INVOLVMENT</td>\n      <td>&lt;NA&gt;</td>\n      <td>BRUISES</td>\n      <td>MENTAL ILLNESS, ADMISSION TO FACILITY</td>\n      <td>HANDS/FEET</td>\n      <td>HANDS/FEET</td>\n      <td>&lt;NA&gt;</td>\n      <td>EMS AT SCENE, HOSPITAL/ADMITTED</td>\n      <td>YES</td>\n      <td>YES</td>\n      <td>KREBS/DAVIS #1508/1230</td>\n      <td>970</td>\n    </tr>\n    <tr>\n      <th>295</th>\n      <td>MARBACH, NICHOLAS</td>\n      <td>1/20/2018</td>\n      <td>1/18/2018</td>\n      <td>23:21</td>\n      <td>EAST</td>\n      <td>23-2018-965</td>\n      <td>NAPOLEON, ALICE LANEY</td>\n      <td>F</td>\n      <td>I</td>\n      <td>U</td>\n      <td>FAILURE TO COMPLY, ALCOHOL</td>\n      <td>DEFEND SELF</td>\n      <td>OTHER, FIELD CONTACT</td>\n      <td>&lt;NA&gt;</td>\n      <td>NONE</td>\n      <td>NONE</td>\n      <td>&lt;NA&gt;</td>\n      <td>HANDS/FEET</td>\n      <td>HANDS/FEET</td>\n      <td>&lt;NA&gt;</td>\n      <td>EMS AT SCENE, SELF TREATMENT</td>\n      <td>YES</td>\n      <td>YES</td>\n      <td>KREBS/DAVIS #1508/1230</td>\n      <td>970</td>\n    </tr>\n    <tr>\n      <th>296</th>\n      <td>HEMSTOCK, STUART</td>\n      <td>1/23/2018</td>\n      <td>1/23/2018</td>\n      <td>8:45</td>\n      <td>EAST</td>\n      <td>23-2018-1191</td>\n      <td>KESSEL, JORDAN P</td>\n      <td>M</td>\n      <td>W</td>\n      <td>N</td>\n      <td>FAILURE TO COMPLY, SEE NARRATIVE</td>\n      <td>&lt;NA&gt;</td>\n      <td>HANDCUFFING, OTHER</td>\n      <td>&lt;NA&gt;</td>\n      <td>NONE</td>\n      <td>NONE</td>\n      <td>&lt;NA&gt;</td>\n      <td>CONTROL HOLDS CAUSING INJURY</td>\n      <td>CONTROL HOLDS CAUSING INJURY</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>YES</td>\n      <td>YES</td>\n      <td>HUBERTY/1214</td>\n      <td>970</td>\n    </tr>\n    <tr>\n      <th>297</th>\n      <td>HAMMOND, SCOTLAND</td>\n      <td>1/27/2018</td>\n      <td>1/27/2018</td>\n      <td>20:20</td>\n      <td>WEST</td>\n      <td>23-2018-1420</td>\n      <td>CONTRERAS, RICKY</td>\n      <td>M</td>\n      <td>W</td>\n      <td>U</td>\n      <td>REPORTED ARMED, FAILURE TO COMPLY, RESIST ARRE...</td>\n      <td>MAKE ARREST</td>\n      <td>HANDCUFFING</td>\n      <td>&lt;NA&gt;</td>\n      <td>NONE</td>\n      <td>NONE</td>\n      <td>&lt;NA&gt;</td>\n      <td>HANDS/FEET</td>\n      <td>HANDS/FEET</td>\n      <td>&lt;NA&gt;</td>\n      <td>EMS AT SCENE</td>\n      <td>YES</td>\n      <td>YES</td>\n      <td>D. KREBS / 1508</td>\n      <td>970</td>\n    </tr>\n  </tbody>\n</table>\n<p>298 rows \u00d7 25 columns</p>\n</div>"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "## Combining the results for every page\n\nIf you provide a list of pages, guides can extract the tables from each of them. It will also do nice things like automatically remove duplicate column headers without you even asking!"
+    },
+    {
+      "type": "code",
+      "content": "df = guides.extract_table(pdf.pages).to_df()\nprint(\"You found\", len(df), \"rows\")\n\ndf.tail()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: df = guides.extract_table(pdf.pages).to_df()\nprint('You found', len(df), 'rows')...\nYou found 970 rows\n[DEBUG] Evaluating expression: df.tail()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/html",
+          "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>OFFICER</th>\n      <th>DATE OF REPORT</th>\n      <th>DATE OF FORCE</th>\n      <th>TIME OF FORCE</th>\n      <th>PRECINCT</th>\n      <th>CASE #</th>\n      <th>SUBJECT PERSON</th>\n      <th>SEX</th>\n      <th>RACE</th>\n      <th>ETHNICITY</th>\n      <th>SUBJECT CONDITION LEADING TO FORCE</th>\n      <th>REASON FOR USE OF FORCE</th>\n      <th>OFFICER ACTIVITY PRIOR TO FORCE</th>\n      <th>SUBJECT WAS INJURED</th>\n      <th>OFFICER INJURIES</th>\n      <th>SUBJECT INJURIES</th>\n      <th>MENTAL HEALTH INDICATORS</th>\n      <th>FORCE OPTIONS ATTEMPTED</th>\n      <th>EFFECTIVE FORCE OPTIONS</th>\n      <th>TREATMENT RECEIVED OFFICER</th>\n      <th>TREATMENT RECEIVED SUBJECT</th>\n      <th>SUPERVISOR NOTIFIED</th>\n      <th>SUPERVISOR AT SCENE</th>\n      <th>SUPERVISOR NAME</th>\n      <th>CASE COUNT</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>965</th>\n      <td>ALDRIDGE, SANDRA</td>\n      <td>7/30/2019</td>\n      <td>7/29/2019</td>\n      <td>2:50</td>\n      <td>VPD EAST</td>\n      <td>23-2019-12373</td>\n      <td>NICHOLAS CALLAWAY</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>FAILURE TO COMPLY, RESIST ARREST, ALCOHOL</td>\n      <td>MAKE ARREST</td>\n      <td>HANDCUFFING</td>\n      <td>PRIOR TO INVOLVMENT</td>\n      <td>NONE</td>\n      <td>LACERATIONS</td>\n      <td>MENTAL ILLNESS, PRIOR KNOWLEDGE</td>\n      <td>HANDS/FEET</td>\n      <td>HANDS/FEET</td>\n      <td>&lt;NA&gt;</td>\n      <td>EMS AT SCENE, HOSPITAL/ADMITTED, HOSPITAL/RELE...</td>\n      <td>REATMENT REFUSED YES</td>\n      <td>YES</td>\n      <td>BARTON/1551</td>\n      <td>970</td>\n    </tr>\n    <tr>\n      <th>966</th>\n      <td>RIEDEL, BRANDON</td>\n      <td>7/30/2019</td>\n      <td>7/30/2019</td>\n      <td>3:00</td>\n      <td>EAST PRECINCT</td>\n      <td>23-2019-12373</td>\n      <td>CALLAWAY, NICHOLAS RICHARD</td>\n      <td>M</td>\n      <td>U</td>\n      <td>N</td>\n      <td>FAILURE TO COMPLY, RESIST ARREST, SELF INJURY</td>\n      <td>DEFEND SELF, MAKE ARREST, PREVENT ESCAPE</td>\n      <td>HANDCUFFING</td>\n      <td>DURING ARREST</td>\n      <td>&lt;NA&gt;</td>\n      <td>LACERATIONS</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>HANDS/FEET</td>\n      <td>&lt;NA&gt;</td>\n      <td>EMS AT SCENE, HOSPITAL/RELEASED</td>\n      <td>YES</td>\n      <td>YES</td>\n      <td>SERGEANT BARTON/1551</td>\n      <td>970</td>\n    </tr>\n    <tr>\n      <th>967</th>\n      <td>SCOTT, MICHAEL</td>\n      <td>7/30/2019</td>\n      <td>7/30/2019</td>\n      <td>2:51</td>\n      <td>EAST</td>\n      <td>23-2019-12373</td>\n      <td>CALLAWAY, NICHOLAS</td>\n      <td>M</td>\n      <td>U</td>\n      <td>N</td>\n      <td>FAILURE TO COMPLY, RESIST ARREST, ALCOHOL, SEL...</td>\n      <td>MAKE ARREST</td>\n      <td>HANDCUFFING</td>\n      <td>&lt;NA&gt;</td>\n      <td>NONE</td>\n      <td>NONE</td>\n      <td>&lt;NA&gt;</td>\n      <td>CONTROL HOLDS CAUSING COMPLAINT OF INJURY</td>\n      <td>CONTROL HOLDS CAUSING COMPLAINT OF INJURY</td>\n      <td>&lt;NA&gt;</td>\n      <td>EMS AT SCENE, HOSPITAL/RELEASED</td>\n      <td>YES</td>\n      <td>YES</td>\n      <td>BARTON / 1551</td>\n      <td>970</td>\n    </tr>\n    <tr>\n      <th>968</th>\n      <td>VIGIL, NICOLE</td>\n      <td>7/30/2019</td>\n      <td>7/30/2019</td>\n      <td>5 MIN</td>\n      <td>EAST</td>\n      <td>23-2019-12373</td>\n      <td>CALLAWAY, NICHOLAS</td>\n      <td>M</td>\n      <td>U</td>\n      <td>N</td>\n      <td>FAILURE TO COMPLY, RESIST ARREST, DRUGS</td>\n      <td>MAKE ARREST, PREVENT ESCAPE</td>\n      <td>OTHER</td>\n      <td>PRIOR TO INVOLVMENT</td>\n      <td>NONE</td>\n      <td>ABRASIONS, LACERATIONS</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>EMS AT SCENE, HOSPITAL/RELEASED</td>\n      <td>YES</td>\n      <td>YES</td>\n      <td>BARTON / 1551</td>\n      <td>970</td>\n    </tr>\n    <tr>\n      <th>969</th>\n      <td>GIBSON, AARON</td>\n      <td>8/1/2019</td>\n      <td>Jun-24-2019</td>\n      <td>21:55</td>\n      <td>WEST</td>\n      <td>23-2019-10327</td>\n      <td>BLEVINS, ANDREW S (DOB: Apr-20-1990)</td>\n      <td>M</td>\n      <td>W</td>\n      <td>U</td>\n      <td>FAILURE TO COMPLY, RESIST ARREST</td>\n      <td>OTHER</td>\n      <td>OTHER</td>\n      <td>&lt;NA&gt;</td>\n      <td>NONE</td>\n      <td>NONE</td>\n      <td>&lt;NA&gt;</td>\n      <td>HANDS/FEET</td>\n      <td>HANDS/FEET</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>YES</td>\n      <td>YES</td>\n      <td>A GIBSON / 1154</td>\n      <td>970</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+{
+  "file": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/cia-document/cia-document-extraction.md",
+  "metadata": {
+    "slug": "cia-document-extraction",
+    "title": "CIA Document Analysis",
+    "description": "Extracting information from declassified CIA documents using AI",
+    "pdf": "cia-doc.pdf",
+    "tags": [
+      "workshop",
+      "ai",
+      "government-documents"
+    ],
+    "published": true,
+    "file": "cia-document-extraction.md"
+  },
+  "cells": [
+    {
+      "type": "markdown",
+      "content": "# CIA Document Classification\n\nLet's work with a declassified CIA document and use AI to classify and extract information."
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf import PDF\n\npdf = PDF(\"cia-doc.pdf\")\npdf.pages.show(cols=6)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf import PDF\npdf = PDF('cia-doc.pdf')...\n[DEBUG] Evaluating expression: pdf.pages.show(cols=6)...\nCould get FontBBox from font descriptor because None cannot be parsed as 4 floats\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/cia-document/cia-document-extraction/images/image_1.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Just like we did above, we can ask what category we think the PDF belongs to."
+    },
+    {
+      "type": "code",
+      "content": "pdf.classify(\n    ['slaughterhouse report', 'dolphin training manual', 'basketball', 'birding'],\n    using='text'\n)\n(pdf.category, pdf.category_confidence)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: pdf.classify(['slaughterhouse report', 'dolphin training manual', 'basketball', 'birding'], using='t...\n[DEBUG] Evaluating expression: (pdf.category, pdf.category_confidence)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/plain",
+          "data": "('birding', 0.5170503258705139)"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "I promise birding is real! The PDF is about *using pigeons to take surveillance photos.*\n\nBut beyond the text content, notice how all of the pages look very very different. **We can also categorize each page using vision!**"
+    },
+    {
+      "type": "code",
+      "content": "pdf.classify_pages(\n    ['diagram', 'text', 'invoice', 'blank'],\n    using='vision'\n)\n\nfor page in pdf.pages:\n    print(f\"Page {page.number} is {page.category} - {page.category_confidence:0.3}\")",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: pdf.classify_pages(\n    ['diagram', 'text', 'invoice', 'blank'],\n    using='vision'\n)\n\nfor page in p...\nPage 1 is text - 0.633\nPage 2 is text - 0.957\nPage 3 is text - 0.921\nPage 4 is diagram - 0.895\nPage 5 is diagram - 0.891\nPage 6 is invoice - 0.919\nPage 7 is text - 0.834\nPage 8 is invoice - 0.594\nPage 9 is invoice - 0.971\nPage 10 is invoice - 0.987\nPage 11 is invoice - 0.994\nPage 12 is invoice - 0.992\nPage 13 is text - 0.822\nPage 14 is text - 0.936\nPage 15 is diagram - 0.913\nPage 16 is text - 0.617\nPage 17 is invoice - 0.868\n\rClassifying batch (openai/clip-vit-base-patch16):   0%|          | 0/17 [00:00<?, ?it/s]\r                                                                                        \r",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "And if we just want to see the pages that are diagrams, we can `.filter` for them."
+    },
+    {
+      "type": "code",
+      "content": "(\n    pdf.pages\n    .filter(lambda page: page.category == 'diagram')\n    .show(show_category=True)\n)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: pdf.pages.filter(lambda page: page.category == 'diagram').show(show_category=True)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/cia-document/cia-document-extraction/images/image_2.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "We can also put them into groups."
+    },
+    {
+      "type": "code",
+      "content": "groups = pdf.pages.groupby(lambda page: page.category)\ngroups.info()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: groups = pdf.pages.groupby(lambda page: page.category)...\n[DEBUG] Evaluating expression: groups.info()...\nPageGroupBy with 3 groups:\n----------------------------------------\n[0] 'text': 7 pages\n[1] 'diagram': 3 pages\n[2] 'invoice': 7 pages\n\rGrouping by function:   0%|          | 0/17 [00:00<?, ?pages/s]\rGrouping by function: 100%|##########| 17/17 [00:00<00:00, 103487.91pages/s]\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "code",
+      "content": "diagrams = groups.get('diagram')\ndiagrams.show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: diagrams = groups.get('diagram')...\n[DEBUG] Evaluating expression: diagrams.show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/cia-document/cia-document-extraction/images/image_3.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "And if that's all we're interested in? We can save a new PDF of just those pages!"
+    },
+    {
+      "type": "code",
+      "content": "(\n    pdf.pages\n    .filter(lambda page: page.category == 'diagram')\n    .save_pdf(\"diagrams.pdf\", original=True)\n)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: pdf.pages.filter(lambda page: page.category == 'diagram').save_pdf('diagrams.pdf', original=True)...\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "pdf_id": "basics",
+  "notebooks": [
+    {
+      "approach": "basics",
+      "status": "success",
+      "path": "pdfs/basics/notebooks/basics.ipynb"
+    }
+  ],
+  "pdf_base_url": "https://pub-4e99d31d19cb404d8d4f5f7efa51ef6e.r2.dev"
+}

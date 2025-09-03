@@ -1,0 +1,11 @@
+{
+  "pdf_id": "sample-bop-policy-restaurant",
+  "notebooks": [
+    {
+      "approach": "sample-bop-policy-restaurant",
+      "status": "success",
+      "path": "pdfs/sample-bop-policy-restaurant/notebooks/sample-bop-policy-restaurant.ipynb"
+    }
+  ],
+  "pdf_base_url": "https://pub-4e99d31d19cb404d8d4f5f7efa51ef6e.r2.dev"
+}

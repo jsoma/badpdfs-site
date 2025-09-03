@@ -1,0 +1,398 @@
+{
+  "file": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/20252026-236232/20252026-236232.md",
+  "metadata": {
+    "slug": "20252026-236232",
+    "title": "Extracting Text from Georgia Legislative Bills",
+    "description": "This PDF contains legal bills from the Georgia legislature, published yearly. Challenges include extracting marked-up text like underlines and strikethroughs. It has line numbers that complicate text extraction. ",
+    "pdf": "20252026-236232.pdf",
+    "tags": [
+      "text extraction",
+      "legislative documents",
+      "PDF challenges",
+      "text formatting"
+    ],
+    "file_size_mb": 0.09,
+    "page_count": 8,
+    "submitted_by": "maggie lee",
+    "language": "English",
+    "published": true,
+    "file": "20252026-236232.md"
+  },
+  "cells": [
+    {
+      "type": "markdown",
+      "content": "# Extracting Text from Georgia Legislative Bills\n\nThis PDF contains legal bills from the Georgia legislature, published yearly. Challenges include extracting marked-up text like underlines and strikethroughs. It has line numbers that complicate text extraction... *or do they make it easier?*"
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf import PDF\n\npdf = PDF(\"20252026-236232.pdf\")\npage = pdf.pages[-1]\npage.show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf import PDF\npdf = PDF('20252026-236232.pdf')\npage = pdf.pages[-1]...\n[DEBUG] Evaluating expression: page.show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/20252026-236232/20252026-236232/images/image_1.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "## Text with strikethroughs\n\nSee those strikeouts? Usually they're awful, terrible, impossible. When you use `.extract_text()` it pulls both the \"normal\" text and the struck-out text, ruining your ability to analyze the results."
+    },
+    {
+      "type": "code",
+      "content": "text = page.extract_text()\nprint(text)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: text = page.extract_text()...\n[DEBUG] Evaluating expression: print(text)...\n25 LC 57 0207S/AP\n165 SECTION 4.\n166 Code Section 45-16-24 of the Official Code of Georgia Annotated, relating to notification\n167 of suspicious or unusual deaths, court ordered medical examiner's inquiry, and written report\n168 of inquiry, is amended by revising subsection (b) as follows:\n169 \"(b) A coroner or county medical examiner who is notified of a death pursuant to\n170 subsection (a) of this Code section under circumstances specified in paragraphs (1)\n171 through (9)(10) of such subsection shall order a medical examiner's inquiry of that death.\n172 A coroner or medical examiner who is notified of a death pursuant to subsection (a) of this\n173 Code section under circumstances specified in paragraph (10) of such subsection and which\n174 death was not under circumstances specified in paragraphs (1) through (9) of such\n175 subsection shall order a medical examiner's inquiry for such death through a regional\n176 perinatal center, as identified by the Department of Public Health. This subsection shall\n177 not be construed to prohibit a medical examiner's inquiry of a death if a coroner or county\n178 medical examiner is notified of a death under circumstances specified in paragraph (11) of\n179 subsection (a) of this Code section.\"\n180 SECTION 5.\n181 All laws and parts of laws in conflict with this Act are repealed.\nH. B. 89\n- 8 -\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Luckily we have a strikeout selector!"
+    },
+    {
+      "type": "code",
+      "content": "page.find_all('text:strikeout').show(crop='wide')",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: page.find_all('text:strikeout').show(crop='wide')...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/20252026-236232/20252026-236232/images/image_2.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "We can do the same thing with underlined text."
+    },
+    {
+      "type": "code",
+      "content": "underlined = page.find_all('text:underline')\nprint(\"Underlined text is\", underlined.extract_text())\nunderlined.show(crop='wide')",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: underlined = page.find_all('text:underline')\nprint('Underlined text is', underlined.extract_text())...\nUnderlined text is (10)\n[DEBUG] Evaluating expression: underlined.show(crop='wide')...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/20252026-236232/20252026-236232/images/image_3.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "This works across pages, too. All of the added text across the pages can be found like this:"
+    },
+    {
+      "type": "tab",
+      "title": "As one string",
+      "cells": [
+        {
+          "type": "code",
+          "content": "text = pdf.find_all('text:underline').extract_text()\nprint(text)",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: text = pdf.find_all('text:underline').extract_text()...\n[DEBUG] Evaluating expression: print(text)...\n, unless prohibited by state or federal law and psychiatric ARTICLE 4 31-2A-70. As used in this article, the term: (1)  'Advisory committee' or 'committee' means the Regional Perinatal Center Advisory Committee established pursuant to Code Section 31-2A-71. (2)  'Regional perinatal center' means a specially qualified hospital identified by the department and designated to a specific geographic region to lead collaboration between hospitals and providers to increase the likelihood that deliveries are performed in a hospital with an appropriate level of care for mothers and infants. 31-2A-71. (a)  There is established the Regional Perinatal Center Advisory Committee for the purpose of considering and making recommendations to the commissioner concerning the addition, reduction, or transition of regional perinatal centers in this state.  The committee shall advise the commissioner on the estimated costs to the department necessary to implement such recommendations. (b)  The Regional Perinatal Center Advisory Committee shall be composed of not less than 11 nor more than 21 members to be appointed by the commissioner, who shall appoint one of such members to serve as  chairperson.  All appointments to the committee shall be for a term of four years.  A member shall serve until his or her successor has been duly appointed.  The commissioner may reappoint any member. (c)  The advisory committee shall meet upon the call of the chairperson appointed pursuant to subsection (b) of this Code section. (d)  Beginning on July 1, 2026, and every four years thereafter, the department, in conjunction with the advisory committee, shall assess and make recommendations to the commissioner on the adequacy of the regional perinatal system and consider hospital or labor and delivery closures.  Such assessment shall evaluate whether: (1)  Perinatal facilities in each region are equipped and prepared to stabilize infants and mothers before transport; (2)  Coordination exists between maternity care in each region and regional perinatal centers; (3)  All identified high-risk pregnancies and deliveries are promptly evaluated in consultation with regional perinatal centers and referred to the appropriate designated regional perinatal center for the proper management and treatment of such conditions as needed; (4)  An adequate transport system is available in the region for the transfer of high-risk mothers and infants and specifically considers: (A)  The distance and travel time between referring hospitals and regional perinatal centers; (B)  The types of vehicles used for transport and whether a need exists for additional vehicles; and (C)  The need for upgraded vehicles and transport equipment; and (5)  Each regional perinatal center provides: (A)  Consultation for patients requiring special services, including transport; (B)  Coordination and assurance of follow-up medical care for maternal and neonatal patients requiring special services; (C)  Educational support to ensure quality care in institutions involved in perinatal healthcare in the region; (D)  An annual education plan with all birthing centers in the region; (E)  Compilation and analysis of perinatal data from the center and referring hospitals; and (F)  Coordination of perinatal health services within the region. (e)  When changes to the regional perinatal centers are approved by the department after recommendation by the advisory committee, the department shall submit a budget request to the Office of Planning and Budget prior to the General Assembly's next legislative session seeking appropriations to implement such changes. 31-2A-72. A hospital interested in being designated as a regional perinatal center shall notify the department of  the following: (1)  Such hospital's ability to meet the standards for regional perinatal centers; (2)  Any additional funding necessary to bring such hospital up to standard; (3)  Any special planning problems in such hospital's perinatal region, including, but not limited to, transportation, shortage of facilities, and personnel; (4)  A description of perinatal care currently being provided; (5)  A description of services that can be provided by the center in patient care, education, and consultation to hospitals within the perinatal region; and (6)  Any other information requested by the department. 31-2A-73. Beginning on July 1, 2026, and every four years thereafter, the department shall present a plan to the Governor, the Speaker of the House of Representatives, and the President of the Senate for the designated perinatal centers in every region of the state.  Such plan shall include funding considerations to aid hospitals in meeting the standards and for continuing requirements, including, but not limited to, patient care, professional education, training programs, and physical facilities. 31-2A-74. The department shall be authorized to promulgate rules and regulations to carry out the purposes of this article. ; and (11)  A copy of the record of a deceased patient or deceased former patient may be released to the Maternal Mortality Review Committee established under Chapter 2A of Title 31, except for matters privileged under the laws of this state (10)\n",
+            "error": null,
+            "figures": [],
+            "result": null
+          }
+        }
+      ]
+    },
+    {
+      "type": "tab",
+      "title": "As separate strings",
+      "cells": [
+        {
+          "type": "code",
+          "content": "text = pdf.find_all('text:underline').extract_each_text()\nprint(text)",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: text = pdf.find_all('text:underline').extract_each_text()...\n[DEBUG] Evaluating expression: print(text)...\n[', unless prohibited by state or federal law', 'and psychiatric', 'ARTICLE 4', '31-2A-70.', 'As used in this article, the term:', \"(1)  'Advisory committee' or 'committee' means the Regional Perinatal Center Advisory\", 'Committee established pursuant to Code Section 31-2A-71.', \"(2)  'Regional perinatal center' means a specially qualified hospital identified by the\", 'department and designated to a specific geographic region to lead collaboration between', 'hospitals and providers to increase the likelihood that deliveries are performed in a', 'hospital with an appropriate level of care for mothers and infants.', '31-2A-71.', '(a)  There is established the Regional Perinatal Center Advisory Committee for the purpose', 'of considering and making recommendations to the commissioner concerning the addition,', 'reduction, or transition of regional perinatal centers in this state.  The committee shall', 'advise the commissioner on the estimated costs to the department necessary to implement', 'such recommendations.', '(b)  The Regional Perinatal Center Advisory Committee shall be composed of not less', 'than 11 nor more than 21 members to be appointed by the commissioner, who shall appoint', 'one of such members to serve as  chairperson.  All appointments to the committee shall be', 'for a term of four years.  A member shall serve until his or her successor has been duly', 'appointed.  The commissioner may reappoint any member.', '(c)  The advisory committee shall meet upon the call of the chairperson appointed pursuant', 'to subsection (b) of this Code section.', '(d)  Beginning on July 1, 2026, and every four years thereafter, the department, in', 'conjunction with the advisory committee, shall assess and make recommendations to the', 'commissioner on the adequacy of the regional perinatal system and consider hospital or', 'labor and delivery closures.  Such assessment shall evaluate whether:', '(1)  Perinatal facilities in each region are equipped and prepared to stabilize infants and', 'mothers before transport;', '(2)  Coordination exists between maternity care in each region and regional perinatal', 'centers;', '(3)  All identified high-risk pregnancies and deliveries are promptly evaluated in', 'consultation with regional perinatal centers and referred to the appropriate designated', 'regional perinatal center for the proper management and treatment of such conditions as', 'needed;', '(4)  An adequate transport system is available in the region for the transfer of high-risk', 'mothers and infants and specifically considers:', '(A)  The distance and travel time between referring hospitals and regional perinatal', 'centers;', '(B)  The types of vehicles used for transport and whether a need exists for additional', 'vehicles; and', '(C)  The need for upgraded vehicles and transport equipment; and', '(5)  Each regional perinatal center provides:', '(A)  Consultation for patients requiring special services, including transport;', '(B)  Coordination and assurance of follow-up medical care for maternal and neonatal', 'patients requiring special services;', '(C)  Educational support to ensure quality care in institutions involved in perinatal', 'healthcare in the region;', '(D)  An annual education plan with all birthing centers in the region;', '(E)  Compilation and analysis of perinatal data from the center and referring hospitals;', 'and', '(F)  Coordination of perinatal health services within the region.', '(e)  When changes to the regional perinatal centers are approved by the department after', 'recommendation by the advisory committee, the department shall submit a budget request', \"to the Office of Planning and Budget prior to the General Assembly's next legislative\", 'session seeking appropriations to implement such changes.', '31-2A-72.', 'A hospital interested in being designated as a regional perinatal center shall notify the', 'department of  the following:', \"(1)  Such hospital's ability to meet the standards for regional perinatal centers;\", '(2)  Any additional funding necessary to bring such hospital up to standard;', \"(3)  Any special planning problems in such hospital's perinatal region, including, but not\", 'limited to, transportation, shortage of facilities, and personnel;', '(4)  A description of perinatal care currently being provided;', '(5)  A description of services that can be provided by the center in patient care, education,', 'and consultation to hospitals within the perinatal region; and', '(6)  Any other information requested by the department.', '31-2A-73.', 'Beginning on July 1, 2026, and every four years thereafter, the department shall present a', 'plan to the Governor, the Speaker of the House of Representatives, and the President of the', 'Senate for the designated perinatal centers in every region of the state.  Such plan shall', 'include funding considerations to aid hospitals in meeting the standards and for continuing', 'requirements, including, but not limited to, patient care, professional education, training', 'programs, and physical facilities.', '31-2A-74.', 'The department shall be authorized to promulgate rules and regulations to carry out the', 'purposes of this article.', '; and', '(11)  A copy of the record of a deceased patient or deceased former patient may be', 'released to the Maternal Mortality Review Committee established under Chapter 2A of', 'Title 31, except for matters privileged under the laws of this state', '(10)']\n",
+            "error": null,
+            "figures": [],
+            "result": null
+          }
+        }
+      ]
+    },
+    {
+      "type": "markdown",
+      "content": "### Ignoring struck-out text\n\nIf we want `.extract_text()` to fully ignore struck-out text, we can add an exclusion."
+    },
+    {
+      "type": "code",
+      "content": "pdf.add_exclusion('text:strikeout')",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: pdf.add_exclusion('text:strikeout')...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/plain",
+          "data": "<PDF source='20252026-236232.pdf' pages=8>"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Easy!\n\n### Selecting the good areas\n\nWe have three approaches to avoiding the numbers on the left-hand column: make use of the numbers, select the region we do want, or ignore the stuff we don't want."
+    },
+    {
+      "type": "tab",
+      "title": "Use the numbers",
+      "cells": [
+        {
+          "type": "code",
+          "content": "page = pdf.pages[0]\npage.show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: page = pdf.pages[0]...\n[DEBUG] Evaluating expression: page.show()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/20252026-236232/20252026-236232/images/image_4.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "One way to describe the sections we want is text to the right of the numbers. So first we find the general area of the numbers..."
+        },
+        {
+          "type": "code",
+          "content": "page.region(right=70).show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Evaluating expression: page.region(right=70).show()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/20252026-236232/20252026-236232/images/image_5.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "...find the numbers..."
+        },
+        {
+          "type": "code",
+          "content": "(\n  page\n  .region(right=70)\n  .find_all('text')\n  .show(crop='wide')\n)",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Evaluating expression: page.region(right=70).find_all('text').show(crop='wide')...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/20252026-236232/20252026-236232/images/image_6.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "...get the stuff to the right of them..."
+        },
+        {
+          "type": "code",
+          "content": "(\n  page\n  .region(right=70)\n  .find_all('text')\n  .right()\n  .show(crop='wide')\n)",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Evaluating expression: page.region(right=70).find_all('text').right().show(crop='wide')...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/20252026-236232/20252026-236232/images/image_7.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "...and merge it all together."
+        },
+        {
+          "type": "code",
+          "content": "(\n  page\n  .region(right=70)\n  .find_all('text')\n  .right()\n  .merge()\n  .show(crop='wide')\n)",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Evaluating expression: page.region(right=70).find_all('text').right().merge().show(crop='wide')...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/20252026-236232/20252026-236232/images/image_8.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "We can do it for all pages."
+        },
+        {
+          "type": "code",
+          "content": "sections = pdf.pages.apply(lambda page: (\n    page\n        .region(right=70)\n        .find_all('text')\n        .right()\n        .merge()\n    )\n)\nsections.show()",
+          "execution": {
+            "status": "error",
+            "output": "[DEBUG] Executing code: sections = pdf.pages.apply(lambda page: page.region(right=70).find_all('text').right().merge())...\n[DEBUG] Evaluating expression: sections.show()...\n",
+            "error": "Traceback (most recent call last):\n  File \"/home/runner/work/badpdfs-site/badpdfs-site/processor/tasks/execution.py\", line 364, in _execute_code\n    last_value = eval(expr_str, self.namespace)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 1, in <module>\n  File \"/home/runner/work/badpdfs-site/badpdfs-site/processor/.venv/lib/python3.11/site-packages/natural_pdf/core/render_spec.py\", line 269, in show\n    highlighter = self._get_highlighter()\n                  ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/badpdfs-site/badpdfs-site/processor/.venv/lib/python3.11/site-packages/natural_pdf/core/render_spec.py\", line 174, in _get_highlighter\n    raise RuntimeError(\nRuntimeError: Cannot find HighlightingService for PageCollection. Override _get_highlighter() to provide access.\n",
+            "figures": [],
+            "result": null
+          }
+        },
+        {
+          "type": "code",
+          "content": "text = sections.extract_text()\nprint(text)",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: text = sections.extract_text()...\n[DEBUG] Evaluating expression: print(text)...\nTo amend Chapter 2A of Title 31 of the Official Code of Georgia Annotated, relating to the\ndepartment of public health, so as to require healthcare providers, healthcare facilities, and\npharmacies to provide the Maternal Mortality Review Committee with psychiatric records;\nto provide for the establishment of the Regional Perinatal Center Advisory Committee; to\nprovide for its composition and duties; to provide for assessment and recommendations to\nthe commissioner of public health; to require that hospitals interested in being a designated\nregional perinatal center provide the department of public health with certain criteria; to\nprovide that such department present a plan every four years; to provide for definitions; to\namend Code Section 37-3-166 of the Official Code of Georgia Annotated, relating to\ntreatment of clinical records, when release permitted, scope of privileged communications,\nliability for disclosure, and notice to sheriff of discharge, so as to permit the release of\nclinical records of a deceased patient or deceased former patient to the Maternal Mortality\nReview Committee; to amend Code Section 45-16-24 of the Official Code of Georgia\nAnnotated, relating to notification of suspicious or unusual deaths, court ordered medical\nexaminer's inquiry, and written report of inquiry, so as to remove the requirement that a\nmedical examiner's inquiry for pregnant female deaths be done through a regional perinatal\ncenter; to provide for related matters; to repeal conflicting laws; and for other purposes.\nBE IT ENACTED BY THE GENERAL ASSEMBLY OF GEORGIA:\nSECTION 1.\nChapter 2A of Title 31 of the Official Code of Georgia Annotated, relating to the department\nof public health, is amended by revising subsection (d) of Code Section 31-2A-16, relating\nto Maternal Mortality Review Committee established, as follows:\n\"(d)(1)  Health care providers licensed pursuant to Title 43, health care facilities licensed\npursuant to Chapter 7 of Title 31, and pharmacies licensed pursuant to Chapter 4 of Title\n26 shall provide reasonable access to the committee to all relevant medical records\nassociated with a case under review by the committee within 30 days of receiving a\nrequest for such records, unless prohibited by state or federal law.\n(2)  A health care provider, health care facility, or pharmacy providing access to medical\nand psychiatric records pursuant to this Code section shall not be held liable for civil\ndamages or be subject to any criminal or disciplinary action for good faith efforts in\nproviding such records.\"\nSECTION 2.\nSaid chapter is further amended by adding a new article to read as follows:\n\"ARTICLE 4\n31-2A-70.\nAs used in this article, the term:\n(1)  'Advisory committee' or 'committee' means the Regional Perinatal Center Advisory\nCommittee established pursuant to Code Section 31-2A-71.\n(2)  'Regional perinatal center' means a specially qualified hospital identified by the\ndepartment and designated to a specific geographic region to lead collaboration between\nhospitals and providers to increase the likelihood that deliveries are performed in a\nhospital with an appropriate level of care for mothers and infants.\n31-2A-71.\n(a)  There is established the Regional Perinatal Center Advisory Committee for the purpose\nof considering and making recommendations to the commissioner concerning the addition,\nreduction, or transition of regional perinatal centers in this state.  The committee shall\nadvise the commissioner on the estimated costs to the department necessary to implement\nsuch recommendations.\n(b)  The Regional Perinatal Center Advisory Committee shall be composed of not less\nthan 11 nor more than 21 members to be appointed by the commissioner, who shall appoint\none of such members to serve as  chairperson.  All appointments to the committee shall be\nfor a term of four years.  A member shall serve until his or her successor has been duly\nappointed.  The commissioner may reappoint any member.\n(c)  The advisory committee shall meet upon the call of the chairperson appointed pursuant\nto subsection (b) of this Code section.\n(d)  Beginning on July 1, 2026, and every four years thereafter, the department, in\nconjunction with the advisory committee, shall assess and make recommendations to the\ncommissioner on the adequacy of the regional perinatal system and consider hospital or\nlabor and delivery closures.  Such assessment shall evaluate whether:\n(1)  Perinatal facilities in each region are equipped and prepared to stabilize infants and\nmothers before transport;\n(2)  Coordination exists between maternity care in each region and regional perinatal\ncenters;\n(3)  All identified high-risk pregnancies and deliveries are promptly evaluated in\nconsultation with regional perinatal centers and referred to the appropriate designated\nregional perinatal center for the proper management and treatment of such conditions as\nneeded;\n(4)  An adequate transport system is available in the region for the transfer of high-risk\nmothers and infants and specifically considers:\n(A)  The distance and travel time between referring hospitals and regional perinatal\ncenters;\n(B)  The types of vehicles used for transport and whether a need exists for additional\nvehicles; and\n(C)  The need for upgraded vehicles and transport equipment; and\n(5)  Each regional perinatal center provides:\n(A)  Consultation for patients requiring special services, including transport;\n(B)  Coordination and assurance of follow-up medical care for maternal and neonatal\npatients requiring special services;\n(C)  Educational support to ensure quality care in institutions involved in perinatal\nhealthcare in the region;\n(D)  An annual education plan with all birthing centers in the region;\n(E)  Compilation and analysis of perinatal data from the center and referring hospitals;\nand\n(F)  Coordination of perinatal health services within the region.\n(e)  When changes to the regional perinatal centers are approved by the department after\nrecommendation by the advisory committee, the department shall submit a budget request\nto the Office of Planning and Budget prior to the General Assembly's next legislative\nsession seeking appropriations to implement such changes.\n31-2A-72.\nA hospital interested in being designated as a regional perinatal center shall notify the\ndepartment of  the following:\n(1)  Such hospital's ability to meet the standards for regional perinatal centers;\n(2)  Any additional funding necessary to bring such hospital up to standard;\n(3)  Any special planning problems in such hospital's perinatal region, including, but not\nlimited to, transportation, shortage of facilities, and personnel;\n(4)  A description of perinatal care currently being provided;\n(5)  A description of services that can be provided by the center in patient care, education,\nand consultation to hospitals within the perinatal region; and\n(6)  Any other information requested by the department.\n31-2A-73.\nBeginning on July 1, 2026, and every four years thereafter, the department shall present a\nplan to the Governor, the Speaker of the House of Representatives, and the President of the\nSenate for the designated perinatal centers in every region of the state.  Such plan shall\ninclude funding considerations to aid hospitals in meeting the standards and for continuing\nrequirements, including, but not limited to, patient care, professional education, training\nprograms, and physical facilities.\n31-2A-74.\nThe department shall be authorized to promulgate rules and regulations to carry out the\npurposes of this article.\"\nSECTION 3.\nCode Section 37-3-166 of the Official Code of Georgia Annotated, relating to treatment of\nclinical records, when release permitted, scope of privileged communications, liability for\ndisclosure, and notice to sheriff of discharge, is amended by revising subsection (a) as\nfollows:\n\"(a)  A clinical record for each patient shall be maintained.  Authorized release of the\nrecord shall include but not be limited to examination of the original record, copies of all\nor any portion of the record, or disclosure of information from the record, except for\nmatters privileged under the laws of this state.  Such examination shall be conducted on\nhospital premises at reasonable times determined by the facility.  The clinical record shall\nnot be a public record and no part of it shall be released except:\n(1)  When the chief medical officer of the facility where the record is kept deems it\nessential for continued treatment, a copy of the record or parts thereof may be released\nto physicians or psychologists when and as necessary for the treatment of the patient;\n(2)  A copy of the record may be released to any person or entity designated in writing\nby the patient or, if appropriate, the parent of a minor, the legal guardian of an adult or\nminor, or a person to whom legal custody of a minor patient has been given by order of\na court;\n(2.1)  A copy of the record of a deceased patient or deceased former patient may be\nreleased to or in response to a valid subpoena of a coroner or medical examiner under\nChapter 16 of Title 45, except for matters privileged under the laws of this state;\n(3)  When a patient is admitted to a facility, a copy of the record or information contained\nin the record from another facility, community mental health center, or private\npractitioner may be released to the admitting facility.  When the service plan of a patient\ninvolves transfer of that patient to another facility, community mental health center, or\nprivate practitioner, a copy of the record or information contained in the record may be\nreleased to that facility, community mental health center, or private practitioner;\n(4)  A copy of the record or any part thereof may be disclosed to any employee or staff\nmember of the facility when it is necessary for the proper treatment of the patient;\n(5)  A copy of the record shall be released to the patient's attorney if the attorney so\nrequests and the patient, or the patient's legal guardian, consents to the release;\n(6)  In a bona fide medical emergency, as determined by a physician treating the patient,\nthe chief medical officer may release a copy of the record to the treating physician or to\nthe patient's psychologist;\n(7)  At the request of the patient, the patient's legal guardian, or the patient's attorney, the\nrecord shall be produced by the entity having custody thereof at any hearing held under\nthis chapter;\n(8)  A copy of the record shall be produced in response to a valid subpoena or order of\nany court of competent jurisdiction, except for matters privileged under the laws of this\nstate;\n(8.1)  A copy of the record may be released to the legal representative of a deceased\npatient's estate, except for matters privileged under the laws of this state;\n(9)  Notwithstanding any other provision of law to the contrary, a law enforcement officer\nin the course of a criminal investigation may be informed as to whether a person is or has\nbeen a patient in a state facility, as well as the patient's current address, if known;\n(10)  Notwithstanding any other provision of law to the contrary, a law enforcement\nofficer in the course of investigating the commission of a crime on the premises of a\nfacility covered by this chapter or against facility personnel or a threat to commit such\na crime may be informed as to the circumstances of the incident, including whether the\nindividual allegedly committing or threatening to commit a crime is or has been a patient\nin the facility, and the name, address, and last known whereabouts of any alleged patient\nperpetrator; and\n(11)  A copy of the record of a deceased patient or deceased former patient may be\nreleased to the Maternal Mortality Review Committee established under Chapter 2A of\nTitle 31, except for matters privileged under the laws of this state.\"\nSECTION 4.\nCode Section 45-16-24 of the Official Code of Georgia Annotated, relating to notification\nof suspicious or unusual deaths, court ordered medical examiner's inquiry, and written report\nof inquiry, is amended by revising subsection (b) as follows:\n\"(b)  A coroner or county medical examiner who is notified of a death pursuant to\nsubsection (a) of this Code section under circumstances specified in paragraphs (1)\nthrough  (10) of such subsection shall order a medical examiner's inquiry of that death.\n  This subsection shall\nnot be construed to prohibit a medical examiner's inquiry of a death if a coroner or county\nmedical examiner is notified of a death under circumstances specified in paragraph (11) of\nsubsection (a) of this Code section.\"\nSECTION 5.\nAll laws and parts of laws in conflict with this Act are repealed.\n",
+            "error": null,
+            "figures": [],
+            "result": null
+          }
+        }
+      ]
+    },
+    {
+      "type": "tab",
+      "title": "Pixel-based regions",
+      "cells": [
+        {
+          "type": "markdown",
+          "content": "Most documents have headers and footers, this one just also has a left-hand area. What if we just selected the region based on pixels?"
+        },
+        {
+          "type": "code",
+          "content": "area = page.region(left=70, top=50, bottom=page.height - 100)\narea.show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: area = page.region(left=70, top=50, bottom=page.height - 100)...\n[DEBUG] Evaluating expression: area.show()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/20252026-236232/20252026-236232/images/image_9.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "We can go through each page and do the same thing, ending up with a collection of sections."
+        },
+        {
+          "type": "code",
+          "content": "sections = pdf.pages.apply(lambda page: page.region(\n    left=70,\n    top=50,\n    bottom=page.height - 100\n  )\n)\nsections.show()",
+          "execution": {
+            "status": "error",
+            "output": "[DEBUG] Executing code: sections = pdf.pages.apply(lambda page: page.region(left=70, top=50, bottom=page.height - 100))...\n[DEBUG] Evaluating expression: sections.show()...\n",
+            "error": "Traceback (most recent call last):\n  File \"/home/runner/work/badpdfs-site/badpdfs-site/processor/tasks/execution.py\", line 364, in _execute_code\n    last_value = eval(expr_str, self.namespace)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 1, in <module>\n  File \"/home/runner/work/badpdfs-site/badpdfs-site/processor/.venv/lib/python3.11/site-packages/natural_pdf/core/render_spec.py\", line 269, in show\n    highlighter = self._get_highlighter()\n                  ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/badpdfs-site/badpdfs-site/processor/.venv/lib/python3.11/site-packages/natural_pdf/core/render_spec.py\", line 174, in _get_highlighter\n    raise RuntimeError(\nRuntimeError: Cannot find HighlightingService for PageCollection. Override _get_highlighter() to provide access.\n",
+            "figures": [],
+            "result": null
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "And now we simply grab the text!"
+        },
+        {
+          "type": "code",
+          "content": "sections.extract_text()\nsections[0].extract_text()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: sections.extract_text()...\n[DEBUG] Evaluating expression: sections[0].extract_text()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "text/plain",
+              "data": "\"25 LC 57 0207S/AP\\nHouse Bill 89 (AS PASSED HOUSE AND SENATE)\\nBy: Representatives Cooper of the 45th, Wade of the 9th, Gambill of the 15th, and Hong of the\\n103rd\\nA BILL TO BE ENTITLED\\nAN ACT\\nTo amend Chapter 2A of Title 31 of the Official Code of Georgia Annotated, relating to the\\ndepartment of public health, so as to require healthcare providers, healthcare facilities, and\\npharmacies to provide the Maternal Mortality Review Committee with psychiatric records;\\nto provide for the establishment of the Regional Perinatal Center Advisory Committee; to\\nprovide for its composition and duties; to provide for assessment and recommendations to\\nthe commissioner of public health; to require that hospitals interested in being a designated\\nregional perinatal center provide the department of public health with certain criteria; to\\nprovide that such department present a plan every four years; to provide for definitions; to\\namend Code Section 37-3-166 of the Official Code of Georgia Annotated, relating to\\ntreatment of clinical records, when release permitted, scope of privileged communications,\\nliability for disclosure, and notice to sheriff of discharge, so as to permit the release of\\nclinical records of a deceased patient or deceased former patient to the Maternal Mortality\\nReview Committee; to amend Code Section 45-16-24 of the Official Code of Georgia\\nAnnotated, relating to notification of suspicious or unusual deaths, court ordered medical\\nexaminer's inquiry, and written report of inquiry, so as to remove the requirement that a\\nmedical examiner's inquiry for pregnant female deaths be done through a regional perinatal\\ncenter; to provide for related matters; to repeal conflicting laws; and for other purposes.\""
+            }
+          }
+        },
+        {
+          "type": "code",
+          "content": "sections.extract_each_text()",
+          "execution": {
+            "status": "error",
+            "output": "[DEBUG] Evaluating expression: sections.extract_each_text()...\n",
+            "error": "Traceback (most recent call last):\n  File \"/home/runner/work/badpdfs-site/badpdfs-site/processor/tasks/execution.py\", line 364, in _execute_code\n    last_value = eval(expr_str, self.namespace)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 1, in <module>\nAttributeError: 'PageCollection' object has no attribute 'extract_each_text'\n",
+            "figures": [],
+            "result": null
+          }
+        }
+      ]
+    },
+    {
+      "type": "tab",
+      "title": "Ignore what we don't want",
+      "cells": [
+        {
+          "type": "markdown",
+          "content": "Another route is through **more exclusions**. We start by finding the area on the page where the Bad Stuff is."
+        },
+        {
+          "type": "code",
+          "content": "left = page.region(right=70)\ntop = page.region(bottom=50)\nbottom = page.region(top=page.height-100)\n(left + top + bottom).show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: left = page.region(right=70)\ntop = page.region(bottom=50)\nbottom = page.region(top=page.height - 100...\n[DEBUG] Evaluating expression: (left + top + bottom).show()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/20252026-236232/20252026-236232/images/image_10.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "Then we tell the PDF to ignore those regions on every single page."
+        },
+        {
+          "type": "code",
+          "content": "pdf.add_exclusion(lambda page: page.region(right=70))\npdf.add_exclusion(lambda page: page.region(bottom=50))\npdf.add_exclusion(lambda page: page.region(top=page.height-100))",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: pdf.add_exclusion(lambda page: page.region(right=70))\npdf.add_exclusion(lambda page: page.region(bot...\n[DEBUG] Evaluating expression: pdf.add_exclusion(lambda page: page.region(top=page.height - 100))...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "text/plain",
+              "data": "<PDF source='20252026-236232.pdf' pages=8>"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "Done and done! We get a little extra copy on the first page compared to first approach, but this is 100x easier."
+        },
+        {
+          "type": "code",
+          "content": "pdf.extract_text()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Evaluating expression: pdf.extract_text()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "text/plain",
+              "data": "'House Bill 89 (AS PASSED HOUSE AND SENATE)\\nBy: Representatives Cooper of the 45th, Wade of the 9th, Gambill of the 15th, and Hong of the\\n103rd\\nA BILL TO BE ENTITLED\\nAN ACT\\nTo amend Chapter 2A of Title 31 of the Official Code of Georgia Annotated, relating to the\\ndepartment of public health, so as to require healthcare providers, healthcare facilities, and\\npharmacies to provide the Maternal Mortality Review Committee with psychiatric records;\\nto provide for the establishment of the Regional Perinatal Center Advisory Committee; to\\nprovide for its composition and duties; to provide for assessment and recommendations to\\nthe commissioner of public health; to require that hospitals interested in being a designated\\nregional perinatal center provide the department of public health with certain criteria; to\\nprovide that such department present a plan every four years; to provide for definitions; to\\namend Code Section 37-3-166 of the Official Code of Georgia Annotated, relating to\\ntreatment of clinical records, when release permitted, scope of privileged communications,\\nliability for disclosure, and notice to sheriff of discharge, so as to permit the release of\\nclinical records of a deceased patient or deceased former patient to the Maternal Mortality\\nReview Committee; to amend Code Section 45-16-24 of the Official Code of Georgia\\nAnnotated, relating to notification of suspicious or unusual deaths, court ordered medical\\nexaminer\\'s inquiry, and written report of inquiry, so as to remove the requirement that a\\nmedical examiner\\'s inquiry for pregnant female deaths be done through a regional perinatal\\ncenter; to provide for related matters; to repeal conflicting laws; and for other purposes.\\nBE IT ENACTED BY THE GENERAL ASSEMBLY OF GEORGIA:\\nSECTION 1.\\nChapter 2A of Title 31 of the Official Code of Georgia Annotated, relating to the department\\nof public health, is amended by revising subsection (d) of Code Section 31-2A-16, relating\\nto Maternal Mortality Review Committee established, as follows:\\n\"(d)(1) Health care providers licensed pursuant to Title 43, health care facilities licensed\\npursuant to Chapter 7 of Title 31, and pharmacies licensed pursuant to Chapter 4 of Title\\n26 shall provide reasonable access to the committee to all relevant medical records\\nassociated with a case under review by the committee within 30 days of receiving a\\nrequest for such records, unless prohibited by state or federal law.\\n(2) A health care provider, health care facility, or pharmacy providing access to medical\\nand psychiatric records pursuant to this Code section shall not be held liable for civil\\ndamages or be subject to any criminal or disciplinary action for good faith efforts in\\nproviding such records.\"\\nSECTION 2.\\nSaid chapter is further amended by adding a new article to read as follows:\\n\"ARTICLE 4\\n31-2A-70.\\nAs used in this article, the term:\\n(1) \\'Advisory committee\\' or \\'committee\\' means the Regional Perinatal Center Advisory\\nCommittee established pursuant to Code Section 31-2A-71.\\n(2) \\'Regional perinatal center\\' means a specially qualified hospital identified by the\\ndepartment and designated to a specific geographic region to lead collaboration between\\nhospitals and providers to increase the likelihood that deliveries are performed in a\\nhospital with an appropriate level of care for mothers and infants.\\n31-2A-71.\\n(a) There is established the Regional Perinatal Center Advisory Committee for the purpose\\nof considering and making recommendations to the commissioner concerning the addition,\\nreduction, or transition of regional perinatal centers in this state. The committee shall\\nadvise the commissioner on the estimated costs to the department necessary to implement\\nsuch recommendations.\\n(b) The Regional Perinatal Center Advisory Committee shall be composed of not less\\nthan 11 nor more than 21 members to be appointed by the commissioner, who shall appoint\\none of such members to serve as chairperson. All appointments to the committee shall be\\nfor a term of four years. A member shall serve until his or her successor has been duly\\nappointed. The commissioner may reappoint any member.\\n(c) The advisory committee shall meet upon the call of the chairperson appointed pursuant\\nto subsection (b) of this Code section.\\n(d) Beginning on July 1, 2026, and every four years thereafter, the department, in\\nconjunction with the advisory committee, shall assess and make recommendations to the\\ncommissioner on the adequacy of the regional perinatal system and consider hospital or\\nlabor and delivery closures. Such assessment shall evaluate whether:\\n(1) Perinatal facilities in each region are equipped and prepared to stabilize infants and\\nmothers before transport;\\n(2) Coordination exists between maternity care in each region and regional perinatal\\ncenters;\\n(3) All identified high-risk pregnancies and deliveries are promptly evaluated in\\nconsultation with regional perinatal centers and referred to the appropriate designated\\nregional perinatal center for the proper management and treatment of such conditions as\\nneeded;\\n(4) An adequate transport system is available in the region for the transfer of high-risk\\nmothers and infants and specifically considers:\\n(A) The distance and travel time between referring hospitals and regional perinatal\\ncenters;\\n(B) The types of vehicles used for transport and whether a need exists for additional\\nvehicles; and\\n(C) The need for upgraded vehicles and transport equipment; and\\n(5) Each regional perinatal center provides:\\n(A) Consultation for patients requiring special services, including transport;\\n(B) Coordination and assurance of follow-up medical care for maternal and neonatal\\npatients requiring special services;\\n(C) Educational support to ensure quality care in institutions involved in perinatal\\nhealthcare in the region;\\n(D) An annual education plan with all birthing centers in the region;\\n(E) Compilation and analysis of perinatal data from the center and referring hospitals;\\nand\\n(F) Coordination of perinatal health services within the region.\\n(e) When changes to the regional perinatal centers are approved by the department after\\nrecommendation by the advisory committee, the department shall submit a budget request\\nto the Office of Planning and Budget prior to the General Assembly\\'s next legislative\\nsession seeking appropriations to implement such changes.\\n31-2A-72.\\nA hospital interested in being designated as a regional perinatal center shall notify the\\ndepartment of the following:\\n(1) Such hospital\\'s ability to meet the standards for regional perinatal centers;\\n(2) Any additional funding necessary to bring such hospital up to standard;\\n(3) Any special planning problems in such hospital\\'s perinatal region, including, but not\\nlimited to, transportation, shortage of facilities, and personnel;\\n(4) A description of perinatal care currently being provided;\\n(5) A description of services that can be provided by the center in patient care, education,\\nand consultation to hospitals within the perinatal region; and\\n(6) Any other information requested by the department.\\n31-2A-73.\\nBeginning on July 1, 2026, and every four years thereafter, the department shall present a\\nplan to the Governor, the Speaker of the House of Representatives, and the President of the\\nSenate for the designated perinatal centers in every region of the state. Such plan shall\\ninclude funding considerations to aid hospitals in meeting the standards and for continuing\\nrequirements, including, but not limited to, patient care, professional education, training\\nprograms, and physical facilities.\\n31-2A-74.\\nThe department shall be authorized to promulgate rules and regulations to carry out the\\npurposes of this article.\"\\nSECTION 3.\\nCode Section 37-3-166 of the Official Code of Georgia Annotated, relating to treatment of\\nclinical records, when release permitted, scope of privileged communications, liability for\\ndisclosure, and notice to sheriff of discharge, is amended by revising subsection (a) as\\nfollows:\\n\"(a) A clinical record for each patient shall be maintained. Authorized release of the\\nrecord shall include but not be limited to examination of the original record, copies of all\\nor any portion of the record, or disclosure of information from the record, except for\\nmatters privileged under the laws of this state. Such examination shall be conducted on\\nhospital premises at reasonable times determined by the facility. The clinical record shall\\nnot be a public record and no part of it shall be released except:\\n(1) When the chief medical officer of the facility where the record is kept deems it\\nessential for continued treatment, a copy of the record or parts thereof may be released\\nto physicians or psychologists when and as necessary for the treatment of the patient;\\n(2) A copy of the record may be released to any person or entity designated in writing\\nby the patient or, if appropriate, the parent of a minor, the legal guardian of an adult or\\nminor, or a person to whom legal custody of a minor patient has been given by order of\\na court;\\n(2.1) A copy of the record of a deceased patient or deceased former patient may be\\nreleased to or in response to a valid subpoena of a coroner or medical examiner under\\nChapter 16 of Title 45, except for matters privileged under the laws of this state;\\n(3) When a patient is admitted to a facility, a copy of the record or information contained\\nin the record from another facility, community mental health center, or private\\npractitioner may be released to the admitting facility. When the service plan of a patient\\ninvolves transfer of that patient to another facility, community mental health center, or\\nprivate practitioner, a copy of the record or information contained in the record may be\\nreleased to that facility, community mental health center, or private practitioner;\\n(4) A copy of the record or any part thereof may be disclosed to any employee or staff\\nmember of the facility when it is necessary for the proper treatment of the patient;\\n(5) A copy of the record shall be released to the patient\\'s attorney if the attorney so\\nrequests and the patient, or the patient\\'s legal guardian, consents to the release;\\n(6) In a bona fide medical emergency, as determined by a physician treating the patient,\\nthe chief medical officer may release a copy of the record to the treating physician or to\\nthe patient\\'s psychologist;\\n(7) At the request of the patient, the patient\\'s legal guardian, or the patient\\'s attorney, the\\nrecord shall be produced by the entity having custody thereof at any hearing held under\\nthis chapter;\\n(8) A copy of the record shall be produced in response to a valid subpoena or order of\\nany court of competent jurisdiction, except for matters privileged under the laws of this\\nstate;\\n(8.1) A copy of the record may be released to the legal representative of a deceased\\npatient\\'s estate, except for matters privileged under the laws of this state;\\n(9) Notwithstanding any other provision of law to the contrary, a law enforcement officer\\nin the course of a criminal investigation may be informed as to whether a person is or has\\nbeen a patient in a state facility, as well as the patient\\'s current address, if known;\\n(10) Notwithstanding any other provision of law to the contrary, a law enforcement\\nofficer in the course of investigating the commission of a crime on the premises of a\\nfacility covered by this chapter or against facility personnel or a threat to commit such\\na crime may be informed as to the circumstances of the incident, including whether the\\nindividual allegedly committing or threatening to commit a crime is or has been a patient\\nin the facility, and the name, address, and last known whereabouts of any alleged patient\\nperpetrator; and\\n(11) A copy of the record of a deceased patient or deceased former patient may be\\nreleased to the Maternal Mortality Review Committee established under Chapter 2A of\\nTitle 31, except for matters privileged under the laws of this state.\"\\nSECTION 4.\\nCode Section 45-16-24 of the Official Code of Georgia Annotated, relating to notification\\nof suspicious or unusual deaths, court ordered medical examiner\\'s inquiry, and written report\\nof inquiry, is amended by revising subsection (b) as follows:\\n\"(b) A coroner or county medical examiner who is notified of a death pursuant to\\nsubsection (a) of this Code section under circumstances specified in paragraphs (1)\\nthrough (10) of such subsection shall order a medical examiner\\'s inquiry of that death.\\nThis subsection shall\\nnot be construed to prohibit a medical examiner\\'s inquiry of a death if a coroner or county\\nmedical examiner is notified of a death under circumstances specified in paragraph (11) of\\nsubsection (a) of this Code section.\"\\nSECTION 5.\\nAll laws and parts of laws in conflict with this Act are repealed.'"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

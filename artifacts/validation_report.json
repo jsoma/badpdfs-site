@@ -1,0 +1,199 @@
+{
+  "total_items": 17,
+  "valid_count": 16,
+  "invalid_count": 1,
+  "valid_pdf_ids": [
+    "liberty-county-boe",
+    "czech-republic-pisa2012_zakovsky_dotaznik_a",
+    "k046682-111320-opa-lea-database-install_1",
+    "20252026-236232",
+    "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+    "24480polcompleted",
+    "mednine",
+    "multicolumn",
+    "statecallcenterdata_redacted",
+    "use-of-force-raw",
+    "ocr-example",
+    "cia-document",
+    "basics",
+    "focus",
+    "sample-bop-policy-restaurant",
+    "m27"
+  ],
+  "invalid_items": [
+    {
+      "item": {
+        "slug": "pomonajailpomonaca06212004",
+        "title": "ICE Detention Facilities Compliance Report Extraction",
+        "description": "This PDF is an ICE report on compliance among detention facilities over the last 20-30 years. Our aim is to extract facility statuses and contract signatories' names and dates. Challenges include strange redactions, blobby text, poor contrast, and ineffective OCR. It has handwritten signatures and dates that are redacted.",
+        "pdf": "pomonajailpomonaca06212004.pdf",
+        "tags": [
+          "ICE compliance report",
+          "Redacted text",
+          "Handwriting",
+          "OCR needed",
+          "Text extraction issues",
+          "Columns"
+        ],
+        "file_size_mb": 41.36,
+        "page_count": 26,
+        "submitted_by": "Paroma Soni",
+        "published": true,
+        "file": "pomonajailpomonaca06212004.md",
+        "id": "pomonajailpomonaca06212004",
+        "methods": [
+          "Judge",
+          "PDF",
+          "add",
+          "apply_ocr",
+          "below",
+          "expand",
+          "extract_text",
+          "find",
+          "forget",
+          "left",
+          "region",
+          "show",
+          "trim"
+        ],
+        "method_usage": [
+          {
+            "method": "PDF",
+            "method_full": "PDF",
+            "args": [
+              "pomonajailpomonaca06212004.pdf"
+            ],
+            "kwargs": {
+              "text_layer": false
+            }
+          },
+          {
+            "method": "show",
+            "method_full": "page.show",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "apply_ocr",
+            "method_full": "page.apply_ocr",
+            "args": [],
+            "kwargs": {
+              "resolution": 192
+            }
+          },
+          {
+            "method": "extract_text",
+            "method_full": "page.extract_text",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "region",
+            "method_full": "page.region",
+            "args": [],
+            "kwargs": {
+              "right": "<BinOp>"
+            }
+          },
+          {
+            "method": "show",
+            "method_full": "left_col.show",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "below",
+            "method_full": "below",
+            "args": [],
+            "kwargs": {
+              "until": "text:contains(ICE Information)",
+              "include_endpoint": false
+            }
+          },
+          {
+            "method": "show",
+            "method_full": "show",
+            "args": [],
+            "kwargs": {
+              "crop": 50
+            }
+          },
+          {
+            "method": "show",
+            "method_full": "show",
+            "args": [],
+            "kwargs": {
+              "crop": true
+            }
+          },
+          {
+            "method": "trim",
+            "method_full": "trim",
+            "args": [],
+            "kwargs": {}
+          },
+          {
+            "method": "expand",
+            "method_full": "expand",
+            "args": [],
+            "kwargs": {
+              "top": 3
+            }
+          },
+          {
+            "method": "forget",
+            "method_full": "judge.forget",
+            "args": [],
+            "kwargs": {
+              "delete": true
+            }
+          },
+          {
+            "method": "add",
+            "method_full": "judge.add",
+            "args": [
+              "<var:region1>",
+              "checked"
+            ],
+            "kwargs": {}
+          },
+          {
+            "method": "add",
+            "method_full": "judge.add",
+            "args": [
+              "<var:region2>",
+              "unchecked"
+            ],
+            "kwargs": {}
+          }
+        ],
+        "selectors": [
+          "text:closest(County)",
+          "text:closest(Dates of Review)",
+          "text:closest(Previous Rating)",
+          "text:contains(Name and Location)",
+          "text[text=Class Action Order]",
+          "text[text=Court Order]",
+          "text[text=Major Litigation]",
+          "text[text=No]"
+        ],
+        "complexity": {
+          "code_blocks": 15,
+          "total_lines": 63,
+          "total_chars": 1969
+        },
+        "approaches": [
+          "pomonajailpomonaca06212004.md"
+        ]
+      },
+      "errors": [
+        {
+          "type": "execution_error",
+          "message": "Code execution failed",
+          "details": "Traceback (most recent call last):\n  File \"/home/runner/work/badpdfs-site/badpdfs-site/processor/tasks/execution.py\", line 358, in _execute_code\n    exec(code_without_last, self.namespace)\n  File \"<string>\", line 2, in <module>\nAttributeError: 'NoneType' object has no attribute 'below'\n",
+          "code": "with left_col.within() as col:\n    portion = (\n        left_col\n        .find(\"text:contains(Name and Location)\")\n        .below(\n          until='text:contains(ICE Information)',\n          include_endpoint=False\n        )\n    )\nportion.show(crop=True)"
+        }
+      ]
+    }
+  ]
+}

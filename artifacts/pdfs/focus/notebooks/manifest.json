@@ -1,0 +1,11 @@
+{
+  "pdf_id": "focus",
+  "notebooks": [
+    {
+      "approach": "focus",
+      "status": "success",
+      "path": "pdfs/focus/notebooks/focus.ipynb"
+    }
+  ],
+  "pdf_base_url": "https://pub-4e99d31d19cb404d8d4f5f7efa51ef6e.r2.dev"
+}

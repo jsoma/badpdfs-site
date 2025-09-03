@@ -1,0 +1,191 @@
+{
+  "file": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/serbia-zakon-o-naknadama-za-koriscenje-javnih/serbia-zakon-o-naknadama-za-koriscenje-javnih.md",
+  "metadata": {
+    "slug": "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+    "title": "Extracting Complex Data from Serbian Regulatory PDF",
+    "description": "This PDF contains parts of Serbian policy documents, crucial for a research project analyzing industry policies across countries. The challenge lies in extracting a large table that spans pages (page 90 to 97) and a math formula on page 98, all in Serbian. Both elements lack clear boundaries between pages, complicating extraction.",
+    "pdf": "serbia-zakon-o-naknadama-za-koriscenje-javnih.pdf",
+    "tags": [
+      "Serbian",
+      "Large Tables",
+      "Math Formulas",
+      "Regulatory Documents",
+      "multiple tables",
+      "spanning pages"
+    ],
+    "file_size_mb": 1.89,
+    "page_count": 120,
+    "submitted_by": "Yuqi Liao",
+    "language": "Serbian",
+    "published": true,
+    "file": "serbia-zakon-o-naknadama-za-koriscenje-javnih.md"
+  },
+  "cells": [
+    {
+      "type": "markdown",
+      "content": "# Extracting Complex Data from Serbian Regulatory PDF\n\nThis PDF contains parts of Serbian policy documents, crucial for a research project analyzing industry policies across countries. The challenge lies in extracting a large table that spans pages (page 90 to 97) and a math formula on page 98, all in Serbian. Both elements lack clear boundaries between pages, complicating extraction."
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf import PDF\nfrom natural_pdf.analyzers.guides import Guides\n\npdf = PDF(\"serbia-zakon-o-naknadama-za-koriscenje-javnih.pdf\")\npdf.pages[:8].show(cols=4)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf import PDF\nfrom natural_pdf.analyzers.guides import Guides\npdf = PDF('serbia-zakon-...\n[DEBUG] Evaluating expression: pdf.pages[:8].show(cols=4)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/serbia-zakon-o-naknadama-za-koriscenje-javnih/serbia-zakon-o-naknadama-za-koriscenje-javnih/images/image_1.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "The submitter mentioned specific pages, but it's more fun to say \"between the page with this and the page with that.\""
+    },
+    {
+      "type": "code",
+      "content": "first_page = pdf.find(text=\"Prilog 7.\").page\nlast_page = pdf.find(text='VISINA NAKNADE ZA ZAGA\u0110ENJE VODA').page\npages = pdf.pages[first_page.index:last_page.index+1]\npages.show(cols=4)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: first_page = pdf.find(text='Prilog 7.').page\nlast_page = pdf.find(text='VISINA NAKNADE ZA ZAGA\u0110ENJE ...\n[DEBUG] Evaluating expression: pages.show(cols=4)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/serbia-zakon-o-naknadama-za-koriscenje-javnih/serbia-zakon-o-naknadama-za-koriscenje-javnih/images/image_2.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "We want everything between Table 4 and 5."
+    },
+    {
+      "type": "code",
+      "content": "region = (\n    pages\n    .find(text=\"Tabela 4\")\n    .below(\n        until=\"text:contains(Tabela 5)\",\n        include_endpoint=False,\n        multipage=True\n    )\n)\nregion.show(cols=4)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: region = pages.find(text='Tabela 4').below(until='text:contains(Tabela 5)', include_endpoint=False, ...\n[DEBUG] Evaluating expression: region.show(cols=4)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/serbia-zakon-o-naknadama-za-koriscenje-javnih/serbia-zakon-o-naknadama-za-koriscenje-javnih/images/image_3.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "We want everything broken up by category, which is labeled as \"RAZRED\" in the document. We'll just split it into sections with those serving as headers."
+    },
+    {
+      "type": "code",
+      "content": "sections = region.get_sections('text:contains(RAZRED)', include_boundaries='none')\n    \nsections.show(cols=4)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: sections = region.get_sections('text:contains(RAZRED)', include_boundaries='none')...\n[DEBUG] Evaluating expression: sections.show(cols=4)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/serbia-zakon-o-naknadama-za-koriscenje-javnih/serbia-zakon-o-naknadama-za-koriscenje-javnih/images/image_4.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Some of them have headers and some of them don't, which can make extraction tough. Here's one that spans two pages and has headers."
+    },
+    {
+      "type": "code",
+      "content": "sections[7].show(cols=2)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: sections[7].show(cols=2)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/serbia-zakon-o-naknadama-za-koriscenje-javnih/serbia-zakon-o-naknadama-za-koriscenje-javnih/images/image_5.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Since it has headers, we can just use `.to_df()`."
+    },
+    {
+      "type": "code",
+      "content": "sections[7].extract_table().to_df()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: sections[7].extract_table().to_df()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/html",
+          "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>Naziv proizvoda</th>\n      <th>Opis proizvoda</th>\n      <th>Jed.\\nmere</th>\n      <th>Naknada</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>Automati za igranje na metalni novac</td>\n      <td>Fliperi, Igre, koje se pu\u0161taju u rad \u017eetonom, ...</td>\n      <td>kg</td>\n      <td>37,12</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>Elektri\u010dni vozi\u0107i, odnosno garniture\\ntrka\u0107ih ...</td>\n      <td>Igra\u010dke, elektri\u010dni vozovi, uklju\u010duju\u0107i kolose...</td>\n      <td>kg</td>\n      <td>37,12</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>Sportska oprema sa elektri\u010dnim ili\\nelektronsk...</td>\n      <td>Oprema za op\u0161te fizi\u010dke ve\u017ebe aparati za ve\u017eba...</td>\n      <td>kg</td>\n      <td>37,12</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>Video igre</td>\n      <td>Video igre elektronske za upotrebu sa tv prije...</td>\n      <td>kg</td>\n      <td>37,12</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>Ru\u010dne konzole za video igre</td>\n      <td>Ru\u010dne konzole za video igre</td>\n      <td>kg</td>\n      <td>37,12</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>Kompjuteri za biciklizam, ronjenje,\\ntr\u010danje, ...</td>\n      <td>Kompjuteri za biciklizam, ronjenje, tr\u010danje, v...</td>\n      <td>kg</td>\n      <td>37,12</td>\n    </tr>\n    <tr>\n      <th>6</th>\n      <td>Igra\u010dke, oprema za rekreaciju i sport</td>\n      <td>Igra\u010dke, oprema za rekreaciju i sport, ostalo</td>\n      <td>kg</td>\n      <td>37,12</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "This next one does *not* have headers."
+    },
+    {
+      "type": "code",
+      "content": "sections[5].show(cols=2)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: sections[5].show(cols=2)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/serbia-zakon-o-naknadama-za-koriscenje-javnih/serbia-zakon-o-naknadama-za-koriscenje-javnih/images/image_6.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "We'll just manually specify them, probably the easiest route."
+    },
+    {
+      "type": "code",
+      "content": "df = sections[5].extract_table().to_df(header=False)\ndf.columns = ['Naziv proizvoda', 'Opis proizvoda', 'Jed. mere', 'Naknada u dinarima po jedinici mere']\ndf",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: df = sections[5].extract_table().to_df(header=False)\ndf.columns = ['Naziv proizvoda', 'Opis proizvod...\n[DEBUG] Evaluating expression: df...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/html",
+          "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>Naziv proizvoda</th>\n      <th>Opis proizvoda</th>\n      <th>Jed. mere</th>\n      <th>Naknada u dinarima po jedinici mere</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>Ostala rasvetna oprema ili oprema za\\n\u0161irenje ...</td>\n      <td>Sijalice, volfram-halogene, za napon do i prek...</td>\n      <td>kg</td>\n      <td>24,68</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>Sijalice sa \u017eare\u0107om niti</td>\n      <td>Sijalice, do 200 W i preko 100 V, ostalo</td>\n      <td>kg</td>\n      <td>86,47</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>Rasvetna tela za fluorescentne svetiljke,\\nosi...</td>\n      <td>Sijalice, sa vlaknima, za napon preko 100 V, o...</td>\n      <td>kg</td>\n      <td>24,68</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>Ravne fluorescentne svetiljke</td>\n      <td>Sijalice, fluorescentne, sa dva podno\u017eja na kr...</td>\n      <td>kg</td>\n      <td>24,68</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>Visokonaponske svetiljke uklju\u010duju\u0107i\\nsvetiljk...</td>\n      <td>Sijalice sa natrijumovom parom; Sijalice sa me...</td>\n      <td>kg</td>\n      <td>24,68</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>Ostala rasvetna oprema ili oprema za\\n\u0161irenje ...</td>\n      <td>Sijalice infracrvene</td>\n      <td>kg</td>\n      <td>24,68</td>\n    </tr>\n    <tr>\n      <th>6</th>\n      <td>Sijalice, ostale</td>\n      <td>Sijalice, ostale</td>\n      <td>kg</td>\n      <td>24,68</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "How do we find the math formula? Find the page that has it, then just ask for the image."
+    },
+    {
+      "type": "code",
+      "content": "page = pdf.find(text=\"Obra\u010dun naknade za neposredno zaga\u0111enje voda\").page\npage.find(\"image\").show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: page = pdf.find(text='Obra\u010dun naknade za neposredno zaga\u0111enje voda').page...\n[DEBUG] Evaluating expression: page.find('image').show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/serbia-zakon-o-naknadama-za-koriscenje-javnih/serbia-zakon-o-naknadama-za-koriscenje-javnih/images/image_7.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "If we were fancier we'd probably use [surya](https://github.com/datalab-to/surya) to convert it, but Natural PDF can't extract images like that just yet (I don't think?)."
+    }
+  ]
+}

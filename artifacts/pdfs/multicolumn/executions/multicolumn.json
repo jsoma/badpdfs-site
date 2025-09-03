@@ -1,0 +1,366 @@
+{
+  "file": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/multicolumn/multicolumn.md",
+  "metadata": {
+    "slug": "multicolumn",
+    "title": "Working with page structure",
+    "description": "Extract text from complex multi-column layouts while maintaining proper reading order. Learn techniques for handling academic papers, newsletters, and documents with intricate column structures using Natural PDF's layout detection features.",
+    "pdf": "multicolumn.pdf",
+    "tags": [
+      "Multi-Column Layout",
+      "Reading Order",
+      "Text Flow",
+      "Academic Papers",
+      "Layout Detection",
+      "Table Extraction",
+      "YOLO",
+      "TATR"
+    ],
+    "file_size_mb": 0.8,
+    "page_count": 1,
+    "submitted_by": "Natural PDF Team",
+    "published": true,
+    "file": "multicolumn.md"
+  },
+  "cells": [
+    {
+      "type": "markdown",
+      "content": "# Multi-page flows\n\n*Sometimes* you have data that flows over multiple columns, or pages, or just... isn't arranged in a \"normal\" top-to-bottom way."
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf import PDF\n\npdf = PDF(\"multicolumn.pdf\")\npage = pdf.pages[0]\npage.show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf import PDF\npdf = PDF('multicolumn.pdf')\npage = pdf.pages[0]...\n[DEBUG] Evaluating expression: page.show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/multicolumn/multicolumn/images/image_1.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Natural PDF deals with these through [reflowing pages](https://jsoma.github.io/natural-pdf/reflowing-pages/), where you grab specific regions of a page and then paste them back together either vertically or horizontally.\n\nIn this example we're splitting the page into three columns."
+    },
+    {
+      "type": "code",
+      "content": "left = page.region(left=0, right=page.width/3, top=0, bottom=page.height)\nmid = page.region(left=page.width/3, right=page.width/3*2, top=0, bottom=page.height)\nright = page.region(left=page.width/3*2, right=page.width, top=0, bottom=page.height)\npage.highlight(left, mid, right)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: left = page.region(left=0, right=page.width / 3, top=0, bottom=page.height)\nmid = page.region(left=p...\n[DEBUG] Evaluating expression: page.highlight(left, mid, right)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/multicolumn/multicolumn/images/image_2.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Now let's **stack them on top of each other**."
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf.flows import Flow\n\nstacked = [left, mid, right]\nflow = Flow(segments=stacked, arrangement=\"vertical\")\nflow.show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf.flows import Flow\nstacked = [left, mid, right]\nflow = Flow(segments=stacked, arrang...\n[DEBUG] Evaluating expression: flow.show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/multicolumn/multicolumn/images/image_3.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Now any time we want to use spatial comparisons, like \"find something below this,\" it *just works*."
+    },
+    {
+      "type": "code",
+      "content": "region = (\n    flow\n    .find('text:contains(\"Table one\")')\n    .below(\n        until='text:contains(\"Table two\")',\n        include_endpoint=False\n    )\n)\nregion.show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: region = flow.find('text:contains(\"Table one\")').below(until='text:contains(\"Table two\")', include_e...\n[DEBUG] Evaluating expression: region.show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/multicolumn/multicolumn/images/image_4.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "It works for text, it works for tables, it works for **anything**. Let's see how we can get both tables on the page.\n\nFirst we find the bold headers \u2013 we need to say `width > 10` because otherwise it pulls some weird tiny empty boxes."
+    },
+    {
+      "type": "code",
+      "content": "(\n    flow\n    .find_all('text[width>10]:bold')\n    .show()\n)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: flow.find_all('text[width>10]:bold').show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/multicolumn/multicolumn/images/image_5.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Then we take each of those headers, and go down down down until we either hit another bold header *or* the \"Here is a bit more text\" text."
+    },
+    {
+      "type": "code",
+      "content": "regions = (\n    flow\n    .find_all('text[width>10]:bold')\n    .below(\n        until='text[width>10]:bold|text:contains(\"Here is a bit\")',\n        include_endpoint=False\n    )\n)\nregions.show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: regions = flow.find_all('text[width>10]:bold').below(until='text[width>10]:bold|text:contains(\"Here ...\n[DEBUG] Evaluating expression: regions.show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/multicolumn/multicolumn/images/image_6.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Now we can use `.extract_table()` on *each individual region* to give us however many tables."
+    },
+    {
+      "type": "code",
+      "content": "regions[0].extract_table().to_df()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: regions[0].extract_table().to_df()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/html",
+          "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>index</th>\n      <th>number</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>1</td>\n      <td>123</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>2</td>\n      <td>456</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>3</td>\n      <td>789</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>4</td>\n      <td>1122</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>5</td>\n      <td>1455</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>6</td>\n      <td>1788</td>\n    </tr>\n    <tr>\n      <th>6</th>\n      <td>7</td>\n      <td>2121</td>\n    </tr>\n    <tr>\n      <th>7</th>\n      <td>8</td>\n      <td>2454</td>\n    </tr>\n    <tr>\n      <th>8</th>\n      <td>9</td>\n      <td>2787</td>\n    </tr>\n    <tr>\n      <th>9</th>\n      <td>10</td>\n      <td>3120</td>\n    </tr>\n    <tr>\n      <th>10</th>\n      <td>11</td>\n      <td>3453</td>\n    </tr>\n    <tr>\n      <th>11</th>\n      <td>12</td>\n      <td>3786</td>\n    </tr>\n    <tr>\n      <th>12</th>\n      <td>13</td>\n      <td>4119</td>\n    </tr>\n    <tr>\n      <th>13</th>\n      <td>14</td>\n      <td>4452</td>\n    </tr>\n    <tr>\n      <th>14</th>\n      <td>15</td>\n      <td>4785</td>\n    </tr>\n    <tr>\n      <th>15</th>\n      <td>16</td>\n      <td>5118</td>\n    </tr>\n    <tr>\n      <th>16</th>\n      <td>17</td>\n      <td>5451</td>\n    </tr>\n    <tr>\n      <th>17</th>\n      <td>18</td>\n      <td>5784</td>\n    </tr>\n    <tr>\n      <th>18</th>\n      <td>19</td>\n      <td>6117</td>\n    </tr>\n    <tr>\n      <th>19</th>\n      <td>20</td>\n      <td>6450</td>\n    </tr>\n    <tr>\n      <th>20</th>\n      <td>21</td>\n      <td>6783</td>\n    </tr>\n    <tr>\n      <th>21</th>\n      <td>22</td>\n      <td>7116</td>\n    </tr>\n    <tr>\n      <th>22</th>\n      <td>23</td>\n      <td>7449</td>\n    </tr>\n    <tr>\n      <th>23</th>\n      <td>24</td>\n      <td>7782</td>\n    </tr>\n    <tr>\n      <th>24</th>\n      <td>26</td>\n      <td>8448</td>\n    </tr>\n    <tr>\n      <th>25</th>\n      <td>27</td>\n      <td>8781</td>\n    </tr>\n    <tr>\n      <th>26</th>\n      <td>28</td>\n      <td>9114</td>\n    </tr>\n    <tr>\n      <th>27</th>\n      <td>29</td>\n      <td>9447</td>\n    </tr>\n    <tr>\n      <th>28</th>\n      <td>30</td>\n      <td>9780</td>\n    </tr>\n    <tr>\n      <th>29</th>\n      <td>31</td>\n      <td>10113</td>\n    </tr>\n    <tr>\n      <th>30</th>\n      <td>32</td>\n      <td>10446</td>\n    </tr>\n    <tr>\n      <th>31</th>\n      <td>33</td>\n      <td>10779</td>\n    </tr>\n    <tr>\n      <th>32</th>\n      <td>34</td>\n      <td>11112</td>\n    </tr>\n    <tr>\n      <th>33</th>\n      <td>35</td>\n      <td>11445</td>\n    </tr>\n    <tr>\n      <th>34</th>\n      <td>36</td>\n      <td>11778</td>\n    </tr>\n    <tr>\n      <th>35</th>\n      <td>37</td>\n      <td>12111</td>\n    </tr>\n    <tr>\n      <th>36</th>\n      <td>38</td>\n      <td>12444</td>\n    </tr>\n    <tr>\n      <th>37</th>\n      <td>39</td>\n      <td>12777</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+        }
+      }
+    },
+    {
+      "type": "code",
+      "content": "# Combine them if we want\nimport pandas as pd\n\ndfs = regions.apply(lambda region: region.extract_table().to_df())\nmerged = pd.concat(dfs, ignore_index=True)\nmerged",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: import pandas as pd\ndfs = regions.apply(lambda region: region.extract_table().to_df())\nmerged = pd.c...\n[DEBUG] Evaluating expression: merged...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/html",
+          "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>index</th>\n      <th>number</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>1</td>\n      <td>123</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>2</td>\n      <td>456</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>3</td>\n      <td>789</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>4</td>\n      <td>1122</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>5</td>\n      <td>1455</td>\n    </tr>\n    <tr>\n      <th>...</th>\n      <td>...</td>\n      <td>...</td>\n    </tr>\n    <tr>\n      <th>71</th>\n      <td>XXX35</td>\n      <td>11445</td>\n    </tr>\n    <tr>\n      <th>72</th>\n      <td>XXX36</td>\n      <td>11778</td>\n    </tr>\n    <tr>\n      <th>73</th>\n      <td>XXX37</td>\n      <td>12111</td>\n    </tr>\n    <tr>\n      <th>74</th>\n      <td>XXX38</td>\n      <td>12444</td>\n    </tr>\n    <tr>\n      <th>75</th>\n      <td>XXX39</td>\n      <td>12777</td>\n    </tr>\n  </tbody>\n</table>\n<p>76 rows \u00d7 2 columns</p>\n</div>"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "# Layout analysis and magic table extraction\n\nSimilar to how we have feelings about what things are on a page - headers, tables, graphics \u2013 computers also have opinions! Just like some AI models have been trained to do things like identify pictures of cats and dogs or spell check, others are capable of **layout analysis** - [YOLO](https://huggingface.co/spaces/omoured/YOLOv11-Document-Layout-Analysis), [surya](https://github.com/datalab-to/surya), etc etc etc. There are a million! [TATR](https://github.com/microsoft/table-transformer) is one of the useful ones for us, it's *just for table detection*.\n\nBut honestly: they're mostly trained on academic papers, so they aren't very good at the kinds of awful documents that journalists have to deal with. And with Natural PDF, you're probably selecting `text[size>12]:bold` in order to find headlines, anyway. *But* if your page has no readable text, they might be able to provide some useful information.\n\nLet's start with [YOLO](https://github.com/opendatalab/DocLayout-YOLO), the default."
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf import PDF\n\npdf = PDF(\"needs-ocr.pdf\")\npage = pdf.pages[0]",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf import PDF\n\npdf = PDF(\"needs-ocr.pdf\")\npage = pdf.pages[0]...\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "code",
+      "content": "# default is YOLO\npage.analyze_layout()\npage.find_all('region').show(group_by='type')",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: page.analyze_layout()...\n\nimage 1/1 /tmp/tmplhz6347d/temp_layout_image.png: 1024x800 2 titles, 3 plain texts, 2 abandons, 1 table, 1675.6ms\nSpeed: 4.8ms preprocess, 1675.6ms inference, 2.6ms postprocess per image at shape (1, 3, 1024, 800)\n[DEBUG] Evaluating expression: page.find_all('region').show(group_by='type')...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/multicolumn/multicolumn/images/image_7.png"
+        }
+      }
+    },
+    {
+      "type": "code",
+      "content": "page.find('table').apply_ocr()\ntext = page.extract_text()\nprint(text)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: page.find('table').apply_ocr()\ntext = page.extract_text()...\n[DEBUG] Evaluating expression: print(text)...\nStatute Description Level Repeat?\n4.12.7 Unsanitary Working Conditions. Critical\n5.8.3 Inadequate Protective Equipment: Serious\n6.3.9 Ineffective Injury Prevention  Serious\n7.1.5 Failure to Properly Store Hazardous Materials: Critical\n8.9.2 Lack of Adequate Fire Safety Measures. Serious\n9.6.4 Inadequate Ventilation Systems. Serious\n10.2.7 Insufficient Employee Training for Safe Work Practices_ Serious\nUsing CPU. Note: This module is much faster with a GPU.\n/home/runner/work/badpdfs-site/badpdfs-site/processor/.venv/lib/python3.11/site-packages/torch/utils/data/dataloader.py:666: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.\n  warnings.warn(warn_msg)\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "### Better layout analysis with tables\n\nLet's see what **TATR** - Microsoft's table transformer \u2013 finds for us."
+    },
+    {
+      "type": "code",
+      "content": "page.analyze_layout('tatr')\npage.find_all('region').show(group_by='type')",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: page.analyze_layout('tatr')...\n[DEBUG] Evaluating expression: page.find_all('region').show(group_by='type')...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/multicolumn/multicolumn/images/image_8.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "There's just *so much stuff* that TATR is finding that it's all overlapping.\n\nFor example, we can just look at one piece at a time."
+    },
+    {
+      "type": "code",
+      "content": "# table-cell\n# table-row\n# table-column\npage.find_all('region[type=table-column]').show(crop=True)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: page.find_all('region[type=table-column]').show(crop=True)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/multicolumn/multicolumn/images/image_9.png"
+        }
+      }
+    },
+    {
+      "type": "code",
+      "content": "# Grab all of the columns\ncols = page.find_all('region[type=table-column]')\n\n# Take one of the columns and apply OCR to it\ncols[2].apply_ocr()\ntext = cols[2].extract_text()\nprint(text)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: cols = page.find_all('region[type=table-column]')\ncols[2].apply_ocr()\ntext = cols[2].extract_text()...\n[DEBUG] Evaluating expression: print(text)...\nLevel\nCritical\nSerious\nSerious\nCritical\nSerious\nSerious\nSerious\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "code",
+      "content": "len(cols[2].find_all('text[source=ocr]'))",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: len(cols[2].find_all('text[source=ocr]'))...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/plain",
+          "data": "8"
+        }
+      }
+    },
+    {
+      "type": "code",
+      "content": "page.find('table').show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: page.find('table').show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/multicolumn/multicolumn/images/image_10.png"
+        }
+      }
+    },
+    {
+      "type": "code",
+      "content": "data = page.find('table').extract_table()\ndata",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: data = page.find('table').extract_table()...\n[DEBUG] Evaluating expression: data...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/plain",
+          "data": "TableResult(rows=9\u2026)"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "## Why YOLO?\n\nI think YOLO is pretty good for isolating a part of a page that has a table, then using Guides to break it down."
+    },
+    {
+      "type": "code",
+      "content": "page.analyze_layout()\npage.find_all('region').show(group_by=\"type\")",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: page.analyze_layout()...\n[DEBUG] Evaluating expression: page.find_all('region').show(group_by='type')...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/multicolumn/multicolumn/images/image_11.png"
+        }
+      }
+    },
+    {
+      "type": "code",
+      "content": "table_area = page.find(\"region[type=table]\")\ntable_area.apply_ocr()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: table_area = page.find('region[type=table]')...\n[DEBUG] Evaluating expression: table_area.apply_ocr()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/plain",
+          "data": "<Region type='table' source='detected' bbox=(99.85877990722656, 815.1997680664062, 1146.6968994140625, 1153.8369140625)>"
+        }
+      }
+    },
+    {
+      "type": "code",
+      "content": "text = table_area.extract_text()\nprint(text)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: text = table_area.extract_text()...\n[DEBUG] Evaluating expression: print(text)...\nStatute Description Level Repeat?\n4.12.7 Unsanitary Working Conditions. Critical\n5.8.3 Inadequate Protective Equipment: Serious\n6.3.9 Ineffective Injury Prevention  Serious\n7.1.5 Failure to Properly Store Hazardous Materials: Critical\n8.9.2 Lack of Adequate Fire Safety Measures. Serious\n9.6.4 Inadequate Ventilation Systems. Serious\n10.2.7 Insufficient Employee Training for Safe Work Practices_ Serious\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf.analyzers import Guides\n\nguides = Guides(table_area)\nguides.vertical.from_lines(threshold=0.6)\nguides.horizontal.from_lines(threshold=0.6)\nguides.show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf.analyzers import Guides\nguides = Guides(table_area)\nguides.vertical.from_lines(thre...\n[DEBUG] Evaluating expression: guides.show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/multicolumn/multicolumn/images/image_12.png"
+        }
+      }
+    },
+    {
+      "type": "code",
+      "content": "guides.extract_table().to_df()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: guides.extract_table().to_df()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/html",
+          "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>Statute</th>\n      <th>Description</th>\n      <th>Level</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>4.12.7</td>\n      <td>Unsanitary Working Conditions.</td>\n      <td>Critical</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>5.8.3</td>\n      <td>Inadequate Protective Equipment:</td>\n      <td>Serious</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>6.3.9</td>\n      <td>Ineffective Injury Prevention</td>\n      <td>Serious</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>7.1.5</td>\n      <td>Failure to Properly Store Hazardous Materials:</td>\n      <td>Critical</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>8.9.2</td>\n      <td>Lack of Adequate Fire Safety Measures.</td>\n      <td>Serious</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>9.6.4</td>\n      <td>Inadequate Ventilation Systems.</td>\n      <td>Serious</td>\n    </tr>\n    <tr>\n      <th>6</th>\n      <td>10.2.7</td>\n      <td>Insufficient Employee Training for Safe Work P...</td>\n      <td>Serious</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,196 @@
+{
+  "file": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/statecallcenterdata_redacted/statecallcenterdata_redacted.md",
+  "metadata": {
+    "slug": "statecallcenterdata_redacted",
+    "title": "Extracting State Agency Call Center Wait Times from FOIA PDF",
+    "description": "This PDF contains data on wait times at a state agency call center. The main focus is on the data on the first two pages, which matches other states' submission formats. The later pages provide granular breakdowns over several years. Challenges include it being heavily pixelated, making it hard to read numbers and text, with inconsistent and unreadable charts.",
+    "pdf": "statecallcenterdata_redacted.pdf",
+    "tags": [
+      "Call Center Data",
+      "Pixelated Scan",
+      "OCR Required",
+      "Granular Breakdown"
+    ],
+    "file_size_mb": 6.19,
+    "page_count": 66,
+    "submitted_by": "Adiel Kaplan",
+    "published": true,
+    "file": "statecallcenterdata_redacted.md"
+  },
+  "cells": [
+    {
+      "type": "markdown",
+      "content": "# Extracting State Agency Call Center Wait Times from FOIA PDF\n\nThis PDF contains data on wait times at a state agency call center. The main focus is on the data on the first two pages, which matches other states' submission formats. The later pages provide granular breakdowns over several years. Challenges include it being heavily pixelated, making it hard to read numbers and text, with inconsistent and unreadable charts.\n\nThe submission said \"the first two pages\" so I'm going with that. The rest of the pages are *insane* and will need a wholly separate writeup."
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf import PDF\n\npdf = PDF(\"statecallcenterdata_redacted.pdf\")\npage = pdf.pages[0]\npage.show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf import PDF\npdf = PDF('statecallcenterdata_redacted.pdf')\npage = pdf.pages[0]...\n[DEBUG] Evaluating expression: page.show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/statecallcenterdata_redacted/statecallcenterdata_redacted/images/image_1.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "The pages are images so they don't have text, but we can always double-check."
+    },
+    {
+      "type": "code",
+      "content": "# No results? Needs OCR!\nprint(page.extract_text())",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: print(page.extract_text())...\n\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "I love [surya](https://github.com/datalab-to/surya) so I'm going to use it instead of the default of easyocr. Two ways to check the results: look at where it found text and look at what the text is."
+    },
+    {
+      "type": "code",
+      "content": "page.apply_ocr('surya')\npage.find_all('text').show(crop=True)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: page.apply_ocr('surya')...\n[DEBUG] Evaluating expression: page.find_all('text').show(crop=True)...\n\rRendering pages:   0%|          | 0/1 [00:00<?, ?it/s]\r                                                      \r\rDetecting bboxes:   0%|          | 0/1 [00:00<?, ?it/s]\rDetecting bboxes: 100%|##########| 1/1 [00:03<00:00,  3.61s/it]\rDetecting bboxes: 100%|##########| 1/1 [00:03<00:00,  3.61s/it]\n\rRecognizing Text:   0%|          | 0/73 [00:00<?, ?it/s]\rRecognizing Text:   1%|1         | 1/73 [00:36<43:45, 36.46s/it]\rRecognizing Text:   3%|2         | 2/73 [00:37<18:49, 15.91s/it]\rRecognizing Text:   4%|4         | 3/73 [00:40<11:09,  9.57s/it]\rRecognizing Text:   5%|5         | 4/73 [00:40<06:53,  6.00s/it]\rRecognizing Text:   7%|6         | 5/73 [00:42<04:58,  4.39s/it]\rRecognizing Text:   8%|8         | 6/73 [00:42<03:25,  3.07s/it]\rRecognizing Text:  10%|9         | 7/73 [00:43<02:27,  2.23s/it]\rRecognizing Text:  11%|#         | 8/73 [00:49<03:54,  3.61s/it]\rRecognizing Text:  12%|#2        | 9/73 [00:50<02:59,  2.81s/it]\rRecognizing Text:  16%|#6        | 12/73 [00:51<01:19,  1.30s/it]\rRecognizing Text:  19%|#9        | 14/73 [00:51<00:55,  1.07it/s]\rRecognizing Text:  21%|##        | 15/73 [00:56<01:42,  1.78s/it]\rRecognizing Text:  22%|##1       | 16/73 [00:57<01:25,  1.49s/it]\rRecognizing Text:  23%|##3       | 17/73 [00:58<01:17,  1.39s/it]\rRecognizing Text:  25%|##4       | 18/73 [01:01<01:40,  1.83s/it]\rRecognizing Text:  26%|##6       | 19/73 [01:02<01:20,  1.48s/it]\rRecognizing Text:  27%|##7       | 20/73 [01:02<01:04,  1.22s/it]\rRecognizing Text:  29%|##8       | 21/73 [01:03<00:52,  1.02s/it]\rRecognizing Text:  30%|###       | 22/73 [01:08<01:52,  2.20s/it]\rRecognizing Text:  33%|###2      | 24/73 [01:08<01:04,  1.32s/it]\rRecognizing Text:  34%|###4      | 25/73 [01:09<01:00,  1.26s/it]\rRecognizing Text:  38%|###8      | 28/73 [01:10<00:31,  1.42it/s]\rRecognizing Text:  40%|###9      | 29/73 [01:15<01:07,  1.54s/it]\rRecognizing Text:  41%|####1     | 30/73 [01:16<01:01,  1.44s/it]\rRecognizing Text:  53%|#####3    | 39/73 [01:24<00:36,  1.06s/it]\rRecognizing Text:  63%|######3   | 46/73 [01:27<00:20,  1.35it/s]\rRecognizing Text:  67%|######7   | 49/73 [01:27<00:14,  1.61it/s]\rRecognizing Text:  77%|#######6  | 56/73 [01:28<00:06,  2.55it/s]\rRecognizing Text:  79%|#######9  | 58/73 [01:28<00:05,  2.68it/s]\rRecognizing Text:  81%|########  | 59/73 [01:29<00:05,  2.59it/s]\rRecognizing Text:  82%|########2 | 60/73 [01:30<00:06,  2.14it/s]\rRecognizing Text:  84%|########3 | 61/73 [01:31<00:06,  1.81it/s]\rRecognizing Text:  85%|########4 | 62/73 [01:38<00:18,  1.64s/it]\rRecognizing Text:  86%|########6 | 63/73 [01:42<00:21,  2.17s/it]\rRecognizing Text:  89%|########9 | 65/73 [02:04<00:43,  5.42s/it]\rRecognizing Text:  90%|######### | 66/73 [02:06<00:32,  4.67s/it]\rRecognizing Text:  92%|#########1| 67/73 [02:07<00:23,  3.89s/it]\rRecognizing Text:  93%|#########3| 68/73 [02:09<00:16,  3.23s/it]\rRecognizing Text:  96%|#########5| 70/73 [02:10<00:06,  2.14s/it]\rRecognizing Text:  97%|#########7| 71/73 [02:10<00:03,  1.79s/it]\rRecognizing Text: 100%|##########| 73/73 [02:10<00:00,  1.79s/it]\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/statecallcenterdata_redacted/statecallcenterdata_redacted/images/image_2.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "And now we'll look at what the text is."
+    },
+    {
+      "type": "code",
+      "content": "print(page.extract_text(layout=True))",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: print(page.extract_text(layout=True))...\n               On-Demand Interviews - Interim and Final Reporting                                            \n                    Complete all shaded fields                                                               \n                          Figure    Comments*   State:                                                       \n        Average call wait time for interview in minutes 19 Minutes <b>Report Start Date</b> 9/1/2019         \n        Number of all calls that result in a completed                                                       \n                  .interview 34,396             <b>Report End Date</b> 3/31/2020                             \n                   Percent 98.31%                                                                            \n                                                Number of applications                                       \n          Average call completion time in minutes 29 filed 34438                                             \n                                                Number of recertification:                                   \n              Number of dropped calls 627       filed      17604                                             \n                                These were the completed Face to face Number of applications                 \n        Number of requests for an in-person interview 16982 Intervews. There is no way to track in the intervlewed on 1st day 22409\n        Number of NOMIs sent for failure to complete                                                         \n             initial application interview 7809                                                              \n                   Percent 22.60%                                                                            \n        Number of NOMIs sent for failure to complete-                                                        \n              recertification interview. 13007                                                               \n                   Percent 73.80%                                                                            \n         Number of applications denied for failure to                                                        \n           complete the interview in 30 days 3885                                                            \n                   Percent 45.00%                                                                            \n        Number of recertifications denied for failure to                                                     \n           complete the interview in 30 days. 74                                                             \n                   Percent 10.00%                                                                            \n      *Please use the comments field for any clarifications or context that are needed for any data points.  \n                      <b>Notes on Measures</b>                                                               \n      1. Average call wait time for interview: Do not include abandoned and dropped calls. \"Wat time\" ends when the eligibility worker answers the call to\n      begin the interview                                                                                    \n      2. Number and percent of all calls that result in a completed interview; Include abandoned and eropped calls in the denominator when calculating the\n      percentage.                                                                                            \n      3. Average call completion time in minutes: \"Completion time\" means the full duration of time the client spends on the call, beginning when the client.\n      nters the call center queue until the Interview is completed                                           \n      4. Number of dropped rails: Include all calls disconnected due to call center error, lack of call center capacity, etc. Do not include abandoned calls,\n      uring which the client terminates the call before completion.                                          \n      5. Number of requests for an in-person interview: This figure should represent the number of clients who were given directions to complete their\n      interview through the call certer, but requested an in-person interview instead.                       \n      6. Number and percent of NOMIs sent for failure to complete initial application interview: Include all applications across the casebad in the\n      ferominator when calculating the percentage.                                                           \n      7. Number and percent of NOMIs sent for failure to complete the recertification interview: Include all recertifications across the caseload in the\n        nator when calculating the percentage.                                                               \n      8. Number and percent of all applications denied that were denied due to failure to complete the interview in 30 days: include all applications across\n      the caselcad for which a denial was ssued in the denominator when calculating the percentage.          \n      9. Number and percent of all recertifications denied that were denied due to failure to complete the interviev in 30 days: Include all recertifications\n      across the caselead for which a denial was issued in the denominator when calculating the percentage.  \n                                                                                                             \n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "To get the table area, we get everything from the \"Figure\" header down to \"Please use the comments field\""
+    },
+    {
+      "type": "code",
+      "content": "table_area = (\n    page\n    .find('text:contains(Figure)')\n    .below(\n        until='text:contains(Please use the comments)',\n        include_endpoint=False\n    )\n)\ntable_area.show(crop='wide')",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: table_area = page.find('text:contains(Figure)').below(until='text:contains(Please use the comments)'...\n[DEBUG] Evaluating expression: table_area.show(crop='wide')...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/statecallcenterdata_redacted/statecallcenterdata_redacted/images/image_3.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "We need to cut it in on the sides a little bit, and expand it on the bottom. I just pick some manual values because I'm lazy, should probably be a better way to resize things based on selectors."
+    },
+    {
+      "type": "code",
+      "content": "table_area = (\n    page\n    .find('text:contains(Figure)')\n    .below(\n        until='text:contains(Please use the comments)',\n        include_endpoint=False\n    )\n    .expand(\n        right=-(page.width * 0.58),\n        left=-30,\n        bottom=3\n    )\n)\ntable_area.show(crop='wide')",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: table_area = page.find('text:contains(Figure)').below(until='text:contains(Please use the comments)'...\n[DEBUG] Evaluating expression: table_area.show(crop='wide')...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/statecallcenterdata_redacted/statecallcenterdata_redacted/images/image_4.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Now we can see all the text in our area."
+    },
+    {
+      "type": "code",
+      "content": "table_area.find_all('text').show(crop=True)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: table_area.find_all('text').show(crop=True)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/statecallcenterdata_redacted/statecallcenterdata_redacted/images/image_5.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "For some reason we can't just use `.extract_table('stream')` on this, even though there are some nice gaps between each column. Oh well!\n\nInstead we'll throw three vertical dividers in and then shuffle then around until they don't intersect any of the text. The horizontal borders are easier because they're just lines."
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf.analyzers.guides import Guides\n\nguide = Guides(table_area)\nguide.vertical.divide(3)\nguide.vertical.snap_to_whitespace(detection_method='text')\nguide.horizontal.from_lines()\nguide.show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf.analyzers.guides import Guides\nguide = Guides(table_area)\nguide.vertical.divide(3)\n...\n[DEBUG] Evaluating expression: guide.show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/statecallcenterdata_redacted/statecallcenterdata_redacted/images/image_6.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "And now we can grab the table!"
+    },
+    {
+      "type": "code",
+      "content": "df = (\n  guide\n  .extract_table()\n  .to_df(\n    header=['value', 'amount', 'comments']\n  )\n)\ndf",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: df = guide.extract_table().to_df(header=['value', 'amount', 'comments'])...\n[DEBUG] Evaluating expression: df...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/html",
+          "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>value</th>\n      <th>amount</th>\n      <th>comments</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>Number of all calls that result in a completed...</td>\n      <td>34,396</td>\n      <td>None</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>Percent</td>\n      <td>98.31%</td>\n      <td>None</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>Average call completion time in minutes</td>\n      <td>29</td>\n      <td>None</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>Number of dropped calls</td>\n      <td>627</td>\n      <td>None</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>Number of requests for an in-person interview\\...</td>\n      <td>16982 Intervews. There is no way to track in the</td>\n      <td>These were the completed Face to face\\nInterve...</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>Number of NOMIs sent for failure to complete\\n...</td>\n      <td>7809</td>\n      <td>None</td>\n    </tr>\n    <tr>\n      <th>6</th>\n      <td>Percent</td>\n      <td>22.60%</td>\n      <td>None</td>\n    </tr>\n    <tr>\n      <th>7</th>\n      <td>Number of NOMIs sent for failure to complete-\\...</td>\n      <td>13007</td>\n      <td>None</td>\n    </tr>\n    <tr>\n      <th>8</th>\n      <td>Percent\\nNumber of applications denied for fai...</td>\n      <td>73.80%</td>\n      <td>None</td>\n    </tr>\n    <tr>\n      <th>9</th>\n      <td>Number of applications denied for failure to\\n...</td>\n      <td>3885</td>\n      <td>None</td>\n    </tr>\n    <tr>\n      <th>10</th>\n      <td>Percent</td>\n      <td>45.00%</td>\n      <td>None</td>\n    </tr>\n    <tr>\n      <th>11</th>\n      <td>Number of recertifications denied for failure ...</td>\n      <td>74</td>\n      <td>None</td>\n    </tr>\n    <tr>\n      <th>12</th>\n      <td>Percent</td>\n      <td>10.00%</td>\n      <td>None</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "The next page is....... too hard for now."
+    },
+    {
+      "type": "code",
+      "content": "pdf.pages[1].show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: pdf.pages[1].show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/statecallcenterdata_redacted/statecallcenterdata_redacted/images/image_7.png"
+        }
+      }
+    }
+  ]
+}

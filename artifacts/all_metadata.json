@@ -1,0 +1,4357 @@
+[
+  {
+    "slug": "m27",
+    "title": "Extracting Data Tables from Oklahoma Booze Licensees PDF",
+    "description": "This PDF contains detailed tables listing alcohol licensees in Oklahoma. It has multi-line cells making it hard to extract data accurately. Challenges include alternative row colors instead of lines (\"zebra stripes\"), complicating row differentiation and extraction.",
+    "pdf": "m27.pdf",
+    "tags": [
+      "data tables",
+      "multiline cells",
+      "PDF extraction issues",
+      "row colors"
+    ],
+    "file_size_mb": 0.03,
+    "page_count": 2,
+    "submitted_by": "Jeremy Merrill",
+    "published": true,
+    "file": "m27.md",
+    "id": "m27",
+    "methods": [
+      "Guides",
+      "PDF",
+      "above",
+      "add_exclusion",
+      "below",
+      "expand",
+      "extract_table",
+      "extract_text",
+      "find",
+      "find_all",
+      "right",
+      "show",
+      "to_df"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "m27.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "above",
+        "method_full": "above",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "PREMISE"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "text:regex(Page \\d+ of)"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "pdf.add_exclusion",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "above",
+        "method_full": "above",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "PREMISE"
+        }
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "pdf.add_exclusion",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "text:regex(Page \\d+ of)"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {
+          "exclusions": "red"
+        }
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<var:page>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "NUMBER"
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": 3,
+          "bottom": 3
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "NUMBER"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": 100,
+          "width": 700
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "NUMBER"
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {
+          "overlap": "partial"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element",
+          "include_source": true
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "NUMBER"
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [
+      "text",
+      "text:regex(Page \\d+ of)"
+    ],
+    "complexity": {
+      "code_blocks": 12,
+      "total_lines": 55,
+      "total_chars": 1289
+    },
+    "approaches": [
+      "m27.md"
+    ]
+  },
+  {
+    "slug": "24480polcompleted",
+    "title": "Animal 911 Calls Extraction from Rainforest Cafe Report",
+    "description": "This PDF is a service call report covering 911 incidents at the Rainforest Cafe in Niagara Falls, NY. We're hunting for animals! The data is formatted as a spreadsheet within the PDF, and challenges include varied column widths, borderless tables, and large swaths of missing data.",
+    "pdf": "24480polcompleted.pdf",
+    "tags": [
+      "Animal 911 Logs",
+      "PDF Spreadsheet",
+      "Truncated Columns",
+      "Selective Redactions"
+    ],
+    "file_size_mb": 4.77,
+    "page_count": 47,
+    "submitted_by": "Adiel Kaplan",
+    "published": true,
+    "file": "24480polcompleted.md",
+    "id": "24480polcompleted",
+    "methods": [
+      "Guides",
+      "PDF",
+      "add_exclusion",
+      "extract_table",
+      "find_all",
+      "from_content",
+      "show",
+      "to_df"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "24480polcompleted.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "pdf.show",
+        "args": [],
+        "kwargs": {
+          "cols": 3,
+          "limit": 9
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": 100
+        }
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "pdf.add_exclusion",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "text:regex(\\d+ Records Found)"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<Subscript>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "from_content",
+        "method_full": "guide.from_content",
+        "args": [
+          "<var:columns>"
+        ],
+        "kwargs": {
+          "outer": "last"
+        }
+      },
+      {
+        "method": "from_content",
+        "method_full": "guide.from_content",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "guide.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<Subscript>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "from_content",
+        "method_full": "base.from_content",
+        "args": [
+          "<var:columns>"
+        ],
+        "kwargs": {
+          "outer": "last"
+        }
+      },
+      {
+        "method": "from_content",
+        "method_full": "base.from_content",
+        "args": [
+          "<Call>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "base.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<var:page>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "from_content",
+        "method_full": "guides.from_content",
+        "args": [
+          "<Call>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "text:starts-with(NF-)"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": "<var:columns>"
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "guides.extract_table",
+        "args": [],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [
+      "text:regex(\\\\d+ Records Found)",
+      "text:starts-with(NF-)"
+    ],
+    "complexity": {
+      "code_blocks": 14,
+      "total_lines": 47,
+      "total_chars": 1613
+    },
+    "approaches": [
+      "24480polcompleted.md"
+    ]
+  },
+  {
+    "slug": "k046682-111320-opa-lea-database-install_1",
+    "title": "Complex Extraction of Law Enforcement Complaints",
+    "description": "This PDF contains a set of complaint records from a local law enforcement agency. Challenges include its relational data structure, unusual formatting common in the region, and redactions that disrupt automatic parsing.",
+    "pdf": "k046682-111320-opa-lea-database-install_1.pdf",
+    "tags": [
+      "law enforcement",
+      "PDF extraction",
+      "redactions",
+      "relational data",
+      "complex formatting"
+    ],
+    "file_size_mb": 1.02,
+    "page_count": 5,
+    "submitted_by": "Brandon Roberts",
+    "language": [
+      "English",
+      "English"
+    ],
+    "published": true,
+    "file": "k046682-111320-opa-lea-database-install_1.md",
+    "id": "k046682-111320-opa-lea-database-install_1",
+    "methods": [
+      "Guides",
+      "PDF",
+      "above",
+      "add_exclusion",
+      "below",
+      "expand",
+      "extract_table",
+      "extract_text",
+      "find",
+      "find_all",
+      "from_lines",
+      "get_sections",
+      "merge",
+      "right",
+      "show",
+      "to_df"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "k046682-111320-opa-lea-database-install_1.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "pdf.show",
+        "args": [],
+        "kwargs": {
+          "cols": 3
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "pdf.add_exclusion",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "L.E.A. Data Technologies"
+        }
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "pdf.add_exclusion",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "above",
+        "method_full": "above",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "Complaints By Date"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {
+          "exclusions": "black"
+        }
+      },
+      {
+        "method": "get_sections",
+        "method_full": "pdf.get_sections",
+        "args": [
+          "text:contains(Recorded)"
+        ],
+        "kwargs": {
+          "include_boundaries": "start"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "sections.show",
+        "args": [],
+        "kwargs": {
+          "cols": 3
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text",
+          "width": "element"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {
+          "overlap": "partial"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text",
+          "width": "element"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": 100
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text",
+          "width": "element"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": "<var:section>"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": "<var:section>"
+        }
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": 5,
+          "bottom": 7
+        }
+      },
+      {
+        "method": "merge",
+        "method_full": "merge",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": [
+            "Type of Complaint",
+            "Description",
+            "Complaint Disposition"
+          ]
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "extract_table",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": 5,
+          "bottom": 7
+        }
+      },
+      {
+        "method": "merge",
+        "method_full": "merge",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": 5,
+          "bottom": 7
+        }
+      },
+      {
+        "method": "merge",
+        "method_full": "merge",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<var:table>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "from_lines",
+        "method_full": "guides.from_lines",
+        "args": [],
+        "kwargs": {
+          "n": 4
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": [
+            "Type of Complaint",
+            "Description",
+            "Complaint Disposition"
+          ]
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "table.extract_table",
+        "args": [],
+        "kwargs": {
+          "verticals": "<Attribute>"
+        }
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": 5,
+          "bottom": 7
+        }
+      },
+      {
+        "method": "merge",
+        "method_full": "merge",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<var:table>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "from_lines",
+        "method_full": "guides.from_lines",
+        "args": [],
+        "kwargs": {
+          "n": 8
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": [
+            "Name",
+            "ID No.",
+            "Rank",
+            "Division",
+            "Officer Disposition",
+            "Action Taken",
+            "Body Cam"
+          ]
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "table.extract_table",
+        "args": [],
+        "kwargs": {
+          "verticals": "<Attribute>"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {
+          "overlap": "partial"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text",
+          "width": "element"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {
+          "overlap": "partial"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text",
+          "width": "element"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "left": 5,
+          "right": 5
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "left": 5,
+          "right": 5
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "left": 5,
+          "right": 5
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text",
+          "width": "element"
+        }
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "find",
+        "args": [
+          "text"
+        ],
+        "kwargs": {
+          "overlap": "partial"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text",
+          "width": "element"
+        }
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": 3,
+          "bottom": 6
+        }
+      },
+      {
+        "method": "merge",
+        "method_full": "merge",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<var:table>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "from_lines",
+        "method_full": "guides.from_lines",
+        "args": [],
+        "kwargs": {
+          "n": 8
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": "<var:columns>"
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "table.extract_table",
+        "args": [],
+        "kwargs": {
+          "verticals": "<Attribute>"
+        }
+      }
+    ],
+    "selectors": [
+      "text",
+      "text:contains(Address)",
+      "text:contains(Complainant)",
+      "text:contains(Complaint #)",
+      "text:contains(Completed)",
+      "text:contains(DOB)",
+      "text:contains(Date Assigned)",
+      "text:contains(Gender)",
+      "text:contains(H Phone)",
+      "text:contains(Investigator)",
+      "text:contains(Number)",
+      "text:contains(Officer #)",
+      "text:contains(Recorded)"
+    ],
+    "complexity": {
+      "code_blocks": 20,
+      "total_lines": 239,
+      "total_chars": 5986
+    },
+    "approaches": [
+      "k046682-111320-opa-lea-database-install_1.md"
+    ]
+  },
+  {
+    "slug": "use-of-force-raw",
+    "title": "Extracting Use-of-Force Records from Vancouver Police PDF",
+    "description": "This PDF contains detailed records of Vancouver Police's use-of-force incidents, provided after a public records request by journalists. Challenges include its very very very small font size and lots of empty whitespace.",
+    "pdf": "use-of-force-raw.pdf",
+    "tags": [
+      "small font",
+      "public records",
+      "tables",
+      "sparse"
+    ],
+    "file_size_mb": 0.7,
+    "page_count": 4,
+    "submitted_by": "Brandon Roberts",
+    "language": [
+      "English"
+    ],
+    "published": true,
+    "file": "use-of-force-raw.md",
+    "id": "use-of-force-raw",
+    "methods": [
+      "Guides",
+      "PDF",
+      "extract_each_text",
+      "extract_table",
+      "find_all",
+      "from_headers",
+      "show",
+      "to_df"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "use-of-force-raw.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "text[y0=min()]"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_each_text",
+        "method_full": "headers.extract_each_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<var:page>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "from_headers",
+        "method_full": "guides.from_headers",
+        "args": [
+          "<var:headers>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "guides.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [
+      "text[y0=min()]"
+    ],
+    "complexity": {
+      "code_blocks": 5,
+      "total_lines": 14,
+      "total_chars": 394
+    },
+    "approaches": [
+      "use-of-force-raw.md"
+    ]
+  },
+  {
+    "slug": "sample-bop-policy-restaurant",
+    "title": "Extracting Business Insurance Details from BOP PDF",
+    "description": "This PDF is a complex insurance policy document generated for small businesses requiring BOP coverage. It contains an overwhelming amount of information across 111 pages. Challenges include varied forms that may differ slightly between carriers, making extraction inconsistent. It has to deal with different templated layouts, meaning even standard parts can shift when generated by different software.",
+    "pdf": "sample-bop-policy-restaurant.pdf",
+    "tags": [
+      "Insurance Policy",
+      "Complex Layouts",
+      "Templated Documents",
+      "Watermark"
+    ],
+    "file_size_mb": 3.64,
+    "page_count": 111,
+    "submitted_by": "Olex Ponomarenko",
+    "published": true,
+    "file": "sample-bop-policy-restaurant.md",
+    "id": "sample-bop-policy-restaurant",
+    "methods": [
+      "Guides",
+      "PDF",
+      "add_exclusion",
+      "exclude",
+      "expand",
+      "extract_text",
+      "find",
+      "find_all",
+      "region",
+      "right",
+      "show"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "sample-bop-policy-restaurant.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "text[color~=red]"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "exclude",
+        "method_full": "exclude",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "pdf.find_all",
+        "args": [
+          "text[color~=red]"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "POLICY NUMBER"
+        }
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "POLICY NUMBER"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "bottom": "text"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "Mailing Address"
+        }
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "bottom": "text"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "Mailing Address"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "pdf.find",
+        "args": [],
+        "kwargs": {
+          "text": "SERVICE OF SUIT"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "bottom": 100
+        }
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "bottom": "<BinOp>"
+        }
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "pdf.add_exclusion",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "bottom": 100
+        }
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "pdf.add_exclusion",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "top": "<BinOp>"
+        }
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [
+      "text[color~=red]"
+    ],
+    "complexity": {
+      "code_blocks": 12,
+      "total_lines": 42,
+      "total_chars": 907
+    },
+    "approaches": [
+      "sample-bop-policy-restaurant.md"
+    ]
+  },
+  {
+    "slug": "liberty-county-boe",
+    "title": "Bad OCR in a board of education annual financial report",
+    "description": "This PDF is all sorts of information about the Board of Education in Liberty County, Georgia",
+    "pdf": "liberty-county-boe.pdf",
+    "tags": [
+      "financial report",
+      "multi-page",
+      "OCR",
+      "page navigation"
+    ],
+    "file_size_mb": 2.1,
+    "page_count": 72,
+    "submitted_by": "Maggie Lee",
+    "published": true,
+    "file": "liberty-county-boe.md",
+    "id": "liberty-county-boe",
+    "methods": [
+      "PDF",
+      "extract_text",
+      "find",
+      "render",
+      "save",
+      "show"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "liberty-county-boe.pdf"
+        ],
+        "kwargs": {
+          "text_layer": false
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "pdf.show",
+        "args": [],
+        "kwargs": {
+          "cols": 6
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "pdf.find",
+        "args": [],
+        "kwargs": {
+          "text": "FINANCIAL HIGHLIGHTS"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "pdf.find",
+        "args": [],
+        "kwargs": {
+          "text": "FINANCIAL HIGHLIGHTS"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "save",
+        "method_full": "save",
+        "args": [
+          "output.png"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "render",
+        "method_full": "page.render",
+        "args": [],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [],
+    "complexity": {
+      "code_blocks": 6,
+      "total_lines": 12,
+      "total_chars": 356
+    },
+    "approaches": [
+      "liberty-county-boe.md"
+    ]
+  },
+  {
+    "slug": "ocr-example",
+    "title": "OCR and AI magic",
+    "description": "Master OCR techniques with Natural PDF - from basic text recognition to advanced LLM-powered corrections. Learn to extract text from image-based PDFs, handle tables without proper boundaries, and leverage AI for accuracy improvements.",
+    "pdf": "ocr-example.pdf",
+    "tags": [
+      "OCR",
+      "LLM Integration",
+      "Text Extraction",
+      "Table Detection",
+      "AI Correction"
+    ],
+    "file_size_mb": 0.5,
+    "page_count": 1,
+    "submitted_by": "Natural PDF",
+    "published": true,
+    "file": "ocr-example.md",
+    "id": "ocr-example",
+    "methods": [
+      "Guides",
+      "PDF",
+      "apply_ocr",
+      "below",
+      "correct_ocr",
+      "extract_table",
+      "extract_text",
+      "find",
+      "find_all",
+      "from_content",
+      "from_lines",
+      "inspect",
+      "show",
+      "snap_to_whitespace",
+      "to_df"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "ocr-example.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {
+          "width": 700
+        }
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "apply_ocr",
+        "method_full": "page.apply_ocr",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "apply_ocr",
+        "method_full": "page.apply_ocr",
+        "args": [
+          "surya"
+        ],
+        "kwargs": {
+          "resolution": 192
+        }
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_table",
+        "method_full": "page.extract_table",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text:contains(Jungle)",
+          "include_endpoint": false
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "text:contains(Violations)"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<var:table_area>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "from_content",
+        "method_full": "guides.from_content",
+        "args": [
+          [
+            "Statute",
+            "Description",
+            "Level",
+            "Repeat"
+          ]
+        ],
+        "kwargs": {
+          "align": "between"
+        }
+      },
+      {
+        "method": "snap_to_whitespace",
+        "method_full": "guides.snap_to_whitespace",
+        "args": [],
+        "kwargs": {
+          "detection_method": "text"
+        }
+      },
+      {
+        "method": "from_lines",
+        "method_full": "guides.from_lines",
+        "args": [],
+        "kwargs": {
+          "threshold": 0.8
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "guides.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "apply_ocr",
+        "method_full": "page.apply_ocr",
+        "args": [],
+        "kwargs": {
+          "resolution": 50
+        }
+      },
+      {
+        "method": "inspect",
+        "method_full": "inspect",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "correct_ocr",
+        "method_full": "page.correct_ocr",
+        "args": [
+          "<var:correct_text_region>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "inspect",
+        "method_full": "inspect",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "apply_ocr",
+        "method_full": "page.apply_ocr",
+        "args": [
+          "surya"
+        ],
+        "kwargs": {
+          "resolution": 15
+        }
+      },
+      {
+        "method": "correct_ocr",
+        "method_full": "page.correct_ocr",
+        "args": [
+          "<var:correct_text_region>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "apply_ocr",
+        "method_full": "page.apply_ocr",
+        "args": [
+          "surya"
+        ],
+        "kwargs": {
+          "detect_only": true
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "inspect",
+        "method_full": "inspect",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "correct_ocr",
+        "method_full": "page.correct_ocr",
+        "args": [
+          "<var:correct_text_region>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "inspect",
+        "method_full": "inspect",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [
+      "text",
+      "text:contains(Violations)"
+    ],
+    "complexity": {
+      "code_blocks": 28,
+      "total_lines": 106,
+      "total_chars": 3334
+    },
+    "approaches": [
+      "ocr-example.md"
+    ]
+  },
+  {
+    "slug": "mednine",
+    "title": "Arabic Election Results Table Extraction from Mednine PDF",
+    "description": "This PDF has a data table showing election results from the Tunisian region of Mednine. Challenges include spanning header cells and rotated headers. It has Arabic script.",
+    "pdf": "mednine.pdf",
+    "tags": [
+      "Election Results",
+      "Arabic Script",
+      "Table Extraction",
+      "Header Challenges"
+    ],
+    "file_size_mb": 0.24,
+    "page_count": 4,
+    "submitted_by": "Jeremy Merrill",
+    "language": [
+      "Arabic"
+    ],
+    "published": true,
+    "file": "mednine.md",
+    "id": "mednine",
+    "methods": [
+      "Flow",
+      "PDF",
+      "apply",
+      "astype",
+      "extract_table",
+      "replace",
+      "show",
+      "to_df"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "mednine.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "pdf.show",
+        "args": [],
+        "kwargs": {
+          "cols": 3
+        }
+      },
+      {
+        "method": "Flow",
+        "method_full": "Flow",
+        "args": [
+          "<Attribute>"
+        ],
+        "kwargs": {
+          "arrangement": "vertical"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "flow.show",
+        "args": [],
+        "kwargs": {
+          "width": 300
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": null
+        }
+      },
+      {
+        "method": "apply",
+        "method_full": "pdf.apply",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": null
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "page.extract_table",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "astype",
+        "method_full": "astype",
+        "args": [
+          "<var:int>"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [],
+    "complexity": {
+      "code_blocks": 5,
+      "total_lines": 20,
+      "total_chars": 621
+    },
+    "approaches": [
+      "mednine.md"
+    ]
+  },
+  {
+    "slug": "multicolumn",
+    "title": "Working with page structure",
+    "description": "Extract text from complex multi-column layouts while maintaining proper reading order. Learn techniques for handling academic papers, newsletters, and documents with intricate column structures using Natural PDF's layout detection features.",
+    "pdf": "multicolumn.pdf",
+    "tags": [
+      "Multi-Column Layout",
+      "Reading Order",
+      "Text Flow",
+      "Academic Papers",
+      "Layout Detection",
+      "Table Extraction",
+      "YOLO",
+      "TATR"
+    ],
+    "file_size_mb": 0.8,
+    "page_count": 1,
+    "submitted_by": "Natural PDF Team",
+    "published": true,
+    "file": "multicolumn.md",
+    "id": "multicolumn",
+    "methods": [
+      "Flow",
+      "Guides",
+      "PDF",
+      "analyze_layout",
+      "apply_ocr",
+      "below",
+      "extract_table",
+      "extract_text",
+      "find",
+      "find_all",
+      "from_lines",
+      "highlight",
+      "region",
+      "show",
+      "to_df"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "multicolumn.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "left": 0,
+          "right": "<BinOp>",
+          "top": 0,
+          "bottom": "<Attribute>"
+        }
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "left": "<BinOp>",
+          "right": "<BinOp>",
+          "top": 0,
+          "bottom": "<Attribute>"
+        }
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "left": "<BinOp>",
+          "right": "<Attribute>",
+          "top": 0,
+          "bottom": "<Attribute>"
+        }
+      },
+      {
+        "method": "highlight",
+        "method_full": "page.highlight",
+        "args": [
+          "<var:left>",
+          "<var:mid>",
+          "<var:right>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "Flow",
+        "method_full": "Flow",
+        "args": [],
+        "kwargs": {
+          "segments": "<var:stacked>",
+          "arrangement": "vertical"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "flow.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text:contains(\"Table two\")",
+          "include_endpoint": false
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text[width>10]:bold|text:contains(\"Here is a bit\")",
+          "include_endpoint": false
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "needs-ocr.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "analyze_layout",
+        "method_full": "page.analyze_layout",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "group_by": "type"
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "region"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "apply_ocr",
+        "method_full": "apply_ocr",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "table"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "analyze_layout",
+        "method_full": "page.analyze_layout",
+        "args": [
+          "tatr"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "group_by": "type"
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "region"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": true
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "region[type=table-column]"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "region[type=table-column]"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "table"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_table",
+        "method_full": "extract_table",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "table"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "analyze_layout",
+        "method_full": "page.analyze_layout",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "group_by": "type"
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "region"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "region[type=table]"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "apply_ocr",
+        "method_full": "table_area.apply_ocr",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<var:table_area>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "from_lines",
+        "method_full": "guides.from_lines",
+        "args": [],
+        "kwargs": {
+          "threshold": 0.6
+        }
+      },
+      {
+        "method": "from_lines",
+        "method_full": "guides.from_lines",
+        "args": [],
+        "kwargs": {
+          "threshold": 0.6
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "guides.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [
+      "region",
+      "region[type=table-column]",
+      "region[type=table]",
+      "table",
+      "text:contains(\"Table one\")",
+      "text[source=ocr]",
+      "text[width>10]:bold"
+    ],
+    "complexity": {
+      "code_blocks": 22,
+      "total_lines": 71,
+      "total_chars": 1976
+    },
+    "approaches": [
+      "multicolumn.md"
+    ]
+  },
+  {
+    "slug": "pomonajailpomonaca06212004",
+    "title": "ICE Detention Facilities Compliance Report Extraction",
+    "description": "This PDF is an ICE report on compliance among detention facilities over the last 20-30 years. Our aim is to extract facility statuses and contract signatories' names and dates. Challenges include strange redactions, blobby text, poor contrast, and ineffective OCR. It has handwritten signatures and dates that are redacted.",
+    "pdf": "pomonajailpomonaca06212004.pdf",
+    "tags": [
+      "ICE compliance report",
+      "Redacted text",
+      "Handwriting",
+      "OCR needed",
+      "Text extraction issues",
+      "Columns"
+    ],
+    "file_size_mb": 41.36,
+    "page_count": 26,
+    "submitted_by": "Paroma Soni",
+    "published": true,
+    "file": "pomonajailpomonaca06212004.md",
+    "id": "pomonajailpomonaca06212004",
+    "methods": [
+      "Judge",
+      "PDF",
+      "add",
+      "apply_ocr",
+      "below",
+      "expand",
+      "extract_text",
+      "find",
+      "forget",
+      "left",
+      "region",
+      "show",
+      "trim"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "pomonajailpomonaca06212004.pdf"
+        ],
+        "kwargs": {
+          "text_layer": false
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "apply_ocr",
+        "method_full": "page.apply_ocr",
+        "args": [],
+        "kwargs": {
+          "resolution": 192
+        }
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "right": "<BinOp>"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "left_col.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text:contains(ICE Information)",
+          "include_endpoint": false
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": 50
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": true
+        }
+      },
+      {
+        "method": "trim",
+        "method_full": "trim",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": 3
+        }
+      },
+      {
+        "method": "forget",
+        "method_full": "judge.forget",
+        "args": [],
+        "kwargs": {
+          "delete": true
+        }
+      },
+      {
+        "method": "add",
+        "method_full": "judge.add",
+        "args": [
+          "<var:region1>",
+          "checked"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "add",
+        "method_full": "judge.add",
+        "args": [
+          "<var:region2>",
+          "unchecked"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [
+      "text:closest(County)",
+      "text:closest(Dates of Review)",
+      "text:closest(Previous Rating)",
+      "text:contains(Name and Location)",
+      "text[text=Class Action Order]",
+      "text[text=Court Order]",
+      "text[text=Major Litigation]",
+      "text[text=No]"
+    ],
+    "complexity": {
+      "code_blocks": 15,
+      "total_lines": 63,
+      "total_chars": 1969
+    },
+    "approaches": [
+      "pomonajailpomonaca06212004.md"
+    ]
+  },
+  {
+    "slug": "basics",
+    "title": "Natural PDF basics with text and tables",
+    "description": "Learn the fundamentals of Natural PDF - opening PDFs, extracting text with layout preservation, selecting elements by criteria, spatial navigation, and managing exclusion zones. Perfect starting point for PDF data extraction.",
+    "pdf": "basics.pdf",
+    "tags": [
+      "Text Extraction",
+      "Basic Usage",
+      "Element Selection",
+      "Spatial Navigation",
+      "Tables",
+      "Exclusion Zones"
+    ],
+    "file_size_mb": 0.2,
+    "page_count": 1,
+    "submitted_by": "Natural PDF Team",
+    "published": true,
+    "file": "basics.md",
+    "id": "basics",
+    "methods": [
+      "PDF",
+      "add_exclusion",
+      "extract_each_text",
+      "extract_table",
+      "extract_text",
+      "find",
+      "find_all",
+      "region",
+      "right",
+      "show",
+      "to_df"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "basics.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {
+          "layout": true
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "rect"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "rect"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_each_text",
+        "method_full": "extract_each_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "text[color~=red]"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "red_text.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "text:contains(\"INS-\")"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "text.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "height": "element"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "Date:"
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "page.extract_table",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "to_df",
+        "method_full": "table.to_df",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "top": 0,
+          "left": 0,
+          "height": 80
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "line"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "page.add_exclusion",
+        "args": [
+          "<var:top>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "page.add_exclusion",
+        "args": [
+          "<var:bottom>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "pdf.add_exclusion",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "top": 0,
+          "left": 0,
+          "height": 80
+        }
+      }
+    ],
+    "selectors": [
+      "line",
+      "rect",
+      "text",
+      "text:contains(\"INS-\")",
+      "text[color~=red]"
+    ],
+    "complexity": {
+      "code_blocks": 14,
+      "total_lines": 34,
+      "total_chars": 1008
+    },
+    "approaches": [
+      "basics.md"
+    ]
+  },
+  {
+    "slug": "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+    "title": "Extracting Complex Data from Serbian Regulatory PDF",
+    "description": "This PDF contains parts of Serbian policy documents, crucial for a research project analyzing industry policies across countries. The challenge lies in extracting a large table that spans pages (page 90 to 97) and a math formula on page 98, all in Serbian. Both elements lack clear boundaries between pages, complicating extraction.",
+    "pdf": "serbia-zakon-o-naknadama-za-koriscenje-javnih.pdf",
+    "tags": [
+      "Serbian",
+      "Large Tables",
+      "Math Formulas",
+      "Regulatory Documents",
+      "multiple tables",
+      "spanning pages"
+    ],
+    "file_size_mb": 1.89,
+    "page_count": 120,
+    "submitted_by": "Yuqi Liao",
+    "language": "Serbian",
+    "published": true,
+    "file": "serbia-zakon-o-naknadama-za-koriscenje-javnih.md",
+    "id": "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+    "methods": [
+      "Guides",
+      "PDF",
+      "below",
+      "extract_table",
+      "find",
+      "show",
+      "to_df"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "serbia-zakon-o-naknadama-za-koriscenje-javnih.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "pdf.find",
+        "args": [],
+        "kwargs": {
+          "text": "Prilog 7."
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "pdf.find",
+        "args": [],
+        "kwargs": {
+          "text": "VISINA NAKNADE ZA ZAGA\u0110ENJE VODA"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text:contains(Tabela 5)",
+          "include_endpoint": false,
+          "multipage": true
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": false
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "pdf.find",
+        "args": [],
+        "kwargs": {
+          "text": "Obra\u010dun naknade za neposredno zaga\u0111enje voda"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "image"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [
+      "image"
+    ],
+    "complexity": {
+      "code_blocks": 9,
+      "total_lines": 28,
+      "total_chars": 957
+    },
+    "approaches": [
+      "serbia-zakon-o-naknadama-za-koriscenje-javnih.md"
+    ]
+  },
+  {
+    "slug": "20252026-236232",
+    "title": "Extracting Text from Georgia Legislative Bills",
+    "description": "This PDF contains legal bills from the Georgia legislature, published yearly. Challenges include extracting marked-up text like underlines and strikethroughs. It has line numbers that complicate text extraction. ",
+    "pdf": "20252026-236232.pdf",
+    "tags": [
+      "text extraction",
+      "legislative documents",
+      "PDF challenges",
+      "text formatting"
+    ],
+    "file_size_mb": 0.09,
+    "page_count": 8,
+    "submitted_by": "maggie lee",
+    "language": "English",
+    "published": true,
+    "file": "20252026-236232.md",
+    "id": "20252026-236232",
+    "methods": [
+      "PDF",
+      "add_exclusion",
+      "apply",
+      "extract_each_text",
+      "extract_text",
+      "find_all",
+      "merge",
+      "region",
+      "right",
+      "show"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "20252026-236232.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": "wide"
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "text:strikeout"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "text:underline"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "underlined.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "underlined.show",
+        "args": [],
+        "kwargs": {
+          "crop": "wide"
+        }
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "pdf.find_all",
+        "args": [
+          "text:underline"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_each_text",
+        "method_full": "extract_each_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "pdf.find_all",
+        "args": [
+          "text:underline"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "pdf.add_exclusion",
+        "args": [
+          "text:strikeout"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "right": 70
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": "wide"
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "right": 70
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": "wide"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "right": 70
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": "wide"
+        }
+      },
+      {
+        "method": "merge",
+        "method_full": "merge",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "right": 70
+        }
+      },
+      {
+        "method": "apply",
+        "method_full": "pdf.apply",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "merge",
+        "method_full": "merge",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "right": 70
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "sections.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "left": 70,
+          "top": 50,
+          "bottom": "<BinOp>"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "area.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "apply",
+        "method_full": "pdf.apply",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "left": 70,
+          "top": 50,
+          "bottom": "<BinOp>"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "sections.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "right": 70
+        }
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "bottom": 50
+        }
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "top": "<BinOp>"
+        }
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "pdf.add_exclusion",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "right": 70
+        }
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "pdf.add_exclusion",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "bottom": 50
+        }
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "pdf.add_exclusion",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "top": "<BinOp>"
+        }
+      },
+      {
+        "method": "extract_text",
+        "method_full": "pdf.extract_text",
+        "args": [],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [
+      "text",
+      "text:strikeout",
+      "text:underline"
+    ],
+    "complexity": {
+      "code_blocks": 21,
+      "total_lines": 70,
+      "total_chars": 1532
+    },
+    "approaches": [
+      "20252026-236232.md"
+    ]
+  },
+  {
+    "slug": "cia-document-extraction",
+    "title": "CIA Document Analysis",
+    "description": "Extracting information from declassified CIA documents using AI",
+    "pdf": "cia-doc.pdf",
+    "tags": [
+      "workshop",
+      "ai",
+      "government-documents"
+    ],
+    "published": true,
+    "file": "cia-document-extraction.md",
+    "id": "cia-document",
+    "methods": [
+      "PDF",
+      "classify",
+      "classify_pages",
+      "filter",
+      "groupby",
+      "info",
+      "save_pdf",
+      "show"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "cia-doc.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "pdf.show",
+        "args": [],
+        "kwargs": {
+          "cols": 6
+        }
+      },
+      {
+        "method": "classify",
+        "method_full": "pdf.classify",
+        "args": [
+          [
+            "slaughterhouse report",
+            "dolphin training manual",
+            "basketball",
+            "birding"
+          ]
+        ],
+        "kwargs": {
+          "using": "text"
+        }
+      },
+      {
+        "method": "classify_pages",
+        "method_full": "pdf.classify_pages",
+        "args": [
+          [
+            "diagram",
+            "text",
+            "invoice",
+            "blank"
+          ]
+        ],
+        "kwargs": {
+          "using": "vision"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "show_category": true
+        }
+      },
+      {
+        "method": "filter",
+        "method_full": "pdf.filter",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "groupby",
+        "method_full": "pdf.groupby",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "info",
+        "method_full": "groups.info",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "save_pdf",
+        "method_full": "save_pdf",
+        "args": [
+          "diagrams.pdf"
+        ],
+        "kwargs": {
+          "original": true
+        }
+      },
+      {
+        "method": "filter",
+        "method_full": "pdf.filter",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [],
+    "complexity": {
+      "code_blocks": 7,
+      "total_lines": 28,
+      "total_chars": 733
+    },
+    "approaches": [
+      "cia-document-extraction.md"
+    ]
+  },
+  {
+    "slug": "statecallcenterdata_redacted",
+    "title": "Extracting State Agency Call Center Wait Times from FOIA PDF",
+    "description": "This PDF contains data on wait times at a state agency call center. The main focus is on the data on the first two pages, which matches other states' submission formats. The later pages provide granular breakdowns over several years. Challenges include it being heavily pixelated, making it hard to read numbers and text, with inconsistent and unreadable charts.",
+    "pdf": "statecallcenterdata_redacted.pdf",
+    "tags": [
+      "Call Center Data",
+      "Pixelated Scan",
+      "OCR Required",
+      "Granular Breakdown"
+    ],
+    "file_size_mb": 6.19,
+    "page_count": 66,
+    "submitted_by": "Adiel Kaplan",
+    "published": true,
+    "file": "statecallcenterdata_redacted.md",
+    "id": "statecallcenterdata_redacted",
+    "methods": [
+      "Guides",
+      "PDF",
+      "apply_ocr",
+      "below",
+      "divide",
+      "expand",
+      "extract_table",
+      "extract_text",
+      "find",
+      "find_all",
+      "from_lines",
+      "show",
+      "snap_to_whitespace",
+      "to_df"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "statecallcenterdata_redacted.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "apply_ocr",
+        "method_full": "page.apply_ocr",
+        "args": [
+          "surya"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": true
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {
+          "layout": true
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text:contains(Please use the comments)",
+          "include_endpoint": false
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "text:contains(Figure)"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "right": "<UnaryOp>",
+          "left": "<UnaryOp>",
+          "bottom": 3
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text:contains(Please use the comments)",
+          "include_endpoint": false
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "text:contains(Figure)"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": true
+        }
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<var:table_area>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "divide",
+        "method_full": "guide.divide",
+        "args": [
+          3
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "snap_to_whitespace",
+        "method_full": "guide.snap_to_whitespace",
+        "args": [],
+        "kwargs": {
+          "detection_method": "text"
+        }
+      },
+      {
+        "method": "from_lines",
+        "method_full": "guide.from_lines",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "guide.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": [
+            "value",
+            "amount",
+            "comments"
+          ]
+        }
+      }
+    ],
+    "selectors": [
+      "text",
+      "text:contains(Figure)"
+    ],
+    "complexity": {
+      "code_blocks": 10,
+      "total_lines": 47,
+      "total_chars": 1028
+    },
+    "approaches": [
+      "statecallcenterdata_redacted.md"
+    ]
+  },
+  {
+    "slug": "czech-republic-pisa2012_zakovsky_dotaznik_a",
+    "title": "Complex Table Extraction from OECD Czech PISA Assessment",
+    "description": "This PDF is a document from the OECD regarding the PISA assessment, provided in Czech. The main extraction goal is to get the survey question table found on page 9. Challenges include the weird table format, making it hard to extract automatically.",
+    "pdf": "czech-republic-pisa2012_zakovsky_dotaznik_a.pdf",
+    "tags": [
+      "OECD",
+      "Czech",
+      "PISA",
+      "Survey Table",
+      "Complex Format"
+    ],
+    "file_size_mb": 0.86,
+    "page_count": 56,
+    "submitted_by": "Yuqi Liao",
+    "language": "Czech",
+    "published": true,
+    "file": "czech-republic-pisa2012_zakovsky_dotaznik_a.md",
+    "id": "czech-republic-pisa2012_zakovsky_dotaznik_a",
+    "methods": [
+      "PDF",
+      "dissolve",
+      "extract_text",
+      "find_all",
+      "inspect",
+      "show"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "czech-republic-pisa2012_zakovsky_dotaznik_a.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "dissolve",
+        "method_full": "dissolve",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "dissolve",
+        "method_full": "dissolve",
+        "args": [],
+        "kwargs": {
+          "padding": 5
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "inspect",
+        "method_full": "inspect",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {
+          "layout": true,
+          "strip": true
+        }
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {
+          "layout": true,
+          "strip": true
+        }
+      }
+    ],
+    "selectors": [
+      "text",
+      "text:bold",
+      "text:bold:not-empty",
+      "text:bold[size~=14][x0>100]:not-empty",
+      "text:italic:not-empty[size>8]",
+      "text:italic[size~=14]",
+      "text:not(:bold):not(:italic)[size=12]",
+      "text:not(:italic):not-empty[size>8]"
+    ],
+    "complexity": {
+      "code_blocks": 19,
+      "total_lines": 92,
+      "total_chars": 2215
+    },
+    "approaches": [
+      "czech-republic-pisa2012_zakovsky_dotaznik_a.md"
+    ]
+  },
+  {
+    "slug": "focus",
+    "title": "Extracting Economic Data from Brazil's Central Bank PDF",
+    "description": "This PDF is the weekly \u201cFocus\u201d report from Brazil\u2019s central bank with economic projections and statistics. Challenges include commas instead of decimal points, images showing projection changes, and tables without border lines that merge during extraction.",
+    "pdf": "focus.pdf",
+    "tags": [
+      "Brazil",
+      "Economic Data",
+      "PDF Extraction",
+      "Tables without Borders",
+      "Comma as Decimal",
+      "Image Interpretation"
+    ],
+    "file_size_mb": 0.87,
+    "page_count": 2,
+    "submitted_by": "Giovanna serafim",
+    "language": "Spanish",
+    "published": true,
+    "file": "focus.md",
+    "id": "focus",
+    "methods": [
+      "PDF",
+      "assign",
+      "below",
+      "clip",
+      "dropna",
+      "expand",
+      "extract_table",
+      "extract_text",
+      "find",
+      "find_all",
+      "right",
+      "show",
+      "to_df"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "focus.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text:contains(comportamento)",
+          "include_endpoint": false
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "Expectativas"
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {
+          "overlap": "partial"
+        }
+      },
+      {
+        "method": "clip",
+        "method_full": "clip",
+        "args": [
+          "<var:data>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element",
+          "include_source": true
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "dropna",
+        "method_full": "dropna",
+        "args": [],
+        "kwargs": {
+          "axis": 0,
+          "how": "all"
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": false
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "extract_table",
+        "args": [
+          "stream"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "assign",
+        "method_full": "assign",
+        "args": [],
+        "kwargs": {
+          "year": "<Call>",
+          "value": "<var:headers>"
+        }
+      },
+      {
+        "method": "dropna",
+        "method_full": "dropna",
+        "args": [],
+        "kwargs": {
+          "axis": 0,
+          "how": "all"
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": false
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "extract_table",
+        "args": [
+          "stream"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text:contains(2026)",
+          "include_source": true,
+          "include_endpoint": false
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text:contains(2026)",
+          "include_source": true,
+          "include_endpoint": false
+        }
+      },
+      {
+        "method": "clip",
+        "method_full": "clip",
+        "args": [
+          "<var:data>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": "<UnaryOp>"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text:contains(2026)",
+          "include_source": true,
+          "include_endpoint": false
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "table.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": false
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "extract_table",
+        "args": [
+          "stream"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "table.expand",
+        "args": [],
+        "kwargs": {
+          "top": "<UnaryOp>"
+        }
+      },
+      {
+        "method": "clip",
+        "method_full": "clip",
+        "args": [
+          "<var:data>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": "<UnaryOp>"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text:contains(2027)",
+          "include_source": true,
+          "include_endpoint": false
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "table.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "dropna",
+        "method_full": "dropna",
+        "args": [],
+        "kwargs": {
+          "axis": 0,
+          "how": "all"
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": false
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "extract_table",
+        "args": [
+          "stream"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "table.expand",
+        "args": [],
+        "kwargs": {
+          "top": "<UnaryOp>"
+        }
+      },
+      {
+        "method": "clip",
+        "method_full": "clip",
+        "args": [
+          "<var:data>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": "<UnaryOp>"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "until": "text:contains(2028)",
+          "include_source": true,
+          "include_endpoint": false
+        }
+      },
+      {
+        "method": "dropna",
+        "method_full": "dropna",
+        "args": [],
+        "kwargs": {
+          "axis": 0,
+          "how": "all"
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": false
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "extract_table",
+        "args": [
+          "stream"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "table.expand",
+        "args": [],
+        "kwargs": {
+          "top": "<UnaryOp>"
+        }
+      },
+      {
+        "method": "clip",
+        "method_full": "clip",
+        "args": [
+          "<var:data>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": "<UnaryOp>"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "dropna",
+        "method_full": "dropna",
+        "args": [],
+        "kwargs": {
+          "axis": 0,
+          "how": "all"
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {
+          "header": false
+        }
+      },
+      {
+        "method": "extract_table",
+        "method_full": "extract_table",
+        "args": [
+          "stream"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "table.expand",
+        "args": [],
+        "kwargs": {
+          "top": "<UnaryOp>"
+        }
+      }
+    ],
+    "selectors": [
+      "text",
+      "text:contains(2025)",
+      "text:contains(2026)",
+      "text:contains(2027)",
+      "text:contains(2028)",
+      "text[size~=10]:regex(\\d\\d\\d\\d)"
+    ],
+    "complexity": {
+      "code_blocks": 18,
+      "total_lines": 143,
+      "total_chars": 3170
+    },
+    "approaches": [
+      "focus.md"
+    ]
+  }
+]

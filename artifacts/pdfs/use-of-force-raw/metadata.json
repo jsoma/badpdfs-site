@@ -1,0 +1,108 @@
+[
+  {
+    "slug": "use-of-force-raw",
+    "title": "Extracting Use-of-Force Records from Vancouver Police PDF",
+    "description": "This PDF contains detailed records of Vancouver Police's use-of-force incidents, provided after a public records request by journalists. Challenges include its very very very small font size and lots of empty whitespace.",
+    "pdf": "use-of-force-raw.pdf",
+    "tags": [
+      "small font",
+      "public records",
+      "tables",
+      "sparse"
+    ],
+    "file_size_mb": 0.7,
+    "page_count": 4,
+    "submitted_by": "Brandon Roberts",
+    "language": [
+      "English"
+    ],
+    "published": true,
+    "file": "use-of-force-raw.md",
+    "id": "use-of-force-raw",
+    "methods": [
+      "Guides",
+      "PDF",
+      "extract_each_text",
+      "extract_table",
+      "find_all",
+      "from_headers",
+      "show",
+      "to_df"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "use-of-force-raw.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "text[y0=min()]"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_each_text",
+        "method_full": "headers.extract_each_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<var:page>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "from_headers",
+        "method_full": "guides.from_headers",
+        "args": [
+          "<var:headers>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "guides.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [
+      "text[y0=min()]"
+    ],
+    "complexity": {
+      "code_blocks": 5,
+      "total_lines": 14,
+      "total_chars": 394
+    },
+    "approaches": [
+      "use-of-force-raw.md"
+    ]
+  }
+]

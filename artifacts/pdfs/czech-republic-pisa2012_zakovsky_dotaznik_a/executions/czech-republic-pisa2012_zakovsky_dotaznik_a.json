@@ -1,0 +1,359 @@
+{
+  "file": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a.md",
+  "metadata": {
+    "slug": "czech-republic-pisa2012_zakovsky_dotaznik_a",
+    "title": "Complex Table Extraction from OECD Czech PISA Assessment",
+    "description": "This PDF is a document from the OECD regarding the PISA assessment, provided in Czech. The main extraction goal is to get the survey question table found on page 9. Challenges include the weird table format, making it hard to extract automatically.",
+    "pdf": "czech-republic-pisa2012_zakovsky_dotaznik_a.pdf",
+    "tags": [
+      "OECD",
+      "Czech",
+      "PISA",
+      "Survey Table",
+      "Complex Format"
+    ],
+    "file_size_mb": 0.86,
+    "page_count": 56,
+    "submitted_by": "Yuqi Liao",
+    "language": "Czech",
+    "published": true,
+    "file": "czech-republic-pisa2012_zakovsky_dotaznik_a.md"
+  },
+  "cells": [
+    {
+      "type": "markdown",
+      "content": "# Complex Table Extraction from OECD Czech PISA Assessment\n\nThis PDF is a document from the OECD regarding the PISA assessment, provided in Czech. The main extraction goal is to get the survey question table found on page 9. Challenges include the weird table format, making it hard to extract automatically.\n\nI'm assuming by \"survey question\" the submitter wants *as much as possible*. You can extend the work we do here to get all of the surveys in the PDF, but for now we're just going to do a single section of the survey, from pages 7-15."
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf import PDF\n\npdf = PDF(\"czech-republic-pisa2012_zakovsky_dotaznik_a.pdf\")\npdf.pages[6:15].show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf import PDF\npdf = PDF('czech-republic-pisa2012_zakovsky_dotaznik_a.pdf')...\n[DEBUG] Evaluating expression: pdf.pages[6:15].show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a/images/image_1.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "If we want to look at one of the pages, it seems like the questions are in bold."
+    },
+    {
+      "type": "code",
+      "content": "pdf.pages[7].find_all(\"text:bold:not-empty\").show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: pdf.pages[7].find_all('text:bold:not-empty').show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a/images/image_2.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Zoom in! You can see that some of the words, like vzd\u011bl\u00e1n\u00ed, are broken up into *multiple words*. We can see why if we inspect the text on the page."
+    },
+    {
+      "type": "code",
+      "content": "pdf.pages[7].inspect()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: pdf.pages[7].inspect()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/html",
+          "data": "<h2>Collection Inspection (144 elements)</h2>\n<h3>Word Elements</h3>\n<table>\n<thead>\n<tr>\n<th>text</th>\n<th>x0</th>\n<th>top</th>\n<th>x1</th>\n<th>bottom</th>\n<th>font_family</th>\n<th>font_variant</th>\n<th>size</th>\n<th>styles</th>\n<th>source</th>\n<th>confidence</th>\n<th>color</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td></td>\n<td>71</td>\n<td>73</td>\n<td>74</td>\n<td>87</td>\n<td>Times</td>\n<td>EPFLBH</td>\n<td>14</td>\n<td>bold, italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#007f00</td>\n</tr>\n<tr>\n<td>ST12</td>\n<td>493</td>\n<td>103</td>\n<td>514</td>\n<td>111</td>\n<td>Arial</td>\n<td>BCOMPD</td>\n<td>8</td>\n<td>bold</td>\n<td>native</td>\n<td>1.00</td>\n<td>#7f7f7f</td>\n</tr>\n<tr>\n<td></td>\n<td>71</td>\n<td>104</td>\n<td>75</td>\n<td>118</td>\n<td>Arial</td>\n<td>BCOMPD</td>\n<td>14</td>\n<td>bold</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>11.</td>\n<td>71</td>\n<td>129</td>\n<td>94</td>\n<td>143</td>\n<td>Arial</td>\n<td>BCOMPD</td>\n<td>14</td>\n<td>bold</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>Jak\u00e9 je hlavn\u00ed zam</td>\n<td>119</td>\n<td>129</td>\n<td>241</td>\n<td>143</td>\n<td>Arial</td>\n<td>BCOMPD</td>\n<td>14</td>\n<td>bold</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u011b</td>\n<td>241</td>\n<td>129</td>\n<td>249</td>\n<td>143</td>\n<td>Arial</td>\n<td>BCOMPC</td>\n<td>14</td>\n<td>bold</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>stn\u00e1n\u00ed tv\u00e9 matky?</td>\n<td>249</td>\n<td>129</td>\n<td>375</td>\n<td>143</td>\n<td>Arial</td>\n<td>BCOMPD</td>\n<td>14</td>\n<td>bold</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>(nap</td>\n<td>119</td>\n<td>145</td>\n<td>147</td>\n<td>159</td>\n<td>Arial</td>\n<td>EPFLAG</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u0159</td>\n<td>147</td>\n<td>145</td>\n<td>152</td>\n<td>159</td>\n<td>Arial</td>\n<td>EPFKOG</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>. u</td>\n<td>152</td>\n<td>145</td>\n<td>167</td>\n<td>159</td>\n<td>Arial</td>\n<td>EPFLAG</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u010d</td>\n<td>167</td>\n<td>145</td>\n<td>174</td>\n<td>159</td>\n<td>Arial</td>\n<td>EPFKOG</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>itelka na st</td>\n<td>174</td>\n<td>145</td>\n<td>241</td>\n<td>159</td>\n<td>Arial</td>\n<td>EPFLAG</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u0159</td>\n<td>241</td>\n<td>145</td>\n<td>246</td>\n<td>159</td>\n<td>Arial</td>\n<td>EPFKOG</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>edn\u00ed \u0161kole, kucha</td>\n<td>246</td>\n<td>145</td>\n<td>355</td>\n<td>159</td>\n<td>Arial</td>\n<td>EPFLAG</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u0159</td>\n<td>355</td>\n<td>145</td>\n<td>359</td>\n<td>159</td>\n<td>Arial</td>\n<td>EPFKOG</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>ka ve \u0161koln\u00ed j\u00eddeln</td>\n<td>359</td>\n<td>145</td>\n<td>471</td>\n<td>159</td>\n<td>Arial</td>\n<td>EPFLAG</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u011b</td>\n<td>471</td>\n<td>145</td>\n<td>478</td>\n<td>159</td>\n<td>Arial</td>\n<td>EPFKOG</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>, vedouc\u00ed</td>\n<td>479</td>\n<td>145</td>\n<td>539</td>\n<td>159</td>\n<td>Arial</td>\n<td>EPFLAG</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>prodeje)</td>\n<td>119</td>\n<td>161</td>\n<td>170</td>\n<td>175</td>\n<td>Arial</td>\n<td>EPFLAG</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td></td>\n<td>170</td>\n<td>161</td>\n<td>174</td>\n<td>175</td>\n<td>Arial</td>\n<td>BCOMPD</td>\n<td>14</td>\n<td>bold</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td></td>\n<td>71</td>\n<td>180</td>\n<td>74</td>\n<td>191</td>\n<td>Arial</td>\n<td>EPFLAG</td>\n<td>11</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>(Jestli\u017ee v sou</td>\n<td>119</td>\n<td>186</td>\n<td>197</td>\n<td>200</td>\n<td>Times</td>\n<td>EPFLHA</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u010d</td>\n<td>197</td>\n<td>186</td>\n<td>204</td>\n<td>200</td>\n<td>Times</td>\n<td>EPFLGP</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>asn\u00e9 dob</td>\n<td>204</td>\n<td>186</td>\n<td>254</td>\n<td>200</td>\n<td>Times</td>\n<td>EPFLHA</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u011b</td>\n<td>254</td>\n<td>186</td>\n<td>260</td>\n<td>200</td>\n<td>Times</td>\n<td>EPFLGP</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>nepracuje, uve</td>\n<td>260</td>\n<td>186</td>\n<td>346</td>\n<td>200</td>\n<td>Times</td>\n<td>EPFLHA</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u010f</td>\n<td>346</td>\n<td>186</td>\n<td>354</td>\n<td>200</td>\n<td>Times</td>\n<td>EPFLGP</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>jej\u00ed posledn\u00ed zam</td>\n<td>354</td>\n<td>186</td>\n<td>453</td>\n<td>200</td>\n<td>Times</td>\n<td>EPFLHA</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u011b</td>\n<td>453</td>\n<td>186</td>\n<td>459</td>\n<td>200</td>\n<td>Times</td>\n<td>EPFLGP</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>stn\u00e1n\u00ed.)</td>\n<td>459</td>\n<td>186</td>\n<td>509</td>\n<td>200</td>\n<td>Times</td>\n<td>EPFLHA</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td><em>Showing 30 of 138 elements (pass limit= to see more)</em></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n</tbody>\n</table>\n<h3>Rect Elements</h3>\n<table>\n<thead>\n<tr>\n<th>x0</th>\n<th>top</th>\n<th>x1</th>\n<th>bottom</th>\n<th>width</th>\n<th>height</th>\n<th>stroke</th>\n<th>fill</th>\n<th>stroke_width</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>428</td>\n<td>550</td>\n<td>440</td>\n<td>562</td>\n<td>12</td>\n<td>12</td>\n<td>#000000</td>\n<td>#000000</td>\n<td>0</td>\n</tr>\n<tr>\n<td>428</td>\n<td>584</td>\n<td>440</td>\n<td>596</td>\n<td>12</td>\n<td>12</td>\n<td>#000000</td>\n<td>#000000</td>\n<td>0</td>\n</tr>\n<tr>\n<td>428</td>\n<td>624</td>\n<td>440</td>\n<td>637</td>\n<td>12</td>\n<td>12</td>\n<td>#000000</td>\n<td>#000000</td>\n<td>0</td>\n</tr>\n<tr>\n<td>428</td>\n<td>665</td>\n<td>440</td>\n<td>678</td>\n<td>12</td>\n<td>12</td>\n<td>#000000</td>\n<td>#000000</td>\n<td>0</td>\n</tr>\n<tr>\n<td>428</td>\n<td>699</td>\n<td>440</td>\n<td>711</td>\n<td>12</td>\n<td>12</td>\n<td>#000000</td>\n<td>#000000</td>\n<td>0</td>\n</tr>\n<tr>\n<td>69</td>\n<td>779</td>\n<td>526</td>\n<td>779</td>\n<td>457</td>\n<td>0</td>\n<td>#000000</td>\n<td>#000000</td>\n<td>0</td>\n</tr>\n</tbody>\n</table>"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Turns out the accented letters are a font variant! Each change in boldness, font size, or font type trigger the idea that something is a *new word*, even if we know it's not.\n\nDo we deal with it? Do we ignore it? At least two paths open up ahead!"
+    },
+    {
+      "type": "tab",
+      "title": "Dissolving and `.find_all`",
+      "cells": [
+        {
+          "type": "markdown",
+          "content": "By default we'll assume you don't know why this is happening, and lean heavily in `dissolve()`. Dissolve can be used to combine texts or regions that are close to one another."
+        },
+        {
+          "type": "code",
+          "content": "pdf.pages[7].find_all(\"text:bold:not-empty\").dissolve().show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Evaluating expression: pdf.pages[7].find_all('text:bold:not-empty').dissolve().show()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a/images/image_3.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "When we use `dissolve()` on the selection you'll see them combine into blocks. Along with weird font issues, dissolving is also useful for combining parts of the same question that are broken into separate rows. By using `padding=5` we have the dissolve reach out five pixels to find nearby overlapping regions, including the ones on the row above/below."
+        },
+        {
+          "type": "code",
+          "content": "questions = (\n    pdf\n    .pages[6:15]\n    .find_all('text:bold[size~=14][x0>100]:not-empty')\n    .dissolve(padding=5)\n)\nquestions.show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: questions = pdf.pages[6:15].find_all('text:bold[size~=14][x0>100]:not-empty').dissolve(padding=5)...\n[DEBUG] Evaluating expression: questions.show()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a/images/image_4.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "If we were just interested in the questions, we could pull them each out now."
+        },
+        {
+          "type": "code",
+          "content": "questions.extract_each_text()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Evaluating expression: questions.extract_each_text()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "text/plain",
+              "data": "['Kte\u0159\u00ed lid\u00e9 obvykle bydl\u00ed u v\u00e1s doma?', 'Jak\u00e9 je hlavn\u00ed zam\u011bstn\u00e1n\u00ed tv\u00e9 matky?', 'Co tv\u00e1 matka v zam\u011bstn\u00e1n\u00ed d\u011bl\u00e1?', 'Jak\u00e9ho nejvy\u0161\u0161\u00edho vzd\u011bl\u00e1n\u00ed z n\u00e1sleduj\u00edc\u00edch mo\u017enost\u00ed dos\u00e1hla\\ntv\u00e1 matka?', 'Ukon\u010dila tv\u00e1 matka n\u011bkter\u00fd z t\u011bchto typ\u016f pomaturitn\u00edho studia?', 'Co v sou\u010dasn\u00e9 dob\u011b d\u011bl\u00e1 tv\u00e1 matka?', 'Jak\u00e9 je hlavn\u00ed zam\u011bstn\u00e1n\u00ed tv\u00e9ho otce?', 'Co tv\u016fj otec v zam\u011bstn\u00e1n\u00ed d\u011bl\u00e1?', 'Jak\u00e9ho nejvy\u0161\u0161\u00edho vzd\u011bl\u00e1n\u00ed z n\u00e1sleduj\u00edc\u00edch mo\u017enost\u00ed dos\u00e1hl\\ntv\u016fj otec?', 'Ukon\u010dil tv\u016fj otec n\u011bkter\u00fd z t\u011bchto typ\u016f pomaturitn\u00edho studia?', 'Co v sou\u010dasn\u00e9 dob\u011b d\u011bl\u00e1 tv\u016fj otec?', 'Ve kter\u00e9 zemi ses narodil/a ty a tvoji rodi\u010de?', 'Jestli\u017ee ses NENARODIL/A v \u010cesk\u00e9 republice, kolik ti bylo let,\\nkdy\u017e ses do \u010cesk\u00e9 republiky p\u0159ist\u011bhoval/a?', 'Kter\u00fdm jazykem doma v\u011bt\u0161inou mluv\u00edte?', 'Kter\u00e9 z uveden\u00fdch v\u011bc\u00ed m\u00e1te doma?', 'Kolik t\u011bchto v\u011bc\u00ed m\u00e1te doma?', 'Kolik m\u00e1te doma knih?']"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "Instead, we're going to use the question to **break the page into sections**. Starting from each question, we'll look `.below()` until it hits the either:\n\n- The next question\n- A wide line (Why is it a `rect`? Who knows!)\n- The STXX text used to denote questions\n\nThis didn't come easy: It took a lot of trial and error to see the right selectors."
+        },
+        {
+          "type": "code",
+          "content": "answer_areas = (\n    questions.below(\n        until='text:bold[size~=14]:regex(\\d+) | rect[width>300] | text:regex(^ST\\d)',\n        include_endpoint=False\n    )\n)\nanswer_areas.show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: answer_areas = questions.below(until='text:bold[size~=14]:regex(\\\\d+) | rect[width>300] | text:regex...\n[DEBUG] Evaluating expression: answer_areas.show()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a/images/image_5.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "Now we can find the text of the question by asking for the text that is neither bold nor tiny:"
+        },
+        {
+          "type": "code",
+          "content": "answer_areas[3].find_all('text:not(:italic):not-empty[size>8]').show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Evaluating expression: answer_areas[3].find_all('text:not(:italic):not-empty[size>8]').show()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a/images/image_6.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "And if we want it for each of the questions, we'll just search through each of them.\n\n> There are about two hundred ways to do this part."
+        },
+        {
+          "type": "code",
+          "content": "results = []\nfor question, answer_area in zip(questions, answer_areas):\n    result = {}\n    result['question'] = question.extract_text()\n    result['notes'] = (\n        answer_area\n        .find_all('text:italic:not-empty[size>8]')\n        .extract_text()\n    )\n    result['answers'] = (\n        answer_area\n        .find_all('text:not(:italic):not-empty[size>8]')\n        .extract_text()\n    )\n    results.append(result)\nprint(\"Found\", len(results))",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: results = []\nfor question, answer_area in zip(questions, answer_areas):\n    result = {}\n    result['...\n[DEBUG] Evaluating expression: print('Found', len(results))...\nFound 17\n",
+            "error": null,
+            "figures": [],
+            "result": null
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "Now we can pack it up into pandas and be good to go."
+        },
+        {
+          "type": "code",
+          "content": "import pandas as pd\n\ndf = pd.DataFrame(results)\ndf",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: import pandas as pd\ndf = pd.DataFrame(results)...\n[DEBUG] Evaluating expression: df...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "text/html",
+              "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>question</th>\n      <th>notes</th>\n      <th>answers</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>Kte\u0159\u00ed lid\u00e9 obvykle bydl\u00ed u v\u00e1s doma?</td>\n      <td></td>\n      <td>10. Kte \u0159 \u00ed lid\u00e9 obvykle bydl\u00ed u v\u00e1s doma?</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>Jak\u00e9 je hlavn\u00ed zam\u011bstn\u00e1n\u00ed tv\u00e9 matky?</td>\n      <td></td>\n      <td>11. Jak\u00e9 je hlavn\u00ed zam \u011b stn\u00e1n\u00ed tv\u00e9 matky?</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>Co tv\u00e1 matka v zam\u011bstn\u00e1n\u00ed d\u011bl\u00e1?</td>\n      <td></td>\n      <td>12. Co tv\u00e1 matka v zam \u011b stn\u00e1n\u00ed d \u011b l\u00e1?</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>Jak\u00e9ho nejvy\u0161\u0161\u00edho vzd\u011bl\u00e1n\u00ed z n\u00e1sleduj\u00edc\u00edch mo\u017e...</td>\n      <td></td>\n      <td>13. Jak\u00e9ho nejvy\u0161\u0161\u00edho vzd \u011b l\u00e1n\u00ed z n\u00e1sleduj\u00edc\u00ed...</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>Ukon\u010dila tv\u00e1 matka n\u011bkter\u00fd z t\u011bchto typ\u016f pomat...</td>\n      <td></td>\n      <td>14. Ukon \u010d ila tv\u00e1 matka n \u011b kter\u00fd z t \u011b chto ...</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>Co v sou\u010dasn\u00e9 dob\u011b d\u011bl\u00e1 tv\u00e1 matka?</td>\n      <td></td>\n      <td>15. Co v sou \u010d asn\u00e9 dob \u011b d \u011b l\u00e1 tv\u00e1 matka?</td>\n    </tr>\n    <tr>\n      <th>6</th>\n      <td>Jak\u00e9 je hlavn\u00ed zam\u011bstn\u00e1n\u00ed tv\u00e9ho otce?</td>\n      <td></td>\n      <td>16. Jak\u00e9 je hlavn\u00ed zam \u011b stn\u00e1n\u00ed tv\u00e9ho otce?</td>\n    </tr>\n    <tr>\n      <th>7</th>\n      <td>Co tv\u016fj otec v zam\u011bstn\u00e1n\u00ed d\u011bl\u00e1?</td>\n      <td></td>\n      <td>17. Co tv \u016f j otec v zam \u011b stn\u00e1n\u00ed d \u011b l\u00e1?</td>\n    </tr>\n    <tr>\n      <th>8</th>\n      <td>Jak\u00e9ho nejvy\u0161\u0161\u00edho vzd\u011bl\u00e1n\u00ed z n\u00e1sleduj\u00edc\u00edch mo\u017e...</td>\n      <td></td>\n      <td>18. Jak\u00e9ho nejvy\u0161\u0161\u00edho vzd \u011b l\u00e1n\u00ed z n\u00e1sleduj\u00edc\u00ed...</td>\n    </tr>\n    <tr>\n      <th>9</th>\n      <td>Ukon\u010dil tv\u016fj otec n\u011bkter\u00fd z t\u011bchto typ\u016f pomatu...</td>\n      <td></td>\n      <td>19. Ukon \u010d il tv \u016f j otec n \u011b kter\u00fd z t \u011b chto...</td>\n    </tr>\n    <tr>\n      <th>10</th>\n      <td>Co v sou\u010dasn\u00e9 dob\u011b d\u011bl\u00e1 tv\u016fj otec?</td>\n      <td></td>\n      <td>20. Co v sou \u010d asn\u00e9 dob \u011b d \u011b l\u00e1 tv \u016f j otec?</td>\n    </tr>\n    <tr>\n      <th>11</th>\n      <td>Ve kter\u00e9 zemi ses narodil/a ty a tvoji rodi\u010de?</td>\n      <td></td>\n      <td>21. Ve kter\u00e9 zemi ses narodil/a ty a tvoji rod...</td>\n    </tr>\n    <tr>\n      <th>12</th>\n      <td>Jestli\u017ee ses NENARODIL/A v \u010cesk\u00e9 republice, ko...</td>\n      <td></td>\n      <td>22. Jestli\u017ee ses NENARODIL/A v \u010c esk\u00e9 republic...</td>\n    </tr>\n    <tr>\n      <th>13</th>\n      <td>Kter\u00fdm jazykem doma v\u011bt\u0161inou mluv\u00edte?</td>\n      <td></td>\n      <td>23. Kter\u00fdm jazykem doma v \u011b t\u0161inou mluv\u00edte?</td>\n    </tr>\n    <tr>\n      <th>14</th>\n      <td>Kter\u00e9 z uveden\u00fdch v\u011bc\u00ed m\u00e1te doma?</td>\n      <td></td>\n      <td>24. Kter\u00e9 z uveden\u00fdch v \u011b c\u00ed m\u00e1te doma?</td>\n    </tr>\n    <tr>\n      <th>15</th>\n      <td>Kolik t\u011bchto v\u011bc\u00ed m\u00e1te doma?</td>\n      <td></td>\n      <td>25. Kolik t \u011b chto v \u011b c\u00ed m\u00e1te doma?</td>\n    </tr>\n    <tr>\n      <th>16</th>\n      <td>Kolik m\u00e1te doma knih?</td>\n      <td></td>\n      <td>26. Kolik m\u00e1te doma knih?</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "tab",
+      "title": "Breaking into sections",
+      "cells": [
+        {
+          "type": "markdown",
+          "content": "Instead of focusing on the questions, we can also think about patterns on the page: each question begins with a number. Let's break the page up based on bold, size 14 text that includes numbers."
+        },
+        {
+          "type": "code",
+          "content": "sections = (\n    pdf\n    .pages[6:15]\n    .get_sections(\n        start_elements='text:bold[size~=14]:regex(\\d+)'\n    )\n)\nsections.show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: sections = pdf.pages[6:15].get_sections(start_elements='text:bold[size~=14]:regex(\\\\d+)')...\n[DEBUG] Evaluating expression: sections.show()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a/images/image_7.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "Let's a look at the first section."
+        },
+        {
+          "type": "code",
+          "content": "sections[0].show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Evaluating expression: sections[0].show()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a/images/image_8.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "If we wanted the rough text from the section, we just ask for it."
+        },
+        {
+          "type": "code",
+          "content": "text = sections[0].extract_text(layout=True)\nprint(text)",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: text = sections[0].extract_text(layout=True)...\n[DEBUG] Evaluating expression: print(text)...\n          10.   Kte\u0159\u00ed lid\u00e9 obvykle bydl\u00ed u v\u00e1s doma?                              \n                (V ka\u017ed\u00e9m \u0159\u00e1dku za\u0161krtni pouze jeden \u010dtvere\u010dek.)                  \n                                                     Ano   Ne                     \n              a) Matka (v\u010detn\u011b nevlastn\u00ed matky nebo p\u011bstounky)                    \n                                                        1    2                    \n              b) Otec (v\u010detn\u011b nevlastn\u00edho otce nebo p\u011bstouna)                     \n                                                        1    2                    \n              c) Bratr/brat\u0159i (v\u010detn\u011b nevlastn\u00edch)                                \n                                                        1    2                    \n              d) Sestra/sestry (v\u010detn\u011b nevlastn\u00edch)                               \n                                                        1    2                    \n              e) Prarodi\u010d/e                                                       \n                                                        1    2                    \n               f) Jin\u00ed (nap\u0159. sest\u0159enice, bratranec)                              \n                                                        1    2                    \n                                         7                                        \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n                                                                                  \n",
+            "error": null,
+            "figures": [],
+            "result": null
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "Most likely we want to pull out the pieces separately: the italic, the bold, the normal. We can inspect the text on the page to see what selectors might work for each."
+        },
+        {
+          "type": "code",
+          "content": "sections[0].find_all('text').inspect()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Evaluating expression: sections[0].find_all('text').inspect()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "text/html",
+              "data": "<h2>Collection Inspection (88 elements)</h2>\n<h3>Word Elements</h3>\n<table>\n<thead>\n<tr>\n<th>text</th>\n<th>x0</th>\n<th>top</th>\n<th>x1</th>\n<th>bottom</th>\n<th>font_family</th>\n<th>font_variant</th>\n<th>size</th>\n<th>styles</th>\n<th>source</th>\n<th>confidence</th>\n<th>color</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>10.</td>\n<td>71</td>\n<td>329</td>\n<td>94</td>\n<td>343</td>\n<td>Arial</td>\n<td>BCOMPD</td>\n<td>14</td>\n<td>bold</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>Kte</td>\n<td>119</td>\n<td>329</td>\n<td>141</td>\n<td>343</td>\n<td>Arial</td>\n<td>BCOMPD</td>\n<td>14</td>\n<td>bold</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u0159</td>\n<td>141</td>\n<td>329</td>\n<td>147</td>\n<td>343</td>\n<td>Arial</td>\n<td>BCOMPC</td>\n<td>14</td>\n<td>bold</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u00ed lid\u00e9 obvykle bydl\u00ed u v\u00e1s doma?</td>\n<td>147</td>\n<td>329</td>\n<td>365</td>\n<td>343</td>\n<td>Arial</td>\n<td>BCOMPD</td>\n<td>14</td>\n<td>bold</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td></td>\n<td>71</td>\n<td>354</td>\n<td>74</td>\n<td>368</td>\n<td>Times</td>\n<td>EPFLHA</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>(V ka\u017ed\u00e9m</td>\n<td>119</td>\n<td>354</td>\n<td>181</td>\n<td>368</td>\n<td>Times</td>\n<td>EPFLHA</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u0159</td>\n<td>181</td>\n<td>354</td>\n<td>186</td>\n<td>368</td>\n<td>Times</td>\n<td>EPFLGP</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u00e1dku za\u0161krtni pouze jeden</td>\n<td>186</td>\n<td>354</td>\n<td>335</td>\n<td>368</td>\n<td>Times</td>\n<td>EPFLHA</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u010d</td>\n<td>335</td>\n<td>354</td>\n<td>341</td>\n<td>368</td>\n<td>Times</td>\n<td>EPFLGP</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>tvere</td>\n<td>341</td>\n<td>354</td>\n<td>369</td>\n<td>368</td>\n<td>Times</td>\n<td>EPFLHA</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u010d</td>\n<td>369</td>\n<td>354</td>\n<td>375</td>\n<td>368</td>\n<td>Times</td>\n<td>EPFLGP</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>ek.)</td>\n<td>375</td>\n<td>354</td>\n<td>399</td>\n<td>368</td>\n<td>Times</td>\n<td>EPFLHA</td>\n<td>14</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td></td>\n<td>483</td>\n<td>385</td>\n<td>486</td>\n<td>399</td>\n<td>Times</td>\n<td>EPFLBJ</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>Ano</td>\n<td>385</td>\n<td>386</td>\n<td>406</td>\n<td>397</td>\n<td>Times</td>\n<td>EPFLHA</td>\n<td>11</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>Ne</td>\n<td>431</td>\n<td>386</td>\n<td>446</td>\n<td>397</td>\n<td>Times</td>\n<td>EPFLHA</td>\n<td>11</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td></td>\n<td>113</td>\n<td>386</td>\n<td>122</td>\n<td>398</td>\n<td>Times</td>\n<td>EPFLBJ</td>\n<td>12</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td></td>\n<td>483</td>\n<td>419</td>\n<td>486</td>\n<td>433</td>\n<td>Times</td>\n<td>EPFLBJ</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>a) Matka (v</td>\n<td>104</td>\n<td>420</td>\n<td>163</td>\n<td>432</td>\n<td>Times</td>\n<td>EPFLBJ</td>\n<td>12</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u010d</td>\n<td>163</td>\n<td>420</td>\n<td>168</td>\n<td>432</td>\n<td>Times</td>\n<td>EPFLBI</td>\n<td>12</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>etn</td>\n<td>168</td>\n<td>420</td>\n<td>183</td>\n<td>432</td>\n<td>Times</td>\n<td>EPFLBJ</td>\n<td>12</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u011b</td>\n<td>183</td>\n<td>420</td>\n<td>188</td>\n<td>432</td>\n<td>Times</td>\n<td>EPFLBI</td>\n<td>12</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>nevlastn\u00ed matky nebo p</td>\n<td>188</td>\n<td>420</td>\n<td>303</td>\n<td>432</td>\n<td>Times</td>\n<td>EPFLBJ</td>\n<td>12</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>\u011b</td>\n<td>303</td>\n<td>420</td>\n<td>308</td>\n<td>432</td>\n<td>Times</td>\n<td>EPFLBI</td>\n<td>12</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>stounky)</td>\n<td>308</td>\n<td>420</td>\n<td>350</td>\n<td>432</td>\n<td>Times</td>\n<td>EPFLBJ</td>\n<td>12</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td></td>\n<td>350</td>\n<td>420</td>\n<td>353</td>\n<td>432</td>\n<td>Times</td>\n<td>EPFLHA</td>\n<td>12</td>\n<td>italic</td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td></td>\n<td>406</td>\n<td>421</td>\n<td>410</td>\n<td>435</td>\n<td>Times</td>\n<td>EPFLBJ</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td></td>\n<td>449</td>\n<td>421</td>\n<td>452</td>\n<td>435</td>\n<td>Times</td>\n<td>EPFLBJ</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>1</td>\n<td>403</td>\n<td>429</td>\n<td>406</td>\n<td>435</td>\n<td>Times</td>\n<td>EPFLBJ</td>\n<td>6</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td>2</td>\n<td>445</td>\n<td>429</td>\n<td>449</td>\n<td>435</td>\n<td>Times</td>\n<td>EPFLBJ</td>\n<td>6</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td></td>\n<td>483</td>\n<td>453</td>\n<td>486</td>\n<td>467</td>\n<td>Times</td>\n<td>EPFLBJ</td>\n<td>14</td>\n<td></td>\n<td>native</td>\n<td>1.00</td>\n<td>#000000</td>\n</tr>\n<tr>\n<td><em>Showing 30 of 88 elements (pass limit= to see more)</em></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n</tbody>\n</table>"
+            }
+          }
+        },
+        {
+          "type": "code",
+          "content": "question = sections[0].find_all('text:bold').extract_text()\nprint(question)",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: question = sections[0].find_all('text:bold').extract_text()...\n[DEBUG] Evaluating expression: print(question)...\n10. Kte \u0159 \u00ed lid\u00e9 obvykle bydl\u00ed u v\u00e1s doma?\n",
+            "error": null,
+            "figures": [],
+            "result": null
+          }
+        },
+        {
+          "type": "code",
+          "content": "notes = sections[0].find_all('text:italic[size~=14]').extract_text()\nprint(notes)",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: notes = sections[0].find_all('text:italic[size~=14]').extract_text()...\n[DEBUG] Evaluating expression: print(notes)...\n(V ka\u017ed\u00e9m \u0159 \u00e1dku za\u0161krtni pouze jeden \u010d tvere \u010d ek.)\n",
+            "error": null,
+            "figures": [],
+            "result": null
+          }
+        },
+        {
+          "type": "code",
+          "content": "answers = (\n    sections[0]\n    .find_all('text:not(:bold):not(:italic)[size=12]')\n    .extract_text(\n        layout=True,\n        strip=True,\n    )\n)\nprint(answers)",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: answers = sections[0].find_all('text:not(:bold):not(:italic)[size=12]').extract_text(layout=True, st...\n[DEBUG] Evaluating expression: print(answers)...\na) Matka (v\u010detn\u011b nevlastn\u00ed matky nebo p\u011bstounky)\nb) Otec (v\u010detn\u011b nevlastn\u00edho otce nebo p\u011bstouna)\nc) Bratr/brat\u0159i (v\u010detn\u011b nevlastn\u00edch)\nd) Sestra/sestry (v\u010detn\u011b nevlastn\u00edch)\ne) Prarodi\u010d/e\nf) Jin\u00ed (nap\u0159. sest\u0159enice, bratranec)\n",
+            "error": null,
+            "figures": [],
+            "result": null
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "Now that we know it works for one of them, we can do it for all of the sections."
+        },
+        {
+          "type": "code",
+          "content": "results = []\n\nfor section in sections:\n    question = (\n        section\n        .find_all('text:bold')\n        .extract_text()\n    )\n    notes = (\n        section\n        .find_all('text:italic[size~=14]')\n        .extract_text()\n    )\n    answers = (\n        section\n        .find_all('text:not(:bold):not(:italic)[size=12]')\n        .extract_text(layout=True, strip=True)\n    )\n    results.append({\n        'question': question,\n        'notes': notes,\n        'answers': answers\n    })\nlen(results)",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: results = []\nfor section in sections:\n    question = section.find_all('text:bold').extract_text()\n  ...\n[DEBUG] Evaluating expression: len(results)...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "text/plain",
+              "data": "17"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "Pop it into a pandas dataframe and you're ready to go!"
+        },
+        {
+          "type": "code",
+          "content": "import pandas as pd\n\ndf = pd.DataFrame(results)\ndf.head()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: import pandas as pd\ndf = pd.DataFrame(results)...\n[DEBUG] Evaluating expression: df.head()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "text/html",
+              "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>question</th>\n      <th>notes</th>\n      <th>answers</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>10. Kte \u0159 \u00ed lid\u00e9 obvykle bydl\u00ed u v\u00e1s doma?</td>\n      <td>(V ka\u017ed\u00e9m \u0159 \u00e1dku za\u0161krtni pouze jeden \u010d tvere ...</td>\n      <td>a) Matka (v\u010detn\u011b nevlastn\u00ed matky nebo p\u011bstounk...</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>11. Jak\u00e9 je hlavn\u00ed zam \u011b stn\u00e1n\u00ed tv\u00e9 matky?</td>\n      <td>(Jestli\u017ee v sou \u010d asn\u00e9 dob \u011b nepracuje, uve \u010f ...</td>\n      <td></td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>12. Co tv\u00e1 matka v zam \u011b stn\u00e1n\u00ed d \u011b l\u00e1?  ST13</td>\n      <td>Popi\u0161 jednou v \u011b tou pracovn\u00ed \u010d innost, kterou...</td>\n      <td></td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>13. Jak\u00e9ho nejvy\u0161\u0161\u00edho vzd \u011b l\u00e1n\u00ed z n\u00e1sleduj\u00edc\u00ed...</td>\n      <td>Kdy\u017e si nebude\u0161 jist\u00fd/jist\u00e1 t\u00edm, co m\u00e1\u0161 vybrat...</td>\n      <td>Ukon\u010dila st\u0159edn\u00ed \u0161kolu nebo u\u010debn\u00ed obor s matu...</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>14. Ukon \u010d ila tv\u00e1 matka n \u011b kter\u00fd z t \u011b chto ...</td>\n      <td>Kdy\u017e si nebude\u0161 jist\u00fd/jist\u00e1 t\u00edm, co m\u00e1\u0161 vybrat...</td>\n      <td>a) Z\u00edskala na vysok\u00e9 \u0161kole v\u011bdeck\u00fd titul (Ph.D...</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "markdown",
+      "content": "Done!"
+    }
+  ]
+}

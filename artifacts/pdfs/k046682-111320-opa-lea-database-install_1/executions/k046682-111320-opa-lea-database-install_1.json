@@ -1,0 +1,388 @@
+{
+  "file": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1.md",
+  "metadata": {
+    "slug": "k046682-111320-opa-lea-database-install_1",
+    "title": "Complex Extraction of Law Enforcement Complaints",
+    "description": "This PDF contains a set of complaint records from a local law enforcement agency. Challenges include its relational data structure, unusual formatting common in the region, and redactions that disrupt automatic parsing.",
+    "pdf": "k046682-111320-opa-lea-database-install_1.pdf",
+    "tags": [
+      "law enforcement",
+      "PDF extraction",
+      "redactions",
+      "relational data",
+      "complex formatting"
+    ],
+    "file_size_mb": 1.02,
+    "page_count": 5,
+    "submitted_by": "Brandon Roberts",
+    "language": [
+      "English",
+      "English"
+    ],
+    "published": true,
+    "file": "k046682-111320-opa-lea-database-install_1.md"
+  },
+  "cells": [
+    {
+      "type": "markdown",
+      "content": "# Complex Extraction of Law Enforcement Complaints\n\nThis PDF contains a set of complaint records from a local law enforcement agency. Challenges include its relational data structure, unusual formatting common in the region, and redactions that disrupt automatic parsing."
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf import PDF\n\npdf = PDF(\"k046682-111320-opa-lea-database-install_1.pdf\")\npdf.show(cols=3)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf import PDF\npdf = PDF('k046682-111320-opa-lea-database-install_1.pdf')...\n[DEBUG] Evaluating expression: pdf.show(cols=3)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1/images/image_1.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Let's look at a single page"
+    },
+    {
+      "type": "code",
+      "content": "page = pdf.pages[0]\npage.show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: page = pdf.pages[0]...\n[DEBUG] Evaluating expression: page.show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1/images/image_2.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "## Adding exclusions\n\nWe don't like the top and bottom areas, so we'll exclude them."
+    },
+    {
+      "type": "code",
+      "content": "pdf.add_exclusion(lambda page: page.find(text='L.E.A. Data Technologies').below(include_source=True))\npdf.add_exclusion(lambda page: page.find(text='Complaints By Date').above(include_source=True))\n\npage.show(exclusions='black')",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: pdf.add_exclusion(lambda page: page.find(text='L.E.A. Data Technologies').below(include_source=True)...\n[DEBUG] Evaluating expression: page.show(exclusions='black')...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1/images/image_3.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "## Breaking into sections\n\nEven though you might think the colors are the best route to tackle this \u2013 they stand out! \u2013 I think text is usually the best option.\n\nWe'll tell it to break the pages into sections by the **Recorded On Camera** text. We tell it `include_boundaries='start'`.\n\n> Originally I did this with **Location of Occurrence** but apparently it's a *little bit lower* than the recording header and caused some problems later on."
+    },
+    {
+      "type": "code",
+      "content": "sections = pdf.get_sections(\n  'text:contains(Recorded)',\n  include_boundaries='start'\n)\nsections.show(cols=3)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: sections = pdf.get_sections('text:contains(Recorded)', include_boundaries='start')...\n[DEBUG] Evaluating expression: sections.show(cols=3)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1/images/image_4.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Let's look at one of the sections."
+    },
+    {
+      "type": "code",
+      "content": "section = sections[3]\nsection.show(crop=True)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: section = sections[3]...\n[DEBUG] Evaluating expression: section.show(crop=True)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1/images/image_5.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "This extraction is made easier since **they're all generally the same**, they all have the same formatting even if they're missing data.\n\n## Extracting the top area\n\nUp top we'll focus on grabbing the labels, then going right until we find a piece of text."
+    },
+    {
+      "type": "code",
+      "content": "complainant = (\n  section\n  .find(\"text:contains(Complainant)\")\n  .right(until='text')\n)\nprint(\"Complainant is\", complainant.extract_text())\ncomplainant.show(crop=100)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: complainant = section.find('text:contains(Complainant)').right(until='text')\nprint('Complainant is',...\nComplainant is Shavlik, Lori D\n[DEBUG] Evaluating expression: complainant.show(crop=100)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1/images/image_6.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Note that date of birth and some other fields are *missing*. Usually this means we'd have to use `right(100)` or pick some manual pixel value, but it turns out even the missing data includes text elements - they're just empty! That means we can use `until='text'` instead of magic numbers."
+    },
+    {
+      "type": "code",
+      "content": "dob = (\n  section\n  .find(\"text:contains(DOB)\")\n  .right(until='text')\n)\nprint(\"DOB is\", dob.extract_text())\ndob.show(crop=100)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: dob = section.find('text:contains(DOB)').right(until='text')\nprint('DOB is', dob.extract_text())...\nDOB is 4/25/1969\n[DEBUG] Evaluating expression: dob.show(crop=100)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1/images/image_7.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "For the above/below pieces it's slightly more problematic. By default when you expand downwards, it doesn't select the *entire* piece of text, it only grabs the ones that intersect with your search area."
+    },
+    {
+      "type": "code",
+      "content": "number = (\n    section\n    .find(\"text:contains(Number)\")\n    .below(until='text', width='element')\n)\nprint(\"Number is\", number.extract_text())\nnumber.show(crop=100)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: number = section.find('text:contains(Number)').below(until='text', width='element')\nprint('Number is...\nNumber is 16-002\n[DEBUG] Evaluating expression: number.show(crop=100)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1/images/image_8.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "In order to be sure you get the entire thing you need to ask for text that even partially overlaps the area you have selected. This makes the area expand to cover all of the number."
+    },
+    {
+      "type": "code",
+      "content": "number = (\n    section\n    .find(\"text:contains(Number)\")\n    .below(until='text', width='element')\n    .find('text', overlap='partial')\n)\nprint(\"Number is\", number.extract_text())\nnumber.show(crop=100)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: number = section.find('text:contains(Number)').below(until='text', width='element').find('text', ove...\nNumber is 16-002 IA\n[DEBUG] Evaluating expression: number.show(crop=100)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1/images/image_9.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "The elements like \"Date Assigned\" and \"Completed\" are a little more difficult, as you want to be sure you're only grabbing the text *fully and directly underneath* the label."
+    },
+    {
+      "type": "code",
+      "content": "(\n  section\n  .find('text:contains(Date Assigned)')\n  .below(width='element')\n  .show(crop=100)\n)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: section.find('text:contains(Date Assigned)').below(width='element').show(crop=100)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1/images/image_10.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "We do this by grabbing the area below, then asking it to find the first piece of text inside the created box full overlap. By default it only picks text that is *fully inside*."
+    },
+    {
+      "type": "code",
+      "content": "(\n  section\n  .find('text:contains(Date Assigned)')\n  .below(width='element')\n  .find('text')\n  .extract_text()\n)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: section.find('text:contains(Date Assigned)').below(width='element').find('text').extract_text()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/plain",
+          "data": "'1/6/2016'"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "If we did `until='text'` it would grab the *first text it touched*, so it would grab the Seargant.\n\nWith that all in line, when we start to grab them all it looks something like this:"
+    },
+    {
+      "type": "code",
+      "content": "complainant = (\n  section\n  .find(\"text:contains(Complainant)\")\n  .right(until='text')\n)\ndob = (\n  section\n  .find(\"text:contains(DOB)\")\n  .right(until='text')\n)\naddress = (\n  section\n  .find(\"text:contains(Address)\")\n  .right(until='text')\n)\ngender = (\n  section\n  .find(\"text:contains(Gender)\")\n  .right(until='text')\n)\nphone = (\n  section\n  .find(\"text:contains(H Phone)\")\n  .right(until='text')\n)\ndate_assigned = (\n  section\n  .find('text:contains(Date Assigned)')\n  .below(width='element')\n  .find('text')\n)\ncompleted = (\n  section\n  .find('text:contains(Completed)')\n  .below(width='element')\n  .find('text')\n)\nrecorded = (\n  section\n  .find('text:contains(Recorded)')\n  .below(until='text', width='element')\n)\n\n(complainant + dob + address + gender + phone + date_assigned + completed + recorded).show(crop=section)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: complainant = section.find('text:contains(Complainant)').right(until='text')\ndob = section.find('tex...\n[DEBUG] Evaluating expression: (complainant + dob + address + gender + phone + date_assigned + completed + recorded).show(crop=sect...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1/images/image_11.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "> I'm sorry, I got lazy \u2013 I trust you understand and can fill the rest of them out on your own!\n\n## Capturing the complaint table\n\nThe tables might seem intimidating, but it's really only a question of isolating the area and then using `.extract_table()`.\n\nHow can we describe the \"Complaint\" area? Well, it's **to the right of a bunch of `Complaint #` text."
+    },
+    {
+      "type": "code",
+      "content": "(\n    section\n    .find_all('text:contains(Complaint #)')\n    .right(include_source=True)\n    .show(crop=section)\n)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: section.find_all('text:contains(Complaint #)').right(include_source=True).show(crop=section)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1/images/image_12.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "We could probably grab each of the text elements individually and parse out the columns, but instead we'll use `.merge()` to combine them into one big region, then nudge it up and down a little bit to capture the entire table."
+    },
+    {
+      "type": "code",
+      "content": "(\n    section\n    .find_all('text:contains(Complaint #)')\n    .right(include_source=True)\n    .merge()\n    .expand(top=5, bottom=7)\n    .show(crop=section)\n)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: section.find_all('text:contains(Complaint #)').right(include_source=True).merge().expand(top=5, bott...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1/images/image_13.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "It's too much work to try to capture the headers programmatically, so we'll just manually type them in."
+    },
+    {
+      "type": "code",
+      "content": "(\n    section\n    .find_all('text:contains(Complaint #)')\n    .right(include_source=True)\n    .merge()\n    .expand(top=5, bottom=7)\n    .extract_table()\n    .to_df(header=['Type of Complaint', 'Description', 'Complaint Disposition'])\n)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Evaluating expression: section.find_all('text:contains(Complaint #)').right(include_source=True).merge().expand(top=5, bott...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/html",
+          "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>Type of Complaint</th>\n      <th>Description</th>\n      <th>Complaint Disposition</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>7.2.1</td>\n      <td>Affirmatively Promoting a Positive Public I</td>\n      <td>Non-Sustained (a)</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>7.2.3</td>\n      <td>Observe Criminal Civil Laws</td>\n      <td>Non-Sustained (a)</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>7.2.4</td>\n      <td>Dishonesty or Untruthfulness</td>\n      <td>Non-Sustained (a)</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>7.2.5</td>\n      <td>Display Competent Performance</td>\n      <td>Non-Sustained (a)</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Unfortunately this doesn't work on all of the tables: some of the ones with redactions trick the columnd detector! So we'll use **Guides** to detect a *specific number of columns* based on the lines."
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf.analyzers.guides import Guides\n\n# Find the area\ntable = (\n    section\n    .find_all('text:contains(Complaint #)')\n    .right(include_source=True)\n    .merge()\n    .expand(top=5, bottom=7)\n)\n\n# Build vertical guidelines from lines\nguides = Guides(table)\nguides.vertical.from_lines(n=4)\n\n# Use the guides\n(\n  table\n  .extract_table(verticals=guides.vertical)\n  .to_df(header=['Type of Complaint', 'Description', 'Complaint Disposition'])\n)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf.analyzers.guides import Guides\ntable = section.find_all('text:contains(Complaint #)...\n[DEBUG] Evaluating expression: table.extract_table(verticals=guides.vertical).to_df(header=['Type of Complaint', 'Description', 'Co...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/html",
+          "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>Type of Complaint</th>\n      <th>Description</th>\n      <th>Complaint Disposition</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>7.2.1</td>\n      <td>Affirmatively Promoting a Positive Public I</td>\n      <td>Non-Sustained (a)</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>7.2.3</td>\n      <td>Observe Criminal Civil Laws</td>\n      <td>Non-Sustained (a)</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>7.2.4</td>\n      <td>Dishonesty or Untruthfulness</td>\n      <td>Non-Sustained (a)</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>7.2.5</td>\n      <td>Display Competent Performance</td>\n      <td>Non-Sustained (a)</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "## Capturing the officers table\n\nWe take the same tack for the officers table."
+    },
+    {
+      "type": "code",
+      "content": "table_area = (\n    section\n    .find_all('text:contains(Officer #)')\n    .right(include_source=True)\n    .merge()\n    .expand(top=5, bottom=7)\n)\n\nguides = Guides(table)\nguides.vertical.from_lines(n=8)\n\n(\n  table\n  .extract_table(verticals=guides.vertical)\n  .to_df(header=['Name', 'ID No.', 'Rank', 'Division', 'Officer Disposition', 'Action Taken', 'Body Cam'])\n)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: table_area = section.find_all('text:contains(Officer #)').right(include_source=True).merge().expand(...\n[DEBUG] Evaluating expression: table.extract_table(verticals=guides.vertical).to_df(header=['Name', 'ID No.', 'Rank', 'Division', '...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/html",
+          "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>Name</th>\n      <th>ID No.</th>\n      <th>Rank</th>\n      <th>Division</th>\n      <th>Officer Disposition</th>\n      <th>Action Taken</th>\n      <th>Body Cam</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>7.2.1</td>\n      <td>Affirmatively Promoting a Positive Public I</td>\n      <td>&lt;NA&gt;</td>\n      <td>Non-Sustained</td>\n      <td>&lt;NA&gt;</td>\n      <td>(a</td>\n      <td>)</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>7.2.3</td>\n      <td>Observe Criminal Civil Laws</td>\n      <td>&lt;NA&gt;</td>\n      <td>Non-Sustained</td>\n      <td>&lt;NA&gt;</td>\n      <td>(a</td>\n      <td>)</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>7.2.4</td>\n      <td>Dishonesty or Untruthfulness</td>\n      <td>&lt;NA&gt;</td>\n      <td>Non-Sustained</td>\n      <td>&lt;NA&gt;</td>\n      <td>(a</td>\n      <td>)</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>7.2.5</td>\n      <td>Display Competent Performance</td>\n      <td>&lt;NA&gt;</td>\n      <td>Non-Sustained</td>\n      <td>&lt;NA&gt;</td>\n      <td>(a</td>\n      <td>)</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "A nice #todo for me is to integrate this into `.extract_table`. Something like `.extract_table(columns=4)` would look nice, no?\n\n## Combining all of the data in one CSV\n\nFirst we can pop through each section and extract the information we're looking for. I added a little expansion for the Date Assigned/Completed pieces as the dates are sometimes a little longer than the header."
+    },
+    {
+      "type": "code",
+      "content": "rows = []\nfor section in sections:\n    complainant = section.find(\"text:contains(Complainant)\").right(until='text')\n    dob = section.find(\"text:contains(DOB)\").right(until='text')\n    address = section.find(\"text:contains(Address)\").right(until='text')\n    gender = section.find(\"text:contains(Gender)\").right(until='text')\n    phone = section.find(\"text:contains(H Phone)\").right(until='text')\n    investigator = (\n        section\n        .find(\"text:contains(Investigator)\")\n        .below(until='text', width='element')\n        .find('text', overlap='partial')\n    )\n    number = (\n        section\n        .find(\"text:contains(Number)\")\n        .below(until='text', width='element')\n        .find('text', overlap='partial')\n    )\n    date_assigned = (\n      section\n      .find('text:contains(Date Assigned)')\n      .below(width='element')\n      .expand(left=5, right=5)\n      .find('text')\n    )\n    completed = (\n      section\n      .find('text:contains(Completed)')\n      .below(width='element')\n      .expand(left=5, right=5)\n      .find('text')\n    )\n    recorded = (\n      section\n      .find('text:contains(Recorded)')\n      .below(until='text', width='element')\n      .expand(left=5, right=5)\n    )\n    \n    row = {}\n    row['complainant'] = complainant.extract_text()\n    row['investigator'] = investigator.extract_text()\n    row['number'] = number.extract_text()\n    row['dob'] = dob.extract_text()\n    row['address'] = address.extract_text()\n    row['gender'] = gender.extract_text()\n    row['phone'] = phone.extract_text()\n    row['date_assigned'] = date_assigned.extract_text()\n    row['completed'] = completed.extract_text()\n    row['recorded'] = recorded.extract_text()\n    rows.append(row)\n\nprint(\"We found\", len(rows), \"rows\")",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: rows = []\nfor section in sections:\n    complainant = section.find('text:contains(Complainant)').righ...\n[DEBUG] Evaluating expression: print('We found', len(rows), 'rows')...\nWe found 16 rows\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Now we can push it into pandas without a problem!"
+    },
+    {
+      "type": "code",
+      "content": "import pandas as pd\n\ndf = pd.DataFrame(rows)\ndf",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: import pandas as pd\ndf = pd.DataFrame(rows)...\n[DEBUG] Evaluating expression: df...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/html",
+          "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>complainant</th>\n      <th>investigator</th>\n      <th>number</th>\n      <th>dob</th>\n      <th>address</th>\n      <th>gender</th>\n      <th>phone</th>\n      <th>date_assigned</th>\n      <th>completed</th>\n      <th>recorded</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>Undersheriff</td>\n      <td>Parker, Scott (Sgt)</td>\n      <td>11-004 IA</td>\n      <td>Gender:</td>\n      <td>NOT STATED ?? UNK</td>\n      <td>Address:</td>\n      <td></td>\n      <td>3/9/2011</td>\n      <td>4/27/2011</td>\n      <td>No\\nN/A</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>Nygaard, Karen</td>\n      <td>Ball, Michael</td>\n      <td>10-001 IAC</td>\n      <td>Gender:</td>\n      <td>3025 Oakes Ave, Everett WA 98201</td>\n      <td>Female</td>\n      <td></td>\n      <td>1/27/2010</td>\n      <td>2/11/2010</td>\n      <td>No\\nN/A</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>Shavlik, Lori</td>\n      <td>Barnett, Robert (Sgt)</td>\n      <td>16-001 IA</td>\n      <td>4/25/1969</td>\n      <td>Not Stated WA Unk</td>\n      <td>Female</td>\n      <td>(425) 345-4959</td>\n      <td>1/6/2016</td>\n      <td>3/3/2016</td>\n      <td>No\\nN/A</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>Shavlik, Lori D</td>\n      <td>Heitzman, Dave (Sgt)</td>\n      <td>16-002 IA</td>\n      <td>4/25/1969</td>\n      <td>Not Stated WA Unk</td>\n      <td>Female</td>\n      <td>(425) 345-4959</td>\n      <td>1/6/2016</td>\n      <td>2/29/2016</td>\n      <td>No\\nN/A</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>Lang, Kathi (Lt)</td>\n      <td>Johnson, Susanna</td>\n      <td>10-003IA</td>\n      <td>Gender:</td>\n      <td>SCSO, Everett WA 98201</td>\n      <td>Female</td>\n      <td></td>\n      <td>3/5/2010</td>\n      <td>5/10/2010</td>\n      <td>No\\nN/A</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>Undersheriff Tom Davis</td>\n      <td>Speyer, Brent (Lt)</td>\n      <td>10-003 IAC</td>\n      <td>Gender:</td>\n      <td>3025 Oakes Ave., Everett WA 98201</td>\n      <td>Male</td>\n      <td></td>\n      <td>4/9/2010</td>\n      <td>8/19/2010</td>\n      <td>No\\nN/A</td>\n    </tr>\n    <tr>\n      <th>6</th>\n      <td>Hover, Rebecca</td>\n      <td>Johnson, Susanna (Sgt)</td>\n      <td>10-005IA</td>\n      <td>Gender:</td>\n      <td>SCSO, Everett WA 98201</td>\n      <td>Female</td>\n      <td></td>\n      <td>4/15/2010</td>\n      <td>5/18/2010</td>\n      <td>No\\nN/A</td>\n    </tr>\n    <tr>\n      <th>7</th>\n      <td>Ball, Michael</td>\n      <td>Ball, Michael (Sgt)</td>\n      <td>10-013 IAC</td>\n      <td>Gender:</td>\n      <td>3025 Oakes Ave, Everett WA 98021</td>\n      <td>Male</td>\n      <td></td>\n      <td>12/7/2010</td>\n      <td>2/8/2011</td>\n      <td>No\\nN/A</td>\n    </tr>\n    <tr>\n      <th>8</th>\n      <td>Baird, Mark</td>\n      <td>Ball, Michael</td>\n      <td>10-004 IAC</td>\n      <td>Gender:</td>\n      <td>3000 Rockefeller Ave, Everett WA 98201</td>\n      <td>Male</td>\n      <td></td>\n      <td>4/29/2010</td>\n      <td>9/14/2010</td>\n      <td>No\\nN/A</td>\n    </tr>\n    <tr>\n      <th>9</th>\n      <td>Saleem, Haroon (Mayor)</td>\n      <td>Rinta, Gregg (Sgt)</td>\n      <td>10-006IA</td>\n      <td>Gender:</td>\n      <td>City Hall, Granite Falls WA 98252</td>\n      <td>Male</td>\n      <td></td>\n      <td>4/23/2010</td>\n      <td>8/31/2010</td>\n      <td>No\\nN/A</td>\n    </tr>\n    <tr>\n      <th>10</th>\n      <td>Lt. Rick Hawkins(Acting Chief)</td>\n      <td>Link, Norman (Sgt)</td>\n      <td>10-010 IA</td>\n      <td>Gender:</td>\n      <td>Granite Falls PD, Granite Falls WA 98252</td>\n      <td>Address:</td>\n      <td></td>\n      <td>8/10/2010</td>\n      <td>8/31/2010</td>\n      <td>No\\nN/A</td>\n    </tr>\n    <tr>\n      <th>11</th>\n      <td>05A Jail -</td>\n      <td>Ball, Michael</td>\n      <td>10-005 IAC</td>\n      <td>Gender:</td>\n      <td>Jail Inmate, Everett WA 98021</td>\n      <td>Male</td>\n      <td></td>\n      <td>5/25/2010</td>\n      <td>6/24/2010</td>\n      <td>No\\nN/A</td>\n    </tr>\n    <tr>\n      <th>12</th>\n      <td>05A Jail -</td>\n      <td>Ball, Michael</td>\n      <td>10-007 IAC</td>\n      <td>Gender:</td>\n      <td>Jail Inmate, Everett WA 98201</td>\n      <td>Male</td>\n      <td></td>\n      <td>7/7/2010</td>\n      <td>7/28/2010</td>\n      <td>No\\nN/A</td>\n    </tr>\n    <tr>\n      <th>13</th>\n      <td>Young, Brian</td>\n      <td>Parker, Scott (Sgt)</td>\n      <td>11-002 IA</td>\n      <td>Gender:</td>\n      <td>16626 6 Ave W, Lynnwood WA UNK</td>\n      <td>Address:</td>\n      <td>(206) 909-3150</td>\n      <td>5/26/2011</td>\n      <td>6/29/2011</td>\n      <td>No\\nN/A</td>\n    </tr>\n    <tr>\n      <th>14</th>\n      <td>McDonald, Steve (Sgt)</td>\n      <td>Johnson, Susanna (Lt)</td>\n      <td>10-007IA</td>\n      <td>Gender:</td>\n      <td>SCSO, Everett WA 98201</td>\n      <td>Male</td>\n      <td></td>\n      <td>6/15/2010</td>\n      <td>7/16/2010</td>\n      <td>No\\nN/A</td>\n    </tr>\n    <tr>\n      <th>15</th>\n      <td>Tennison, Steven</td>\n      <td>Ball, Michael</td>\n      <td>10-006 IAC</td>\n      <td>Gender:</td>\n      <td>3025 Oakes Ave, Everett WA 98021</td>\n      <td>Male</td>\n      <td></td>\n      <td>6/25/2010</td>\n      <td>10/14/2010</td>\n      <td>No\\nN/A</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "## Saving the tables as combined CSVs\n\nUsually when you have a number of similar tables in one PDF, you don't want to make a bunch of different CSV files, you want to **put them all into one CSV**.\n\nWe'll do that by looping through each section like we did before, but we'll also add a new column to our data: the `number`"
+    },
+    {
+      "type": "code",
+      "content": "import pandas as pd\n\nofficer_dfs = []\nfor section in sections:\n    # Not every section has officers, exit\n    # early if Officer number not mentioned\n    if 'Officer #' not in section.extract_text():\n      continue\n\n    # Grab the case number\n    case_number = (\n        section\n        .find(\"text:contains(Number)\")\n        .below(until='text', width='element')\n        .find('text', overlap='partial')\n        .extract_text()\n    )\n\n    # Grab the table area\n    table = (\n        section\n        .find_all('text:contains(Officer #)')\n        .right(include_source=True)\n        .merge()\n        .expand(top=3, bottom=6)\n    )\n    \n    # Use the guides to extract the table\n    guides = Guides(table)\n    guides.vertical.from_lines(n=8)\n    columns = ['Name', 'ID No.', 'Rank', 'Division', 'Officer Disposition', 'Action Taken', 'Body Cam']\n    officer_df = (\n      table\n      .extract_table(verticals=guides.vertical)\n      .to_df(header=columns)\n    )\n\n    # Add to your list\n    officer_df['case_number'] = case_number\n    officer_dfs.append(officer_df)\n\n# Combine the dataframes\nprint(\"Combining\", len(officer_dfs), \"officer dataframes\")\ndf = pd.concat(officer_dfs, ignore_index=True)\ndf.head()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: import pandas as pd\nofficer_dfs = []\nfor section in sections:\n    if 'Officer #' not in section.extr...\nCombining 16 officer dataframes\n[DEBUG] Evaluating expression: df.head()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/html",
+          "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>Name</th>\n      <th>ID No.</th>\n      <th>Rank</th>\n      <th>Division</th>\n      <th>Officer Disposition</th>\n      <th>Action Taken</th>\n      <th>Body Cam</th>\n      <th>case_number</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>Kunard, James C</td>\n      <td>1489</td>\n      <td>Deputy</td>\n      <td>Sheriff</td>\n      <td>Within Policy-Intenti</td>\n      <td>None</td>\n      <td>No</td>\n      <td>11-004 IA</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>Yedlin, Ira N</td>\n      <td>7089</td>\n      <td>ARNP</td>\n      <td>Corrections</td>\n      <td>Purged</td>\n      <td>Termination</td>\n      <td>No</td>\n      <td>10-001 IAC</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>Conley, Kendra D.</td>\n      <td>1535</td>\n      <td>Deputy</td>\n      <td>Sheriff</td>\n      <td>Non-Sustained (a)</td>\n      <td>None</td>\n      <td>No</td>\n      <td>16-001 IA</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>Fontenot, David</td>\n      <td>1540</td>\n      <td>Deputy</td>\n      <td>Sheriff</td>\n      <td>Non-Sustained (a)</td>\n      <td>None</td>\n      <td>No</td>\n      <td>16-001 IA</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>Bryant, Alan James</td>\n      <td>1529</td>\n      <td>Lieutenant</td>\n      <td>Sheriff</td>\n      <td>Non-Sustained (a)</td>\n      <td>None</td>\n      <td>No</td>\n      <td>16-002 IA</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Repeat the same thing for complaints (just changing `n=8` to `n=4`) and you'll be good to go!"
+    }
+  ]
+}

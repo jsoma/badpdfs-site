@@ -1,0 +1,359 @@
+{
+  "file": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/focus/focus.md",
+  "metadata": {
+    "slug": "focus",
+    "title": "Extracting Economic Data from Brazil's Central Bank PDF",
+    "description": "This PDF is the weekly \u201cFocus\u201d report from Brazil\u2019s central bank with economic projections and statistics. Challenges include commas instead of decimal points, images showing projection changes, and tables without border lines that merge during extraction.",
+    "pdf": "focus.pdf",
+    "tags": [
+      "Brazil",
+      "Economic Data",
+      "PDF Extraction",
+      "Tables without Borders",
+      "Comma as Decimal",
+      "Image Interpretation"
+    ],
+    "file_size_mb": 0.87,
+    "page_count": 2,
+    "submitted_by": "Giovanna serafim",
+    "language": "Spanish",
+    "published": true,
+    "file": "focus.md"
+  },
+  "cells": [
+    {
+      "type": "markdown",
+      "content": "# Extracting Economic Data from Brazil's Central Bank PDF\n\nThis PDF is the weekly \u201cFocus\u201d report from Brazil\u2019s central bank with economic projections and statistics. Challenges include commas instead of decimal points, images showing projection changes, and tables without border lines that merge during extraction."
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf import PDF\n\npdf = PDF(\"focus.pdf\")\npage = pdf.pages[0]\npage.show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf import PDF\npdf = PDF('focus.pdf')\npage = pdf.pages[0]...\n[DEBUG] Evaluating expression: page.show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/focus/focus/images/image_1.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Let's cut out the part of the page we're interested in: everything from **Expectativas** to the long, light text that starts with **comportamento**."
+    },
+    {
+      "type": "code",
+      "content": "data = (\n    page\n    .find(text='Expectativas')\n    .below(\n        until='text:contains(comportamento)',\n        include_endpoint=False\n    )\n)\n    \ndata.show(crop=True)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: data = page.find(text='Expectativas').below(until='text:contains(comportamento)', include_endpoint=F...\n[DEBUG] Evaluating expression: data.show(crop=True)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/focus/focus/images/image_2.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "## Grabbing headers\n\nWhile we could type out the column names on the left, it's probably easier to just scrape them from the page. We start from IPCA, move down, clip it to the section we cut out earlier (otherwise it runs down the whole page), then find all of the text that even somewhat overlaps."
+    },
+    {
+      "type": "code",
+      "content": "row_names = (\n    data\n    .find(text='IPCA')\n    .below(width='element', include_source=True)\n    .clip(data)\n    .find_all('text', overlap='partial')\n)\nheaders = row_names.extract_each_text()\nheaders",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: row_names = data.find(text='IPCA').below(width='element', include_source=True).clip(data).find_all('...\n[DEBUG] Evaluating expression: headers...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/plain",
+          "data": "['IPCA (varia\u00e7\u00e3o %)', 'PIB Total (varia\u00e7\u00e3o % sobre ano anterior)', 'C\u00e2mbio (R$/US$)', 'Selic (% a.a)', 'IGP-M (varia\u00e7\u00e3o %)', 'IPCA Administrados (varia\u00e7\u00e3o %)', 'Conta corrente (US$ bilh\u00f5es)', 'Balan\u00e7a comercial (US$ bilh\u00f5es)', 'Investimento direto no pa\u00eds (US$ bilh\u00f5es)', 'D\u00edvida l\u00edquida do setor p\u00fablico (% do PIB)', 'Resultado prim\u00e1rio (% do PIB)', 'Resultado nominal (% do PIB)']"
+        }
+      }
+    },
+    {
+      "type": "tab",
+      "title": "Using sections",
+      "cells": [
+        {
+          "type": "markdown",
+          "content": "## Horizontal sections\n\nWhile you usually use `.get_sections` to split pages vertically, you can also do it horizontally. In this case we'll find the year headers - four numbers in a row, size 10 font - and use them as our breakpoints."
+        },
+        {
+          "type": "code",
+          "content": "sections = (\n    data.get_sections(\n        start_elements=\"text[size~=10]:regex(\\d\\d\\d\\d)\",\n        include_boundaries='start',\n        orientation='horizontal'\n    )\n)\nsections.show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: sections = data.get_sections(start_elements='text[size~=10]:regex(\\\\d\\\\d\\\\d\\\\d)', include_boundaries...\n[DEBUG] Evaluating expression: sections.show()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/focus/focus/images/image_3.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "We'll take the first table as an example. We don't want all of that junk up top \u2013 it's easy to retype multi-row headers \u2013 so we'll dial it back in a bit."
+        },
+        {
+          "type": "code",
+          "content": "(\n    sections[0]\n    .expand(top=-50)\n    .show()\n)",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Evaluating expression: sections[0].expand(top=-50).show()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/focus/focus/images/image_4.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "Then we'll ask it to extract the content using the **stream** method, which uses the space between text. Even though we can see lines and backgrounds and all sorts of things, stream works consistently when other approaches don't!"
+        },
+        {
+          "type": "code",
+          "content": "(\n    sections[0]\n    .expand(top=-50, right=0)\n    .extract_table('stream')\n    .to_df(header=False)\n    .dropna(axis=0, how='all')\n)",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Evaluating expression: sections[0].expand(top=-50, right=0).extract_table('stream').to_df(header=False).dropna(axis=0, how=...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "text/html",
+              "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>0</th>\n      <th>1</th>\n      <th>2</th>\n      <th>3</th>\n      <th>4</th>\n      <th>5</th>\n      <th>6</th>\n      <th>7</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>semanas</td>\n      <td>semana</td>\n      <td>s</td>\n      <td>ema</td>\n      <td>nal *</td>\n      <td>**</td>\n      <td>\u00fateis</td>\n      <td>***</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>5,65</td>\n      <td>5,55</td>\n      <td>5,53</td>\n      <td>\u25bc</td>\n      <td>(3)</td>\n      <td>148</td>\n      <td>5,51</td>\n      <td>112</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>1,97</td>\n      <td>2,00</td>\n      <td>2,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(2)</td>\n      <td>112</td>\n      <td>2,00</td>\n      <td>71</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>5,90</td>\n      <td>5,90</td>\n      <td>5,86</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>119</td>\n      <td>5,85</td>\n      <td>84</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>15,00</td>\n      <td>15,00</td>\n      <td>14,75</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>144</td>\n      <td>14,75</td>\n      <td>102</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>5,10</td>\n      <td>4,84</td>\n      <td>4,98</td>\n      <td>\u25b2</td>\n      <td>(1)</td>\n      <td>75</td>\n      <td>4,96</td>\n      <td>54</td>\n    </tr>\n    <tr>\n      <th>6</th>\n      <td>5,06</td>\n      <td>4,75</td>\n      <td>4,63</td>\n      <td>\u25bc</td>\n      <td>(4)</td>\n      <td>104</td>\n      <td>4,52</td>\n      <td>80</td>\n    </tr>\n    <tr>\n      <th>8</th>\n      <td>-56,30</td>\n      <td>-55,90</td>\n      <td>-55,90</td>\n      <td>&lt;NA&gt;</td>\n      <td>(2)</td>\n      <td>37</td>\n      <td>-55,90</td>\n      <td>21</td>\n    </tr>\n    <tr>\n      <th>10</th>\n      <td>75,00</td>\n      <td>75,00</td>\n      <td>75,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(5)</td>\n      <td>38</td>\n      <td>75,96</td>\n      <td>23</td>\n    </tr>\n    <tr>\n      <th>11</th>\n      <td>70,00</td>\n      <td>70,00</td>\n      <td>70,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(20)</td>\n      <td>34</td>\n      <td>70,00</td>\n      <td>18</td>\n    </tr>\n    <tr>\n      <th>13</th>\n      <td>65,79</td>\n      <td>65,90</td>\n      <td>65,80</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>55</td>\n      <td>65,40</td>\n      <td>38</td>\n    </tr>\n    <tr>\n      <th>14</th>\n      <td>-0,60</td>\n      <td>-0,60</td>\n      <td>-0,60</td>\n      <td>&lt;NA&gt;</td>\n      <td>(19)</td>\n      <td>65</td>\n      <td>-0,60</td>\n      <td>46</td>\n    </tr>\n    <tr>\n      <th>15</th>\n      <td>-9,00</td>\n      <td>-9,00</td>\n      <td>-9,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(5)</td>\n      <td>49</td>\n      <td>-8,80</td>\n      <td>34</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "We include the `.dropna` in there because stream injects some phantom rows full of empty values.\n\n## Looping through sections\n\nNow that we know how it works from one section, let's do it for all of them. We'll use `.apply` so that it creates a list of dataframes that we can combine later on."
+        },
+        {
+          "type": "code",
+          "content": "dataframes = sections.apply(lambda section: (\n    section\n        .expand(top=-50, right=0)\n        .extract_table('stream')\n        .to_df(header=False)\n        .dropna(axis=0, how='all')\n        .assign(\n            year=section.find('text[size~=10]:regex(\\d\\d\\d\\d)').extract_text(),\n            value=headers\n        )\n    )\n)\n\nimport pandas as pd\n\npd.concat(dataframes, ignore_index=True)",
+          "execution": {
+            "status": "error",
+            "output": "[DEBUG] Executing code: dataframes = sections.apply(lambda section: section.expand(top=-50, right=0).extract_table('stream')...\n",
+            "error": "Traceback (most recent call last):\n  File \"/home/runner/work/badpdfs-site/badpdfs-site/processor/tasks/execution.py\", line 358, in _execute_code\n    exec(code_without_last, self.namespace)\n  File \"<string>\", line 1, in <module>\n  File \"/home/runner/work/badpdfs-site/badpdfs-site/processor/.venv/lib/python3.11/site-packages/natural_pdf/collections/mixins.py\", line 100, in apply\n    results = [func(item, *args, **kwargs) for item in items_iterable]\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/badpdfs-site/badpdfs-site/processor/.venv/lib/python3.11/site-packages/natural_pdf/collections/mixins.py\", line 100, in <listcomp>\n    results = [func(item, *args, **kwargs) for item in items_iterable]\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 1, in <lambda>\n  File \"/home/runner/work/badpdfs-site/badpdfs-site/processor/.venv/lib/python3.11/site-packages/pandas/core/frame.py\", line 5246, in assign\n    data[k] = com.apply_if_callable(v, data)\n    ~~~~^^^\n  File \"/home/runner/work/badpdfs-site/badpdfs-site/processor/.venv/lib/python3.11/site-packages/pandas/core/frame.py\", line 4316, in __setitem__\n    self._set_item(key, value)\n  File \"/home/runner/work/badpdfs-site/badpdfs-site/processor/.venv/lib/python3.11/site-packages/pandas/core/frame.py\", line 4529, in _set_item\n    value, refs = self._sanitize_column(value)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/badpdfs-site/badpdfs-site/processor/.venv/lib/python3.11/site-packages/pandas/core/frame.py\", line 5273, in _sanitize_column\n    com.require_length_match(value, self.index)\n  File \"/home/runner/work/badpdfs-site/badpdfs-site/processor/.venv/lib/python3.11/site-packages/pandas/core/common.py\", line 573, in require_length_match\n    raise ValueError(\nValueError: Length of values (12) does not match length of index (13)\n",
+            "figures": [],
+            "result": null
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "import pandas as pd\n\npd.concat(dataframes, ignore_index=True)"
+        }
+      ]
+    },
+    {
+      "type": "tab",
+      "title": "Manually selecting tables",
+      "cells": [
+        {
+          "type": "markdown",
+          "content": "## Grabbing tables\n\nWe start by grabbing the space between the 2025 and 2026 headers."
+        },
+        {
+          "type": "code",
+          "content": "(\n    data\n    .find('text:contains(2025)')\n    .right(\n        until='text:contains(2026)',\n        include_source=True,\n        include_endpoint=False\n    )\n).show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Evaluating expression: data.find('text:contains(2025)').right(until='text:contains(2026)', include_source=True, include_end...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/focus/focus/images/image_5.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "...then we move down..."
+        },
+        {
+          "type": "code",
+          "content": "(\n    data\n    .find('text:contains(2025)')\n    .right(\n        until='text:contains(2026)',\n        include_source=True,\n        include_endpoint=False\n    )\n    .below(width='element')\n).show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Evaluating expression: data.find('text:contains(2025)').right(until='text:contains(2026)', include_source=True, include_end...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/focus/focus/images/image_6.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "...then we nudge the top down a little bit and clip it to the size of the region of interest (the `data` region)."
+        },
+        {
+          "type": "code",
+          "content": "table = (\n    data\n    .find('text:contains(2025)')\n    .right(\n        until='text:contains(2026)',\n        include_source=True,\n        include_endpoint=False\n    )\n    .below(width='element')\n    .expand(top=-20)\n    .clip(data)\n)\n\ntable.show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: table = data.find('text:contains(2025)').right(until='text:contains(2026)', include_source=True, inc...\n[DEBUG] Evaluating expression: table.show()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/focus/focus/images/image_7.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "We could try to figure out something magic with all of the headers and colors and backgrounds and blah blah blah, but it's easier to just extract the table using the \"stream\" method, which looks at the gaps between rows and columns. While there *are* actual boundaries between the rows, I promise stream works the best."
+        },
+        {
+          "type": "code",
+          "content": "df_2025 = table.expand(top=-5).extract_table('stream').to_df(header=False)\ndf_2025",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: df_2025 = table.expand(top=-5).extract_table('stream').to_df(header=False)...\n[DEBUG] Evaluating expression: df_2025...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "text/html",
+              "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>0</th>\n      <th>1</th>\n      <th>2</th>\n      <th>3</th>\n      <th>4</th>\n      <th>5</th>\n      <th>6</th>\n      <th>7</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>5,65</td>\n      <td>5,55</td>\n      <td>5,53</td>\n      <td>\u25bc</td>\n      <td>(3)</td>\n      <td>148</td>\n      <td>5,51</td>\n      <td>112</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>1,97</td>\n      <td>2,00</td>\n      <td>2,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(2)</td>\n      <td>112</td>\n      <td>2,00</td>\n      <td>71</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>5,90</td>\n      <td>5,90</td>\n      <td>5,86</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>119</td>\n      <td>5,85</td>\n      <td>84</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>15,00</td>\n      <td>15,00</td>\n      <td>14,75</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>144</td>\n      <td>14,75</td>\n      <td>102</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>5,10</td>\n      <td>4,84</td>\n      <td>4,98</td>\n      <td>\u25b2</td>\n      <td>(1)</td>\n      <td>75</td>\n      <td>4,96</td>\n      <td>54</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>5,06</td>\n      <td>4,75</td>\n      <td>4,63</td>\n      <td>\u25bc</td>\n      <td>(4)</td>\n      <td>104</td>\n      <td>4,52</td>\n      <td>80</td>\n    </tr>\n    <tr>\n      <th>6</th>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n    </tr>\n    <tr>\n      <th>7</th>\n      <td>-56,30</td>\n      <td>-55,90</td>\n      <td>-55,90</td>\n      <td>&lt;NA&gt;</td>\n      <td>(2)</td>\n      <td>37</td>\n      <td>-55,90</td>\n      <td>21</td>\n    </tr>\n    <tr>\n      <th>8</th>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n    </tr>\n    <tr>\n      <th>9</th>\n      <td>75,00</td>\n      <td>75,00</td>\n      <td>75,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(5)</td>\n      <td>38</td>\n      <td>75,96</td>\n      <td>23</td>\n    </tr>\n    <tr>\n      <th>10</th>\n      <td>70,00</td>\n      <td>70,00</td>\n      <td>70,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(20)</td>\n      <td>34</td>\n      <td>70,00</td>\n      <td>18</td>\n    </tr>\n    <tr>\n      <th>11</th>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n    </tr>\n    <tr>\n      <th>12</th>\n      <td>65,79</td>\n      <td>65,90</td>\n      <td>65,80</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>55</td>\n      <td>65,40</td>\n      <td>38</td>\n    </tr>\n    <tr>\n      <th>13</th>\n      <td>-0,60</td>\n      <td>-0,60</td>\n      <td>-0,60</td>\n      <td>&lt;NA&gt;</td>\n      <td>(19)</td>\n      <td>65</td>\n      <td>-0,60</td>\n      <td>46</td>\n    </tr>\n    <tr>\n      <th>14</th>\n      <td>-9,00</td>\n      <td>-9,00</td>\n      <td>-9,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(5)</td>\n      <td>49</td>\n      <td>-8,80</td>\n      <td>34</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "It needs a *little* cleanup. Due to using the steam approach we got some extra (empty) columns, but we can just drop them with pandas. We'll also insert the year and the row titles that we grabbed up above."
+        },
+        {
+          "type": "code",
+          "content": "df_2025 = df_2025.dropna(axis=0, how='all')\ndf_2025.insert(0, 'year', 2025)\ndf_2025.insert(0, 'value', headers)\ndf_2025",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: df_2025 = df_2025.dropna(axis=0, how='all')\ndf_2025.insert(0, 'year', 2025)\ndf_2025.insert(0, 'value...\n[DEBUG] Evaluating expression: df_2025...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "text/html",
+              "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>value</th>\n      <th>year</th>\n      <th>0</th>\n      <th>1</th>\n      <th>2</th>\n      <th>3</th>\n      <th>4</th>\n      <th>5</th>\n      <th>6</th>\n      <th>7</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>IPCA (varia\u00e7\u00e3o %)</td>\n      <td>2025</td>\n      <td>5,65</td>\n      <td>5,55</td>\n      <td>5,53</td>\n      <td>\u25bc</td>\n      <td>(3)</td>\n      <td>148</td>\n      <td>5,51</td>\n      <td>112</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>PIB Total (varia\u00e7\u00e3o % sobre ano anterior)</td>\n      <td>2025</td>\n      <td>1,97</td>\n      <td>2,00</td>\n      <td>2,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(2)</td>\n      <td>112</td>\n      <td>2,00</td>\n      <td>71</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>C\u00e2mbio (R$/US$)</td>\n      <td>2025</td>\n      <td>5,90</td>\n      <td>5,90</td>\n      <td>5,86</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>119</td>\n      <td>5,85</td>\n      <td>84</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>Selic (% a.a)</td>\n      <td>2025</td>\n      <td>15,00</td>\n      <td>15,00</td>\n      <td>14,75</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>144</td>\n      <td>14,75</td>\n      <td>102</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>IGP-M (varia\u00e7\u00e3o %)</td>\n      <td>2025</td>\n      <td>5,10</td>\n      <td>4,84</td>\n      <td>4,98</td>\n      <td>\u25b2</td>\n      <td>(1)</td>\n      <td>75</td>\n      <td>4,96</td>\n      <td>54</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>IPCA Administrados (varia\u00e7\u00e3o %)</td>\n      <td>2025</td>\n      <td>5,06</td>\n      <td>4,75</td>\n      <td>4,63</td>\n      <td>\u25bc</td>\n      <td>(4)</td>\n      <td>104</td>\n      <td>4,52</td>\n      <td>80</td>\n    </tr>\n    <tr>\n      <th>7</th>\n      <td>Conta corrente (US$ bilh\u00f5es)</td>\n      <td>2025</td>\n      <td>-56,30</td>\n      <td>-55,90</td>\n      <td>-55,90</td>\n      <td>&lt;NA&gt;</td>\n      <td>(2)</td>\n      <td>37</td>\n      <td>-55,90</td>\n      <td>21</td>\n    </tr>\n    <tr>\n      <th>9</th>\n      <td>Balan\u00e7a comercial (US$ bilh\u00f5es)</td>\n      <td>2025</td>\n      <td>75,00</td>\n      <td>75,00</td>\n      <td>75,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(5)</td>\n      <td>38</td>\n      <td>75,96</td>\n      <td>23</td>\n    </tr>\n    <tr>\n      <th>10</th>\n      <td>Investimento direto no pa\u00eds (US$ bilh\u00f5es)</td>\n      <td>2025</td>\n      <td>70,00</td>\n      <td>70,00</td>\n      <td>70,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(20)</td>\n      <td>34</td>\n      <td>70,00</td>\n      <td>18</td>\n    </tr>\n    <tr>\n      <th>12</th>\n      <td>D\u00edvida l\u00edquida do setor p\u00fablico (% do PIB)</td>\n      <td>2025</td>\n      <td>65,79</td>\n      <td>65,90</td>\n      <td>65,80</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>55</td>\n      <td>65,40</td>\n      <td>38</td>\n    </tr>\n    <tr>\n      <th>13</th>\n      <td>Resultado prim\u00e1rio (% do PIB)</td>\n      <td>2025</td>\n      <td>-0,60</td>\n      <td>-0,60</td>\n      <td>-0,60</td>\n      <td>&lt;NA&gt;</td>\n      <td>(19)</td>\n      <td>65</td>\n      <td>-0,60</td>\n      <td>46</td>\n    </tr>\n    <tr>\n      <th>14</th>\n      <td>Resultado nominal (% do PIB)</td>\n      <td>2025</td>\n      <td>-9,00</td>\n      <td>-9,00</td>\n      <td>-9,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(5)</td>\n      <td>49</td>\n      <td>-8,80</td>\n      <td>34</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "### Working on all the other tables\n\n2026 is basically the same."
+        },
+        {
+          "type": "code",
+          "content": "table = (\n    data\n    .find('text:contains(2026)')\n    .right(\n        until='text:contains(2027)',\n        include_source=True,\n        include_endpoint=False\n    )\n    .below(width='element')\n    .expand(top=-20)\n    .clip(data)\n)\ntable.show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: table = data.find('text:contains(2026)').right(until='text:contains(2027)', include_source=True, inc...\n[DEBUG] Evaluating expression: table.show()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/focus/focus/images/image_8.png"
+            }
+          }
+        },
+        {
+          "type": "code",
+          "content": "df_2026 = table.expand(top=-5).extract_table('stream').to_df(header=False).dropna(axis=0, how='all')\ndf_2026.insert(0, 'year', 2026)\ndf_2026.insert(0, 'value', headers)\ndf_2026",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: df_2026 = table.expand(top=-5).extract_table('stream').to_df(header=False).dropna(axis=0, how='all')...\n[DEBUG] Evaluating expression: df_2026...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "text/html",
+              "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>value</th>\n      <th>year</th>\n      <th>0</th>\n      <th>1</th>\n      <th>2</th>\n      <th>3</th>\n      <th>4</th>\n      <th>5</th>\n      <th>6</th>\n      <th>7</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>IPCA (varia\u00e7\u00e3o %)</td>\n      <td>2026</td>\n      <td>4,50</td>\n      <td>4,51</td>\n      <td>4,51</td>\n      <td>&lt;NA&gt;</td>\n      <td>(1)</td>\n      <td>142</td>\n      <td>4,52</td>\n      <td>109</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>PIB Total (varia\u00e7\u00e3o % sobre ano anterior)</td>\n      <td>2026</td>\n      <td>1,60</td>\n      <td>1,70</td>\n      <td>1,70</td>\n      <td>&lt;NA&gt;</td>\n      <td>(2)</td>\n      <td>106</td>\n      <td>1,70</td>\n      <td>69</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>C\u00e2mbio (R$/US$)</td>\n      <td>2026</td>\n      <td>5,99</td>\n      <td>5,95</td>\n      <td>5,91</td>\n      <td>\u25bc</td>\n      <td>(5)</td>\n      <td>117</td>\n      <td>5,91</td>\n      <td>83</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>Selic (% a.a)</td>\n      <td>2026</td>\n      <td>12,50</td>\n      <td>12,50</td>\n      <td>12,50</td>\n      <td>&lt;NA&gt;</td>\n      <td>(14)</td>\n      <td>137</td>\n      <td>12,50</td>\n      <td>98</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>IGP-M (varia\u00e7\u00e3o %)</td>\n      <td>2026</td>\n      <td>4,52</td>\n      <td>4,59</td>\n      <td>4,52</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>67</td>\n      <td>4,50</td>\n      <td>50</td>\n    </tr>\n    <tr>\n      <th>6</th>\n      <td>IPCA Administrados (varia\u00e7\u00e3o %)</td>\n      <td>2026</td>\n      <td>4,28</td>\n      <td>4,28</td>\n      <td>4,28</td>\n      <td>&lt;NA&gt;</td>\n      <td>(6)</td>\n      <td>96</td>\n      <td>4,28</td>\n      <td>76</td>\n    </tr>\n    <tr>\n      <th>8</th>\n      <td>Conta corrente (US$ bilh\u00f5es)</td>\n      <td>2026</td>\n      <td>-50,60</td>\n      <td>-51,00</td>\n      <td>-52,90</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>37</td>\n      <td>-52,90</td>\n      <td>21</td>\n    </tr>\n    <tr>\n      <th>9</th>\n      <td>Balan\u00e7a comercial (US$ bilh\u00f5es)</td>\n      <td>2026</td>\n      <td>79,51</td>\n      <td>79,40</td>\n      <td>78,60</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>36</td>\n      <td>78,60</td>\n      <td>22</td>\n    </tr>\n    <tr>\n      <th>10</th>\n      <td>Investimento direto no pa\u00eds (US$ bilh\u00f5es)</td>\n      <td>2026</td>\n      <td>70,00</td>\n      <td>70,00</td>\n      <td>70,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(6)</td>\n      <td>34</td>\n      <td>70,00</td>\n      <td>18</td>\n    </tr>\n    <tr>\n      <th>12</th>\n      <td>D\u00edvida l\u00edquida do setor p\u00fablico (% do PIB)</td>\n      <td>2026</td>\n      <td>70,01</td>\n      <td>70,35</td>\n      <td>70,18</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>52</td>\n      <td>69,95</td>\n      <td>36</td>\n    </tr>\n    <tr>\n      <th>13</th>\n      <td>Resultado prim\u00e1rio (% do PIB)</td>\n      <td>2026</td>\n      <td>-0,70</td>\n      <td>-0,67</td>\n      <td>-0,64</td>\n      <td>\u25b2</td>\n      <td>(1)</td>\n      <td>62</td>\n      <td>-0,60</td>\n      <td>44</td>\n    </tr>\n    <tr>\n      <th>14</th>\n      <td>Resultado nominal (% do PIB)</td>\n      <td>2026</td>\n      <td>-8,50</td>\n      <td>-8,55</td>\n      <td>-8,51</td>\n      <td>\u25b2</td>\n      <td>(1)</td>\n      <td>48</td>\n      <td>-8,50</td>\n      <td>33</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "As is 2027."
+        },
+        {
+          "type": "code",
+          "content": "table = (\n    data\n    .find('text:contains(2027)')\n    .right(\n        until='text:contains(2028)',\n        include_source=True,\n        include_endpoint=False\n    )\n    .below(width='element')\n    .expand(top=-20)\n    .clip(data)\n)\ndf_2027 = table.expand(top=-5).extract_table('stream').to_df(header=False).dropna(axis=0, how='all')\ndf_2027.insert(0, 'year', 2027)\ndf_2027.insert(0, 'value', headers)\ndf_2027",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: table = data.find('text:contains(2027)').right(until='text:contains(2028)', include_source=True, inc...\n[DEBUG] Evaluating expression: df_2027...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "text/html",
+              "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>value</th>\n      <th>year</th>\n      <th>0</th>\n      <th>1</th>\n      <th>2</th>\n      <th>3</th>\n      <th>4</th>\n      <th>5</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>IPCA (varia\u00e7\u00e3o %)</td>\n      <td>2027</td>\n      <td>4,00</td>\n      <td>4,00</td>\n      <td>4,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(11)</td>\n      <td>117</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>PIB Total (varia\u00e7\u00e3o % sobre ano anterior)</td>\n      <td>2027</td>\n      <td>2,00</td>\n      <td>2,00</td>\n      <td>2,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(5)</td>\n      <td>77</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>C\u00e2mbio (R$/US$)</td>\n      <td>2027</td>\n      <td>5,90</td>\n      <td>5,86</td>\n      <td>5,85</td>\n      <td>\u25bc</td>\n      <td>(2)</td>\n      <td>85</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>Selic (% a.a)</td>\n      <td>2027</td>\n      <td>10,50</td>\n      <td>10,50</td>\n      <td>10,50</td>\n      <td>&lt;NA&gt;</td>\n      <td>(12)</td>\n      <td>111</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>IGP-M (varia\u00e7\u00e3o %)</td>\n      <td>2027</td>\n      <td>4,00</td>\n      <td>4,00</td>\n      <td>4,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(16)</td>\n      <td>58</td>\n    </tr>\n    <tr>\n      <th>6</th>\n      <td>IPCA Administrados (varia\u00e7\u00e3o %)</td>\n      <td>2027</td>\n      <td>4,00</td>\n      <td>4,00</td>\n      <td>4,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(15)</td>\n      <td>68</td>\n    </tr>\n    <tr>\n      <th>8</th>\n      <td>Conta corrente (US$ bilh\u00f5es)</td>\n      <td>2027</td>\n      <td>-50,00</td>\n      <td>-50,00</td>\n      <td>-50,74</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>26</td>\n    </tr>\n    <tr>\n      <th>9</th>\n      <td>Balan\u00e7a comercial (US$ bilh\u00f5es)</td>\n      <td>2027</td>\n      <td>79,60</td>\n      <td>80,00</td>\n      <td>80,11</td>\n      <td>\u25b2</td>\n      <td>(5)</td>\n      <td>24</td>\n    </tr>\n    <tr>\n      <th>10</th>\n      <td>Investimento direto no pa\u00eds (US$ bilh\u00f5es)</td>\n      <td>2027</td>\n      <td>80,00</td>\n      <td>80,00</td>\n      <td>76,90</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>25</td>\n    </tr>\n    <tr>\n      <th>11</th>\n      <td>D\u00edvida l\u00edquida do setor p\u00fablico (% do PIB)</td>\n      <td>2027</td>\n      <td>74,08</td>\n      <td>74,13</td>\n      <td>74,08</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>43</td>\n    </tr>\n    <tr>\n      <th>12</th>\n      <td>Resultado prim\u00e1rio (% do PIB)</td>\n      <td>2027</td>\n      <td>-0,50</td>\n      <td>-0,46</td>\n      <td>-0,46</td>\n      <td>&lt;NA&gt;</td>\n      <td>(1)</td>\n      <td>46</td>\n    </tr>\n    <tr>\n      <th>13</th>\n      <td>Resultado nominal (% do PIB)</td>\n      <td>2027</td>\n      <td>-7,19</td>\n      <td>-7,20</td>\n      <td>-7,20</td>\n      <td>&lt;NA&gt;</td>\n      <td>(1)</td>\n      <td>37</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "2028 is a *little* different because it doesn't including an endpoint on the right. We just blast on through until we hit the right-hand side of the page."
+        },
+        {
+          "type": "code",
+          "content": "table = (\n    data\n    .find('text:contains(2028)')\n    .right(include_source=True)\n    .below(width='element')\n    .expand(top=-20)\n    .clip(data)\n)\ndf_2028 = table.expand(top=-5).extract_table('stream').to_df(header=False).dropna(axis=0, how='all')\ndf_2028.insert(0, 'year', 2028)\ndf_2028.insert(0, 'value', headers)\ndf_2028",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: table = data.find('text:contains(2028)').right(include_source=True).below(width='element').expand(to...\n[DEBUG] Evaluating expression: df_2028...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "text/html",
+              "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>value</th>\n      <th>year</th>\n      <th>0</th>\n      <th>1</th>\n      <th>2</th>\n      <th>3</th>\n      <th>4</th>\n      <th>5</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>IPCA (varia\u00e7\u00e3o %)</td>\n      <td>2028</td>\n      <td>3,78</td>\n      <td>3,78</td>\n      <td>3,80</td>\n      <td>\u25b2</td>\n      <td>(1)</td>\n      <td>105</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>PIB Total (varia\u00e7\u00e3o % sobre ano anterior)</td>\n      <td>2028</td>\n      <td>2,00</td>\n      <td>2,00</td>\n      <td>2,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(60)</td>\n      <td>77</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>C\u00e2mbio (R$/US$)</td>\n      <td>2028</td>\n      <td>5,85</td>\n      <td>5,85</td>\n      <td>5,85</td>\n      <td>&lt;NA&gt;</td>\n      <td>(2)</td>\n      <td>82</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>Selic (% a.a)</td>\n      <td>2028</td>\n      <td>10,00</td>\n      <td>10,00</td>\n      <td>10,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(19)</td>\n      <td>103</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>IGP-M (varia\u00e7\u00e3o %)</td>\n      <td>2028</td>\n      <td>4,00</td>\n      <td>4,00</td>\n      <td>4,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(14)</td>\n      <td>55</td>\n    </tr>\n    <tr>\n      <th>6</th>\n      <td>IPCA Administrados (varia\u00e7\u00e3o %)</td>\n      <td>2028</td>\n      <td>3,94</td>\n      <td>3,90</td>\n      <td>3,95</td>\n      <td>\u25b2</td>\n      <td>(2)</td>\n      <td>64</td>\n    </tr>\n    <tr>\n      <th>8</th>\n      <td>Conta corrente (US$ bilh\u00f5es)</td>\n      <td>2028</td>\n      <td>-51,18</td>\n      <td>-51,06</td>\n      <td>-53,15</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>24</td>\n    </tr>\n    <tr>\n      <th>9</th>\n      <td>Balan\u00e7a comercial (US$ bilh\u00f5es)</td>\n      <td>2028</td>\n      <td>80,00</td>\n      <td>80,00</td>\n      <td>81,00</td>\n      <td>\u25b2</td>\n      <td>(1)</td>\n      <td>20</td>\n    </tr>\n    <tr>\n      <th>10</th>\n      <td>Investimento direto no pa\u00eds (US$ bilh\u00f5es)</td>\n      <td>2028</td>\n      <td>80,00</td>\n      <td>80,00</td>\n      <td>76,40</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>24</td>\n    </tr>\n    <tr>\n      <th>11</th>\n      <td>D\u00edvida l\u00edquida do setor p\u00fablico (% do PIB)</td>\n      <td>2028</td>\n      <td>75,96</td>\n      <td>75,98</td>\n      <td>76,00</td>\n      <td>\u25b2</td>\n      <td>(2)</td>\n      <td>39</td>\n    </tr>\n    <tr>\n      <th>12</th>\n      <td>Resultado prim\u00e1rio (% do PIB)</td>\n      <td>2028</td>\n      <td>-0,26</td>\n      <td>-0,12</td>\n      <td>-0,10</td>\n      <td>\u25b2</td>\n      <td>(4)</td>\n      <td>43</td>\n    </tr>\n    <tr>\n      <th>13</th>\n      <td>Resultado nominal (% do PIB)</td>\n      <td>2028</td>\n      <td>-6,50</td>\n      <td>-6,60</td>\n      <td>-6,60</td>\n      <td>&lt;NA&gt;</td>\n      <td>(1)</td>\n      <td>35</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "Now we'll set up the dataframes in a nice long list to combine in the next step."
+        },
+        {
+          "type": "code",
+          "content": "dataframes = [df_2025, df_2026, df_2027, df_2028]",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: dataframes = [df_2025, df_2026, df_2027, df_2028]...\n",
+            "error": null,
+            "figures": [],
+            "result": null
+          }
+        }
+      ]
+    },
+    {
+      "type": "markdown",
+      "content": "## Combining our data\n\nNow that we have a list of dataframes (no matter which path we took) we can just use pandas to concatenate them."
+    },
+    {
+      "type": "code",
+      "content": "import pandas as pd\n\ndf = pd.concat(dataframes, ignore_index=True)\ndf",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: import pandas as pd\ndf = pd.concat(dataframes, ignore_index=True)...\n[DEBUG] Evaluating expression: df...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/html",
+          "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>value</th>\n      <th>year</th>\n      <th>0</th>\n      <th>1</th>\n      <th>2</th>\n      <th>3</th>\n      <th>4</th>\n      <th>5</th>\n      <th>6</th>\n      <th>7</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>IPCA (varia\u00e7\u00e3o %)</td>\n      <td>2025</td>\n      <td>5,65</td>\n      <td>5,55</td>\n      <td>5,53</td>\n      <td>\u25bc</td>\n      <td>(3)</td>\n      <td>148</td>\n      <td>5,51</td>\n      <td>112</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>PIB Total (varia\u00e7\u00e3o % sobre ano anterior)</td>\n      <td>2025</td>\n      <td>1,97</td>\n      <td>2,00</td>\n      <td>2,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(2)</td>\n      <td>112</td>\n      <td>2,00</td>\n      <td>71</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>C\u00e2mbio (R$/US$)</td>\n      <td>2025</td>\n      <td>5,90</td>\n      <td>5,90</td>\n      <td>5,86</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>119</td>\n      <td>5,85</td>\n      <td>84</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>Selic (% a.a)</td>\n      <td>2025</td>\n      <td>15,00</td>\n      <td>15,00</td>\n      <td>14,75</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>144</td>\n      <td>14,75</td>\n      <td>102</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>IGP-M (varia\u00e7\u00e3o %)</td>\n      <td>2025</td>\n      <td>5,10</td>\n      <td>4,84</td>\n      <td>4,98</td>\n      <td>\u25b2</td>\n      <td>(1)</td>\n      <td>75</td>\n      <td>4,96</td>\n      <td>54</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>IPCA Administrados (varia\u00e7\u00e3o %)</td>\n      <td>2025</td>\n      <td>5,06</td>\n      <td>4,75</td>\n      <td>4,63</td>\n      <td>\u25bc</td>\n      <td>(4)</td>\n      <td>104</td>\n      <td>4,52</td>\n      <td>80</td>\n    </tr>\n    <tr>\n      <th>6</th>\n      <td>Conta corrente (US$ bilh\u00f5es)</td>\n      <td>2025</td>\n      <td>-56,30</td>\n      <td>-55,90</td>\n      <td>-55,90</td>\n      <td>&lt;NA&gt;</td>\n      <td>(2)</td>\n      <td>37</td>\n      <td>-55,90</td>\n      <td>21</td>\n    </tr>\n    <tr>\n      <th>7</th>\n      <td>Balan\u00e7a comercial (US$ bilh\u00f5es)</td>\n      <td>2025</td>\n      <td>75,00</td>\n      <td>75,00</td>\n      <td>75,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(5)</td>\n      <td>38</td>\n      <td>75,96</td>\n      <td>23</td>\n    </tr>\n    <tr>\n      <th>8</th>\n      <td>Investimento direto no pa\u00eds (US$ bilh\u00f5es)</td>\n      <td>2025</td>\n      <td>70,00</td>\n      <td>70,00</td>\n      <td>70,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(20)</td>\n      <td>34</td>\n      <td>70,00</td>\n      <td>18</td>\n    </tr>\n    <tr>\n      <th>9</th>\n      <td>D\u00edvida l\u00edquida do setor p\u00fablico (% do PIB)</td>\n      <td>2025</td>\n      <td>65,79</td>\n      <td>65,90</td>\n      <td>65,80</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>55</td>\n      <td>65,40</td>\n      <td>38</td>\n    </tr>\n    <tr>\n      <th>10</th>\n      <td>Resultado prim\u00e1rio (% do PIB)</td>\n      <td>2025</td>\n      <td>-0,60</td>\n      <td>-0,60</td>\n      <td>-0,60</td>\n      <td>&lt;NA&gt;</td>\n      <td>(19)</td>\n      <td>65</td>\n      <td>-0,60</td>\n      <td>46</td>\n    </tr>\n    <tr>\n      <th>11</th>\n      <td>Resultado nominal (% do PIB)</td>\n      <td>2025</td>\n      <td>-9,00</td>\n      <td>-9,00</td>\n      <td>-9,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(5)</td>\n      <td>49</td>\n      <td>-8,80</td>\n      <td>34</td>\n    </tr>\n    <tr>\n      <th>12</th>\n      <td>IPCA (varia\u00e7\u00e3o %)</td>\n      <td>2026</td>\n      <td>4,50</td>\n      <td>4,51</td>\n      <td>4,51</td>\n      <td>&lt;NA&gt;</td>\n      <td>(1)</td>\n      <td>142</td>\n      <td>4,52</td>\n      <td>109</td>\n    </tr>\n    <tr>\n      <th>13</th>\n      <td>PIB Total (varia\u00e7\u00e3o % sobre ano anterior)</td>\n      <td>2026</td>\n      <td>1,60</td>\n      <td>1,70</td>\n      <td>1,70</td>\n      <td>&lt;NA&gt;</td>\n      <td>(2)</td>\n      <td>106</td>\n      <td>1,70</td>\n      <td>69</td>\n    </tr>\n    <tr>\n      <th>14</th>\n      <td>C\u00e2mbio (R$/US$)</td>\n      <td>2026</td>\n      <td>5,99</td>\n      <td>5,95</td>\n      <td>5,91</td>\n      <td>\u25bc</td>\n      <td>(5)</td>\n      <td>117</td>\n      <td>5,91</td>\n      <td>83</td>\n    </tr>\n    <tr>\n      <th>15</th>\n      <td>Selic (% a.a)</td>\n      <td>2026</td>\n      <td>12,50</td>\n      <td>12,50</td>\n      <td>12,50</td>\n      <td>&lt;NA&gt;</td>\n      <td>(14)</td>\n      <td>137</td>\n      <td>12,50</td>\n      <td>98</td>\n    </tr>\n    <tr>\n      <th>16</th>\n      <td>IGP-M (varia\u00e7\u00e3o %)</td>\n      <td>2026</td>\n      <td>4,52</td>\n      <td>4,59</td>\n      <td>4,52</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>67</td>\n      <td>4,50</td>\n      <td>50</td>\n    </tr>\n    <tr>\n      <th>17</th>\n      <td>IPCA Administrados (varia\u00e7\u00e3o %)</td>\n      <td>2026</td>\n      <td>4,28</td>\n      <td>4,28</td>\n      <td>4,28</td>\n      <td>&lt;NA&gt;</td>\n      <td>(6)</td>\n      <td>96</td>\n      <td>4,28</td>\n      <td>76</td>\n    </tr>\n    <tr>\n      <th>18</th>\n      <td>Conta corrente (US$ bilh\u00f5es)</td>\n      <td>2026</td>\n      <td>-50,60</td>\n      <td>-51,00</td>\n      <td>-52,90</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>37</td>\n      <td>-52,90</td>\n      <td>21</td>\n    </tr>\n    <tr>\n      <th>19</th>\n      <td>Balan\u00e7a comercial (US$ bilh\u00f5es)</td>\n      <td>2026</td>\n      <td>79,51</td>\n      <td>79,40</td>\n      <td>78,60</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>36</td>\n      <td>78,60</td>\n      <td>22</td>\n    </tr>\n    <tr>\n      <th>20</th>\n      <td>Investimento direto no pa\u00eds (US$ bilh\u00f5es)</td>\n      <td>2026</td>\n      <td>70,00</td>\n      <td>70,00</td>\n      <td>70,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(6)</td>\n      <td>34</td>\n      <td>70,00</td>\n      <td>18</td>\n    </tr>\n    <tr>\n      <th>21</th>\n      <td>D\u00edvida l\u00edquida do setor p\u00fablico (% do PIB)</td>\n      <td>2026</td>\n      <td>70,01</td>\n      <td>70,35</td>\n      <td>70,18</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>52</td>\n      <td>69,95</td>\n      <td>36</td>\n    </tr>\n    <tr>\n      <th>22</th>\n      <td>Resultado prim\u00e1rio (% do PIB)</td>\n      <td>2026</td>\n      <td>-0,70</td>\n      <td>-0,67</td>\n      <td>-0,64</td>\n      <td>\u25b2</td>\n      <td>(1)</td>\n      <td>62</td>\n      <td>-0,60</td>\n      <td>44</td>\n    </tr>\n    <tr>\n      <th>23</th>\n      <td>Resultado nominal (% do PIB)</td>\n      <td>2026</td>\n      <td>-8,50</td>\n      <td>-8,55</td>\n      <td>-8,51</td>\n      <td>\u25b2</td>\n      <td>(1)</td>\n      <td>48</td>\n      <td>-8,50</td>\n      <td>33</td>\n    </tr>\n    <tr>\n      <th>24</th>\n      <td>IPCA (varia\u00e7\u00e3o %)</td>\n      <td>2027</td>\n      <td>4,00</td>\n      <td>4,00</td>\n      <td>4,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(11)</td>\n      <td>117</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>25</th>\n      <td>PIB Total (varia\u00e7\u00e3o % sobre ano anterior)</td>\n      <td>2027</td>\n      <td>2,00</td>\n      <td>2,00</td>\n      <td>2,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(5)</td>\n      <td>77</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>26</th>\n      <td>C\u00e2mbio (R$/US$)</td>\n      <td>2027</td>\n      <td>5,90</td>\n      <td>5,86</td>\n      <td>5,85</td>\n      <td>\u25bc</td>\n      <td>(2)</td>\n      <td>85</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>27</th>\n      <td>Selic (% a.a)</td>\n      <td>2027</td>\n      <td>10,50</td>\n      <td>10,50</td>\n      <td>10,50</td>\n      <td>&lt;NA&gt;</td>\n      <td>(12)</td>\n      <td>111</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>28</th>\n      <td>IGP-M (varia\u00e7\u00e3o %)</td>\n      <td>2027</td>\n      <td>4,00</td>\n      <td>4,00</td>\n      <td>4,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(16)</td>\n      <td>58</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>29</th>\n      <td>IPCA Administrados (varia\u00e7\u00e3o %)</td>\n      <td>2027</td>\n      <td>4,00</td>\n      <td>4,00</td>\n      <td>4,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(15)</td>\n      <td>68</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>30</th>\n      <td>Conta corrente (US$ bilh\u00f5es)</td>\n      <td>2027</td>\n      <td>-50,00</td>\n      <td>-50,00</td>\n      <td>-50,74</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>26</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>31</th>\n      <td>Balan\u00e7a comercial (US$ bilh\u00f5es)</td>\n      <td>2027</td>\n      <td>79,60</td>\n      <td>80,00</td>\n      <td>80,11</td>\n      <td>\u25b2</td>\n      <td>(5)</td>\n      <td>24</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>32</th>\n      <td>Investimento direto no pa\u00eds (US$ bilh\u00f5es)</td>\n      <td>2027</td>\n      <td>80,00</td>\n      <td>80,00</td>\n      <td>76,90</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>25</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>33</th>\n      <td>D\u00edvida l\u00edquida do setor p\u00fablico (% do PIB)</td>\n      <td>2027</td>\n      <td>74,08</td>\n      <td>74,13</td>\n      <td>74,08</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>43</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>34</th>\n      <td>Resultado prim\u00e1rio (% do PIB)</td>\n      <td>2027</td>\n      <td>-0,50</td>\n      <td>-0,46</td>\n      <td>-0,46</td>\n      <td>&lt;NA&gt;</td>\n      <td>(1)</td>\n      <td>46</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>35</th>\n      <td>Resultado nominal (% do PIB)</td>\n      <td>2027</td>\n      <td>-7,19</td>\n      <td>-7,20</td>\n      <td>-7,20</td>\n      <td>&lt;NA&gt;</td>\n      <td>(1)</td>\n      <td>37</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>36</th>\n      <td>IPCA (varia\u00e7\u00e3o %)</td>\n      <td>2028</td>\n      <td>3,78</td>\n      <td>3,78</td>\n      <td>3,80</td>\n      <td>\u25b2</td>\n      <td>(1)</td>\n      <td>105</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>37</th>\n      <td>PIB Total (varia\u00e7\u00e3o % sobre ano anterior)</td>\n      <td>2028</td>\n      <td>2,00</td>\n      <td>2,00</td>\n      <td>2,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(60)</td>\n      <td>77</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>38</th>\n      <td>C\u00e2mbio (R$/US$)</td>\n      <td>2028</td>\n      <td>5,85</td>\n      <td>5,85</td>\n      <td>5,85</td>\n      <td>&lt;NA&gt;</td>\n      <td>(2)</td>\n      <td>82</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>39</th>\n      <td>Selic (% a.a)</td>\n      <td>2028</td>\n      <td>10,00</td>\n      <td>10,00</td>\n      <td>10,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(19)</td>\n      <td>103</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>40</th>\n      <td>IGP-M (varia\u00e7\u00e3o %)</td>\n      <td>2028</td>\n      <td>4,00</td>\n      <td>4,00</td>\n      <td>4,00</td>\n      <td>&lt;NA&gt;</td>\n      <td>(14)</td>\n      <td>55</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>41</th>\n      <td>IPCA Administrados (varia\u00e7\u00e3o %)</td>\n      <td>2028</td>\n      <td>3,94</td>\n      <td>3,90</td>\n      <td>3,95</td>\n      <td>\u25b2</td>\n      <td>(2)</td>\n      <td>64</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>42</th>\n      <td>Conta corrente (US$ bilh\u00f5es)</td>\n      <td>2028</td>\n      <td>-51,18</td>\n      <td>-51,06</td>\n      <td>-53,15</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>24</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>43</th>\n      <td>Balan\u00e7a comercial (US$ bilh\u00f5es)</td>\n      <td>2028</td>\n      <td>80,00</td>\n      <td>80,00</td>\n      <td>81,00</td>\n      <td>\u25b2</td>\n      <td>(1)</td>\n      <td>20</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>44</th>\n      <td>Investimento direto no pa\u00eds (US$ bilh\u00f5es)</td>\n      <td>2028</td>\n      <td>80,00</td>\n      <td>80,00</td>\n      <td>76,40</td>\n      <td>\u25bc</td>\n      <td>(1)</td>\n      <td>24</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>45</th>\n      <td>D\u00edvida l\u00edquida do setor p\u00fablico (% do PIB)</td>\n      <td>2028</td>\n      <td>75,96</td>\n      <td>75,98</td>\n      <td>76,00</td>\n      <td>\u25b2</td>\n      <td>(2)</td>\n      <td>39</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>46</th>\n      <td>Resultado prim\u00e1rio (% do PIB)</td>\n      <td>2028</td>\n      <td>-0,26</td>\n      <td>-0,12</td>\n      <td>-0,10</td>\n      <td>\u25b2</td>\n      <td>(4)</td>\n      <td>43</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>47</th>\n      <td>Resultado nominal (% do PIB)</td>\n      <td>2028</td>\n      <td>-6,50</td>\n      <td>-6,60</td>\n      <td>-6,60</td>\n      <td>&lt;NA&gt;</td>\n      <td>(1)</td>\n      <td>35</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "There we go!"
+    }
+  ]
+}

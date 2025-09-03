@@ -1,0 +1,990 @@
+{
+  "documents": [
+    {
+      "id": "m27",
+      "slug": "m27",
+      "title": "Extracting Data Tables from Oklahoma Booze Licensees PDF",
+      "description": "This PDF contains detailed tables listing alcohol licensees in Oklahoma. It has multi-line cells making it hard to extract data accurately. Challenges include alternative row colors instead of lines (\"zebra stripes\"), complicating row differentiation and extraction.",
+      "content": "Extracting Data Tables from Oklahoma Booze Licensees PDF\n\nThis PDF contains detailed tables listing alcohol licensees in Oklahoma. It has zebra-striped, multi-line cells without lines, making it hard to extract data accurately.\n\n...or is that helpful?\nfrom natural_pdf import PDF\n\npdf = PDF(\"m27.pdf\")\npage = pdf.pages[0]\npage.show()\nExclusions\n\nFirst let's think about what we don't want: headers and footers.\nheader = page.find(text=\"PREMISE\").above()\nfooter = page.find(\"text:regex(Page \\d+ of)\")\n(header + footer).show()\nTo make exclusions apply to each page instead of just your current page, you can use lambda page: page.xxx.\nprint(\"Before exclusions:\", page.extract_text()[:200])\n\n# Add exclusions\npdf.add_exclusion(lambda page: page.find(text=\"PREMISE\").above())\npdf.add_exclusion(lambda page: page.find(\"text:regex(Page \\d+ of)\").expand())\n\nprint(\"After exclusions:\", page.extract_text()[:200])\n\n# Preview\npage.show(exclusions='red')\nTable extraction\n\nA basic page.extract_table() won't work \u2013 spacing is too narrow, not enough details \u2013 so we'll use guides to extract the table.\nfrom natural_pdf.analyzers.guides import Guides\n\nguides = Guides(page)\nTable columns\n\nWe'll start by creating some lines to separate each column. It's easiest to grab the \"NUMBER\" header and then everything to the right of it.\nregion = (\n    page\n    .find(text=\"NUMBER\")\n    .right(include_source=True)\n)\nregion.show(crop=100)\nWhen we grab each header we need a little 3px wiggle room, as the lines aren't exactly lined up.\nheaders = (\n    page\n    .find(text=\"NUMBER\")\n    .right(include_source=True)\n    .expand(top=3, bottom=3)\n    .find_all('text')\n)\nheaders.show(crop=100)\nNotice how all of the headers are left-aligned? We can use that to build a grid with our guides.\nguides.vertical.from_content(headers, align='left')\nguides.show()\nNow we need to separate out our rows: we have two options!\nRows have alternating blue bands behind them. If we use `horizontal.from_stripes()` it will go through a two-step process:\n\n1. Find the most popular color rectangles\n2. Add guidelines for the top and bottom of each rectangle\n\nYou can also set the `color=` or find+pass the rectangles yourself, but in this case it works with the default options.\nguides.horizontal.from_stripes()\nguides.show()\nInstead of relying on the colored banding, we can also find an item that shows up exactly once in each row, then use that to draw the borders.\n(\n    page\n    .find(text=\"NUMBER\")\n    .below(width='element')\n).show(crop=100, width=700)\nWe draw down from the **NUMBER** header, then find all of the elements under it. We do need to ask for `overlap='partial'` because the header doesn't fully encompass each license number.\nrows = (\n    page\n    .find(text=\"NUMBER\")\n    .below(\n      width='element',\n      include_source=True\n    )\n    .find_all('text', overlap='partial')\n)\nrows.show(crop=100, width=700)\nNow we can feed each row to `from_content` and tell Natural PDF to draw a border at the bottom of each one.\nguides.horizontal.from_content(rows, align='bottom')\nguides.show()\nDepending on how you set up your extraction, include_outer_boundaries=True isn't necessarily necessary, but I'm using it here so that it works for both approaches up above (even though one gives you an extra column).\ndf = (\n  guides\n  .extract_table(include_outer_boundaries=True)\n  .to_df()\n)\ndf.head()",
+      "code": "from natural_pdf import PDF\n\npdf = PDF(\"m27.pdf\")\npage = pdf.pages[0]\npage.show()\nheader = page.find(text=\"PREMISE\").above()\nfooter = page.find(\"text:regex(Page \\d+ of)\")\n(header + footer).show()\nprint(\"Before exclusions:\", page.extract_text()[:200])\n\n# Add exclusions\npdf.add_exclusion(lambda page: page.find(text=\"PREMISE\").above())\npdf.add_exclusion(lambda page: page.find(\"text:regex(Page \\d+ of)\").expand())\n\nprint(\"After exclusions:\", page.extract_text()[:200])\n\n# Preview\npage.show(exclusions='red')\nfrom natural_pdf.analyzers.guides import Guides\n\nguides = Guides(page)\nregion = (\n    page\n    .find(text=\"NUMBER\")\n    .right(include_source=True)\n)\nregion.show(crop=100)\nheaders = (\n    page\n    .find(text=\"NUMBER\")\n    .right(include_source=True)\n    .expand(top=3, bottom=3)\n    .find_all('text')\n)\nheaders.show(crop=100)\nguides.vertical.from_content(headers, align='left')\nguides.show()\nguides.horizontal.from_stripes()\nguides.show()\n(\n    page\n    .find(text=\"NUMBER\")\n    .below(width='element')\n).show(crop=100, width=700)\nrows = (\n    page\n    .find(text=\"NUMBER\")\n    .below(\n      width='element',\n      include_source=True\n    )\n    .find_all('text', overlap='partial')\n)\nrows.show(crop=100, width=700)\nguides.horizontal.from_content(rows, align='bottom')\nguides.show()\ndf = (\n  guides\n  .extract_table(include_outer_boundaries=True)\n  .to_df()\n)\ndf.head()",
+      "methods": [
+        "Guides",
+        "PDF",
+        "above",
+        "add_exclusion",
+        "below",
+        "expand",
+        "extract_table",
+        "extract_text",
+        "find",
+        "find_all",
+        "right",
+        "show",
+        "to_df"
+      ],
+      "selectors": [
+        "text",
+        "text:regex(Page \\d+ of)"
+      ],
+      "tags": [
+        "data tables",
+        "multiline cells",
+        "PDF extraction issues",
+        "row colors"
+      ],
+      "complexity": 12,
+      "pdf": "m27.pdf"
+    },
+    {
+      "id": "24480polcompleted",
+      "slug": "24480polcompleted",
+      "title": "Animal 911 Calls Extraction from Rainforest Cafe Report",
+      "description": "This PDF is a service call report covering 911 incidents at the Rainforest Cafe in Niagara Falls, NY. We're hunting for animals! The data is formatted as a spreadsheet within the PDF, and challenges include varied column widths, borderless tables, and large swaths of missing data.",
+      "content": "Animal 911 Calls Extraction from Rainforest Cafe Report\n\nThis PDF is a service call report covering 911 incidents at the Rainforest Cafe in Niagara Falls, NY. We're hunting for animals! The data is formatted as a spreadsheet within the PDF, and challenges include varied column widths, borderless tables, and large swaths of missing data.\nfrom natural_pdf import PDF\n\npdf = PDF(\"24480polcompleted.pdf\")\npdf.show(cols=3, limit=9)\nSelecting a subset of pages\n\nWe only want the spreadsheet pages, which start on page 5.\npages = pdf.pages[4:]\npages.show(cols=6)\nExcluding extra text\n\nIf we look at the last page we see \"2770 Records Found\" at the bottom of the table, which we do not want in our dataset.\npages[-1].show(crop=200)\nWe're going to exclude it so it doesn't show up in our table or confuse the table detector. But instead of matching it exactly, what if we end up doing this with different sets of documents? Maybe across years? It's easier to match with a regex, so instead of a specific number of records found we can look for ____ Records Found.\n(\n  pages[-1]\n  .find_all('text:regex(\\\\d+ Records Found)')\n  .show(crop=100)\n)\nAnything we can find we can exclude. Depending on what we expect our data to look like, we can exclude two different ways.\nWe know the \"XXX results\" will always be on the last page, so we can add a simple text selector match.\npages[-1].add_exclusion('text:regex(\\\\d+ Records Found)')\nIf we aren't sure whether the record counts will be on other pages besides the last page, we can add it to the PDF. This will apply it to every single page.\npdf.add_exclusion(\n  lambda page: page.find_all('text:regex(\\\\d+ Records Found)')\n)\nRecord counts: excluded!\npages[-1].show(exclusions='red')\nBuilding our table\n\nNow we need to build our table. Let's take a look at what the first page looks like again.\npages[0].show()\nExtracting the tables with guides\n\nWe're going to use guides to outline the table with the following steps:\n\n- Drop vertical lines between the column headers, then re-use these boundaries on each page.\n- For horizontal rows, we'll say find every place where text starts with NF-, since each row starts with NF-00051026-24. That way even if there are multi-line rows we shouldn't have a problem.\n\nThere are two ways to do this: re-useable guides with lambdas or just manually updating your guide in a for loop.\n\n> You could probably do a raw .extract_table() on each page and combine them, but using grids makes things a bit more specific and controlled.\n>\n> For example, if an entire column is empty on one page the \"normal\" extraction method won't understand that it's missing data. If you base your guides off of a full/complete page, though, it knows the empty area represents a column with missing data.\nWe'll start by using **Guides** to draw our boundaries. While we might be able to separate rows based on whitespace, it's easier to base the borders on the content of the page:\n\n- Vertical boundaries go at the start of each of the column headers\n- Each row is located by text that starts with`NF-`\n\nBy default the last column (Main Officer) would be ignored since it doesn't have an \"ending\" vertical bar. To fix that I'll add `outer=\"last\"` so the outer area *after* the last boundary counts as a column.\nfrom natural_pdf.analyzers.guides import Guides\n\nguide = Guides(pages[0])\ncolumns = ['Number', 'Date Occurred', 'Time Occurred', 'Location', 'Call Type', 'Description', 'Disposition', 'Main Officer']\nguide.vertical.from_content(columns, outer=\"last\")\nguide.horizontal.from_content(\n  lambda p: p.find_all('text:starts-with(NF-)')\n)\nguide.show()\nNotice how we used a **lambda** in the approach above. This means we don't just want the `NF-` content on the first page, we want it for *any page the guide is applied to.*\n\nWe then say, apply this guide to every single page! Since the headers are only on the first page, we use `header=\"first\"`.\ntable_result = guide.extract_table(pages, header=\"first\")\ndf = table_result.to_df()\ndf.head()\nWe'll start by drawing boundaries at the start of each of the column headers. Since there isn't a boundary to the right of the last column, we'll say `outer=\"last\"` to have the outer area after the last boundary count as a column.\nfrom natural_pdf.analyzers.guides import Guides\n\nbase = Guides(pages[0])\ncolumns = ['Number', 'Date Occurred', 'Time Occurred', 'Location', 'Call Type', 'Description', 'Disposition', 'Main Officer']\nbase.vertical.from_content(columns, outer=\"last\")\nbase.horizontal.from_content(pages[0].find_all('text:starts-with(NF-)'))\nbase.show()\nWe'll then pull out the first table from the first page.\nfirst_table = base.extract_table().to_df()\nfirst_table.head()\nNow we're going to go through each additional page, extracting the table, adding it to a list of pandas dataframes. At the end we'll then combine them all into one big dataframe.\n\nNote that the first page is the **only one with column headers**. We used a simple `.to_df()` before, but now we need to say `headers=columns` to manually set the headers of each dataframe. If we didn't do this pandas wouldn't be able to stack them all together.\ndataframes = [first_table]\n\nfor page in pages:\n    guides = Guides(page)\n    guides.vertical = base.vertical\n    guides.horizontal.from_content(page.find_all('text:starts-with(NF-)'))\n    single_df = guides.extract_table().to_df(header=columns)\n    dataframes.append(single_df)\nprint(\"We made\", len(dataframes), \"dataframes\")\nNow we can use `pd.concat` to combine them all.\nimport pandas as pd\ndf = pd.concat(dataframes, ignore_index=True)\ndf.head()\nDone!",
+      "code": "from natural_pdf import PDF\n\npdf = PDF(\"24480polcompleted.pdf\")\npdf.show(cols=3, limit=9)\npages = pdf.pages[4:]\npages.show(cols=6)\npages[-1].show(crop=200)\n(\n  pages[-1]\n  .find_all('text:regex(\\\\d+ Records Found)')\n  .show(crop=100)\n)\npages[-1].add_exclusion('text:regex(\\\\d+ Records Found)')\npdf.add_exclusion(\n  lambda page: page.find_all('text:regex(\\\\d+ Records Found)')\n)\npages[-1].show(exclusions='red')\npages[0].show()\nfrom natural_pdf.analyzers.guides import Guides\n\nguide = Guides(pages[0])\ncolumns = ['Number', 'Date Occurred', 'Time Occurred', 'Location', 'Call Type', 'Description', 'Disposition', 'Main Officer']\nguide.vertical.from_content(columns, outer=\"last\")\nguide.horizontal.from_content(\n  lambda p: p.find_all('text:starts-with(NF-)')\n)\nguide.show()\ntable_result = guide.extract_table(pages, header=\"first\")\ndf = table_result.to_df()\ndf.head()\nfrom natural_pdf.analyzers.guides import Guides\n\nbase = Guides(pages[0])\ncolumns = ['Number', 'Date Occurred', 'Time Occurred', 'Location', 'Call Type', 'Description', 'Disposition', 'Main Officer']\nbase.vertical.from_content(columns, outer=\"last\")\nbase.horizontal.from_content(pages[0].find_all('text:starts-with(NF-)'))\nbase.show()\nfirst_table = base.extract_table().to_df()\nfirst_table.head()\ndataframes = [first_table]\n\nfor page in pages:\n    guides = Guides(page)\n    guides.vertical = base.vertical\n    guides.horizontal.from_content(page.find_all('text:starts-with(NF-)'))\n    single_df = guides.extract_table().to_df(header=columns)\n    dataframes.append(single_df)\nprint(\"We made\", len(dataframes), \"dataframes\")\nimport pandas as pd\ndf = pd.concat(dataframes, ignore_index=True)\ndf.head()",
+      "methods": [
+        "Guides",
+        "PDF",
+        "add_exclusion",
+        "extract_table",
+        "find_all",
+        "from_content",
+        "show",
+        "to_df"
+      ],
+      "selectors": [
+        "text:regex(\\\\d+ Records Found)",
+        "text:starts-with(NF-)"
+      ],
+      "tags": [
+        "Animal 911 Logs",
+        "PDF Spreadsheet",
+        "Truncated Columns",
+        "Selective Redactions"
+      ],
+      "complexity": 14,
+      "pdf": "24480polcompleted.pdf"
+    },
+    {
+      "id": "k046682-111320-opa-lea-database-install_1",
+      "slug": "k046682-111320-opa-lea-database-install_1",
+      "title": "Complex Extraction of Law Enforcement Complaints",
+      "description": "This PDF contains a set of complaint records from a local law enforcement agency. Challenges include its relational data structure, unusual formatting common in the region, and redactions that disrupt automatic parsing.",
+      "content": "Complex Extraction of Law Enforcement Complaints\n\nThis PDF contains a set of complaint records from a local law enforcement agency. Challenges include its relational data structure, unusual formatting common in the region, and redactions that disrupt automatic parsing.\nfrom natural_pdf import PDF\n\npdf = PDF(\"k046682-111320-opa-lea-database-install_1.pdf\")\npdf.show(cols=3)\nLet's look at a single page\npage = pdf.pages[0]\npage.show()\nAdding exclusions\n\nWe don't like the top and bottom areas, so we'll exclude them.\npdf.add_exclusion(lambda page: page.find(text='L.E.A. Data Technologies').below(include_source=True))\npdf.add_exclusion(lambda page: page.find(text='Complaints By Date').above(include_source=True))\n\npage.show(exclusions='black')\nBreaking into sections\n\nEven though you might think the colors are the best route to tackle this \u2013 they stand out! \u2013 I think text is usually the best option.\n\nWe'll tell it to break the pages into sections by the Recorded On Camera text. We tell it include_boundaries='start'.\n\n> Originally I did this with Location of Occurrence but apparently it's a little bit lower than the recording header and caused some problems later on.\nsections = pdf.get_sections(\n  'text:contains(Recorded)',\n  include_boundaries='start'\n)\nsections.show(cols=3)\nLet's look at one of the sections.\nsection = sections[3]\nsection.show(crop=True)\nThis extraction is made easier since they're all generally the same, they all have the same formatting even if they're missing data.\n\nExtracting the top area\n\nUp top we'll focus on grabbing the labels, then going right until we find a piece of text.\ncomplainant = (\n  section\n  .find(\"text:contains(Complainant)\")\n  .right(until='text')\n)\nprint(\"Complainant is\", complainant.extract_text())\ncomplainant.show(crop=100)\nNote that date of birth and some other fields are missing. Usually this means we'd have to use right(100) or pick some manual pixel value, but it turns out even the missing data includes text elements - they're just empty! That means we can use until='text' instead of magic numbers.\ndob = (\n  section\n  .find(\"text:contains(DOB)\")\n  .right(until='text')\n)\nprint(\"DOB is\", dob.extract_text())\ndob.show(crop=100)\nFor the above/below pieces it's slightly more problematic. By default when you expand downwards, it doesn't select the entire piece of text, it only grabs the ones that intersect with your search area.\nnumber = (\n    section\n    .find(\"text:contains(Number)\")\n    .below(until='text', width='element')\n)\nprint(\"Number is\", number.extract_text())\nnumber.show(crop=100)\nIn order to be sure you get the entire thing you need to ask for text that even partially overlaps the area you have selected. This makes the area expand to cover all of the number.\nnumber = (\n    section\n    .find(\"text:contains(Number)\")\n    .below(until='text', width='element')\n    .find('text', overlap='partial')\n)\nprint(\"Number is\", number.extract_text())\nnumber.show(crop=100)\nThe elements like \"Date Assigned\" and \"Completed\" are a little more difficult, as you want to be sure you're only grabbing the text fully and directly underneath the label.\n(\n  section\n  .find('text:contains(Date Assigned)')\n  .below(width='element')\n  .show(crop=100)\n)\nWe do this by grabbing the area below, then asking it to find the first piece of text inside the created box full overlap. By default it only picks text that is fully inside.\n(\n  section\n  .find('text:contains(Date Assigned)')\n  .below(width='element')\n  .find('text')\n  .extract_text()\n)\nIf we did until='text' it would grab the first text it touched, so it would grab the Seargant.\n\nWith that all in line, when we start to grab them all it looks something like this:\ncomplainant = (\n  section\n  .find(\"text:contains(Complainant)\")\n  .right(until='text')\n)\ndob = (\n  section\n  .find(\"text:contains(DOB)\")\n  .right(until='text')\n)\naddress = (\n  section\n  .find(\"text:contains(Address)\")\n  .right(until='text')\n)\ngender = (\n  section\n  .find(\"text:contains(Gender)\")\n  .right(until='text')\n)\nphone = (\n  section\n  .find(\"text:contains(H Phone)\")\n  .right(until='text')\n)\ndate_assigned = (\n  section\n  .find('text:contains(Date Assigned)')\n  .below(width='element')\n  .find('text')\n)\ncompleted = (\n  section\n  .find('text:contains(Completed)')\n  .below(width='element')\n  .find('text')\n)\nrecorded = (\n  section\n  .find('text:contains(Recorded)')\n  .below(until='text', width='element')\n)\n\n(complainant + dob + address + gender + phone + date_assigned + completed + recorded).show(crop=section)\n> I'm sorry, I got lazy \u2013 I trust you understand and can fill the rest of them out on your own!\n\nCapturing the complaint table\n\nThe tables might seem intimidating, but it's really only a question of isolating the area and then using .extract_table().\n\nHow can we describe the \"Complaint\" area? Well, it's to the right of a bunch of Complaint # text.\n(\n    section\n    .find_all('text:contains(Complaint #)')\n    .right(include_source=True)\n    .show(crop=section)\n)\nWe could probably grab each of the text elements individually and parse out the columns, but instead we'll use .merge() to combine them into one big region, then nudge it up and down a little bit to capture the entire table.\n(\n    section\n    .find_all('text:contains(Complaint #)')\n    .right(include_source=True)\n    .merge()\n    .expand(top=5, bottom=7)\n    .show(crop=section)\n)\nIt's too much work to try to capture the headers programmatically, so we'll just manually type them in.\n(\n    section\n    .find_all('text:contains(Complaint #)')\n    .right(include_source=True)\n    .merge()\n    .expand(top=5, bottom=7)\n    .extract_table()\n    .to_df(header=['Type of Complaint', 'Description', 'Complaint Disposition'])\n)\nUnfortunately this doesn't work on all of the tables: some of the ones with redactions trick the columnd detector! So we'll use Guides to detect a specific number of columns based on the lines.\nfrom natural_pdf.analyzers.guides import Guides\n\n# Find the area\ntable = (\n    section\n    .find_all('text:contains(Complaint #)')\n    .right(include_source=True)\n    .merge()\n    .expand(top=5, bottom=7)\n)\n\n# Build vertical guidelines from lines\nguides = Guides(table)\nguides.vertical.from_lines(n=4)\n\n# Use the guides\n(\n  table\n  .extract_table(verticals=guides.vertical)\n  .to_df(header=['Type of Complaint', 'Description', 'Complaint Disposition'])\n)\nCapturing the officers table\n\nWe take the same tack for the officers table.\ntable_area = (\n    section\n    .find_all('text:contains(Officer #)')\n    .right(include_source=True)\n    .merge()\n    .expand(top=5, bottom=7)\n)\n\nguides = Guides(table)\nguides.vertical.from_lines(n=8)\n\n(\n  table\n  .extract_table(verticals=guides.vertical)\n  .to_df(header=['Name', 'ID No.', 'Rank', 'Division', 'Officer Disposition', 'Action Taken', 'Body Cam'])\n)\nA nice #todo for me is to integrate this into .extract_table. Something like .extract_table(columns=4) would look nice, no?\n\nCombining all of the data in one CSV\n\nFirst we can pop through each section and extract the information we're looking for. I added a little expansion for the Date Assigned/Completed pieces as the dates are sometimes a little longer than the header.\nrows = []\nfor section in sections:\n    complainant = section.find(\"text:contains(Complainant)\").right(until='text')\n    dob = section.find(\"text:contains(DOB)\").right(until='text')\n    address = section.find(\"text:contains(Address)\").right(until='text')\n    gender = section.find(\"text:contains(Gender)\").right(until='text')\n    phone = section.find(\"text:contains(H Phone)\").right(until='text')\n    investigator = (\n        section\n        .find(\"text:contains(Investigator)\")\n        .below(until='text', width='element')\n        .find('text', overlap='partial')\n    )\n    number = (\n        section\n        .find(\"text:contains(Number)\")\n        .below(until='text', width='element')\n        .find('text', overlap='partial')\n    )\n    date_assigned = (\n      section\n      .find('text:contains(Date Assigned)')\n      .below(width='element')\n      .expand(left=5, right=5)\n      .find('text')\n    )\n    completed = (\n      section\n      .find('text:contains(Completed)')\n      .below(width='element')\n      .expand(left=5, right=5)\n      .find('text')\n    )\n    recorded = (\n      section\n      .find('text:contains(Recorded)')\n      .below(until='text', width='element')\n      .expand(left=5, right=5)\n    )\n    \n    row = {}\n    row['complainant'] = complainant.extract_text()\n    row['investigator'] = investigator.extract_text()\n    row['number'] = number.extract_text()\n    row['dob'] = dob.extract_text()\n    row['address'] = address.extract_text()\n    row['gender'] = gender.extract_text()\n    row['phone'] = phone.extract_text()\n    row['date_assigned'] = date_assigned.extract_text()\n    row['completed'] = completed.extract_text()\n    row['recorded'] = recorded.extract_text()\n    rows.append(row)\n\nprint(\"We found\", len(rows), \"rows\")\nNow we can push it into pandas without a problem!\nimport pandas as pd\n\ndf = pd.DataFrame(rows)\ndf\nSaving the tables as combined CSVs\n\nUsually when you have a number of similar tables in one PDF, you don't want to make a bunch of different CSV files, you want to put them all into one CSV.\n\nWe'll do that by looping through each section like we did before, but we'll also add a new column to our data: the number\nimport pandas as pd\n\nofficer_dfs = []\nfor section in sections:\n    # Not every section has officers, exit\n    # early if Officer number not mentioned\n    if 'Officer #' not in section.extract_text():\n      continue\n\n    # Grab the case number\n    case_number = (\n        section\n        .find(\"text:contains(Number)\")\n        .below(until='text', width='element')\n        .find('text', overlap='partial')\n        .extract_text()\n    )\n\n    # Grab the table area\n    table = (\n        section\n        .find_all('text:contains(Officer #)')\n        .right(include_source=True)\n        .merge()\n        .expand(top=3, bottom=6)\n    )\n    \n    # Use the guides to extract the table\n    guides = Guides(table)\n    guides.vertical.from_lines(n=8)\n    columns = ['Name', 'ID No.', 'Rank', 'Division', 'Officer Disposition', 'Action Taken', 'Body Cam']\n    officer_df = (\n      table\n      .extract_table(verticals=guides.vertical)\n      .to_df(header=columns)\n    )\n\n    # Add to your list\n    officer_df['case_number'] = case_number\n    officer_dfs.append(officer_df)\n\n# Combine the dataframes\nprint(\"Combining\", len(officer_dfs), \"officer dataframes\")\ndf = pd.concat(officer_dfs, ignore_index=True)\ndf.head()\nRepeat the same thing for complaints (just changing n=8 to n=4) and you'll be good to go!",
+      "code": "from natural_pdf import PDF\n\npdf = PDF(\"k046682-111320-opa-lea-database-install_1.pdf\")\npdf.show(cols=3)\npage = pdf.pages[0]\npage.show()\npdf.add_exclusion(lambda page: page.find(text='L.E.A. Data Technologies').below(include_source=True))\npdf.add_exclusion(lambda page: page.find(text='Complaints By Date').above(include_source=True))\n\npage.show(exclusions='black')\nsections = pdf.get_sections(\n  'text:contains(Recorded)',\n  include_boundaries='start'\n)\nsections.show(cols=3)\nsection = sections[3]\nsection.show(crop=True)\ncomplainant = (\n  section\n  .find(\"text:contains(Complainant)\")\n  .right(until='text')\n)\nprint(\"Complainant is\", complainant.extract_text())\ncomplainant.show(crop=100)\ndob = (\n  section\n  .find(\"text:contains(DOB)\")\n  .right(until='text')\n)\nprint(\"DOB is\", dob.extract_text())\ndob.show(crop=100)\nnumber = (\n    section\n    .find(\"text:contains(Number)\")\n    .below(until='text', width='element')\n)\nprint(\"Number is\", number.extract_text())\nnumber.show(crop=100)\nnumber = (\n    section\n    .find(\"text:contains(Number)\")\n    .below(until='text', width='element')\n    .find('text', overlap='partial')\n)\nprint(\"Number is\", number.extract_text())\nnumber.show(crop=100)\n(\n  section\n  .find('text:contains(Date Assigned)')\n  .below(width='element')\n  .show(crop=100)\n)\n(\n  section\n  .find('text:contains(Date Assigned)')\n  .below(width='element')\n  .find('text')\n  .extract_text()\n)\ncomplainant = (\n  section\n  .find(\"text:contains(Complainant)\")\n  .right(until='text')\n)\ndob = (\n  section\n  .find(\"text:contains(DOB)\")\n  .right(until='text')\n)\naddress = (\n  section\n  .find(\"text:contains(Address)\")\n  .right(until='text')\n)\ngender = (\n  section\n  .find(\"text:contains(Gender)\")\n  .right(until='text')\n)\nphone = (\n  section\n  .find(\"text:contains(H Phone)\")\n  .right(until='text')\n)\ndate_assigned = (\n  section\n  .find('text:contains(Date Assigned)')\n  .below(width='element')\n  .find('text')\n)\ncompleted = (\n  section\n  .find('text:contains(Completed)')\n  .below(width='element')\n  .find('text')\n)\nrecorded = (\n  section\n  .find('text:contains(Recorded)')\n  .below(until='text', width='element')\n)\n\n(complainant + dob + address + gender + phone + date_assigned + completed + recorded).show(crop=section)\n(\n    section\n    .find_all('text:contains(Complaint #)')\n    .right(include_source=True)\n    .show(crop=section)\n)\n(\n    section\n    .find_all('text:contains(Complaint #)')\n    .right(include_source=True)\n    .merge()\n    .expand(top=5, bottom=7)\n    .show(crop=section)\n)\n(\n    section\n    .find_all('text:contains(Complaint #)')\n    .right(include_source=True)\n    .merge()\n    .expand(top=5, bottom=7)\n    .extract_table()\n    .to_df(header=['Type of Complaint', 'Description', 'Complaint Disposition'])\n)\nfrom natural_pdf.analyzers.guides import Guides\n\n# Find the area\ntable = (\n    section\n    .find_all('text:contains(Complaint #)')\n    .right(include_source=True)\n    .merge()\n    .expand(top=5, bottom=7)\n)\n\n# Build vertical guidelines from lines\nguides = Guides(table)\nguides.vertical.from_lines(n=4)\n\n# Use the guides\n(\n  table\n  .extract_table(verticals=guides.vertical)\n  .to_df(header=['Type of Complaint', 'Description', 'Complaint Disposition'])\n)\ntable_area = (\n    section\n    .find_all('text:contains(Officer #)')\n    .right(include_source=True)\n    .merge()\n    .expand(top=5, bottom=7)\n)\n\nguides = Guides(table)\nguides.vertical.from_lines(n=8)\n\n(\n  table\n  .extract_table(verticals=guides.vertical)\n  .to_df(header=['Name', 'ID No.', 'Rank', 'Division', 'Officer Disposition', 'Action Taken', 'Body Cam'])\n)\nrows = []\nfor section in sections:\n    complainant = section.find(\"text:contains(Complainant)\").right(until='text')\n    dob = section.find(\"text:contains(DOB)\").right(until='text')\n    address = section.find(\"text:contains(Address)\").right(until='text')\n    gender = section.find(\"text:contains(Gender)\").right(until='text')\n    phone = section.find(\"text:contains(H Phone)\").right(until='text')\n    investigator = (\n        section\n        .find(\"text:contains(Investigator)\")\n        .below(until='text', width='element')\n        .find('text', overlap='partial')\n    )\n    number = (\n        section\n        .find(\"text:contains(Number)\")\n        .below(until='text', width='element')\n        .find('text', overlap='partial')\n    )\n    date_assigned = (\n      section\n      .find('text:contains(Date Assigned)')\n      .below(width='element')\n      .expand(left=5, right=5)\n      .find('text')\n    )\n    completed = (\n      section\n      .find('text:contains(Completed)')\n      .below(width='element')\n      .expand(left=5, right=5)\n      .find('text')\n    )\n    recorded = (\n      section\n      .find('text:contains(Recorded)')\n      .below(until='text', width='element')\n      .expand(left=5, right=5)\n    )\n    \n    row = {}\n    row['complainant'] = complainant.extract_text()\n    row['investigator'] = investigator.extract_text()\n    row['number'] = number.extract_text()\n    row['dob'] = dob.extract_text()\n    row['address'] = address.extract_text()\n    row['gender'] = gender.extract_text()\n    row['phone'] = phone.extract_text()\n    row['date_assigned'] = date_assigned.extract_text()\n    row['completed'] = completed.extract_text()\n    row['recorded'] = recorded.extract_text()\n    rows.append(row)\n\nprint(\"We found\", len(rows), \"rows\")\nimport pandas as pd\n\ndf = pd.DataFrame(rows)\ndf\nimport pandas as pd\n\nofficer_dfs = []\nfor section in sections:\n    # Not every section has officers, exit\n    # early if Officer number not mentioned\n    if 'Officer #' not in section.extract_text():\n      continue\n\n    # Grab the case number\n    case_number = (\n        section\n        .find(\"text:contains(Number)\")\n        .below(until='text', width='element')\n        .find('text', overlap='partial')\n        .extract_text()\n    )\n\n    # Grab the table area\n    table = (\n        section\n        .find_all('text:contains(Officer #)')\n        .right(include_source=True)\n        .merge()\n        .expand(top=3, bottom=6)\n    )\n    \n    # Use the guides to extract the table\n    guides = Guides(table)\n    guides.vertical.from_lines(n=8)\n    columns = ['Name', 'ID No.', 'Rank', 'Division', 'Officer Disposition', 'Action Taken', 'Body Cam']\n    officer_df = (\n      table\n      .extract_table(verticals=guides.vertical)\n      .to_df(header=columns)\n    )\n\n    # Add to your list\n    officer_df['case_number'] = case_number\n    officer_dfs.append(officer_df)\n\n# Combine the dataframes\nprint(\"Combining\", len(officer_dfs), \"officer dataframes\")\ndf = pd.concat(officer_dfs, ignore_index=True)\ndf.head()",
+      "methods": [
+        "Guides",
+        "PDF",
+        "above",
+        "add_exclusion",
+        "below",
+        "expand",
+        "extract_table",
+        "extract_text",
+        "find",
+        "find_all",
+        "from_lines",
+        "get_sections",
+        "merge",
+        "right",
+        "show",
+        "to_df"
+      ],
+      "selectors": [
+        "text",
+        "text:contains(Address)",
+        "text:contains(Complainant)",
+        "text:contains(Complaint #)",
+        "text:contains(Completed)",
+        "text:contains(DOB)",
+        "text:contains(Date Assigned)",
+        "text:contains(Gender)",
+        "text:contains(H Phone)",
+        "text:contains(Investigator)",
+        "text:contains(Number)",
+        "text:contains(Officer #)",
+        "text:contains(Recorded)"
+      ],
+      "tags": [
+        "law enforcement",
+        "PDF extraction",
+        "redactions",
+        "relational data",
+        "complex formatting"
+      ],
+      "complexity": 20,
+      "pdf": "k046682-111320-opa-lea-database-install_1.pdf"
+    },
+    {
+      "id": "use-of-force-raw",
+      "slug": "use-of-force-raw",
+      "title": "Extracting Use-of-Force Records from Vancouver Police PDF",
+      "description": "This PDF contains detailed records of Vancouver Police's use-of-force incidents, provided after a public records request by journalists. Challenges include its very very very small font size and lots of empty whitespace.",
+      "content": "Extracting Use-of-Force Records from Vancouver Police PDF\n\nThis PDF contains detailed records of Vancouver Police's use-of-force incidents, provided after a public records request by journalists. Challenges include its very small font size and lots of empty whitespace.\nfrom natural_pdf import PDF\n\npdf = PDF(\"use-of-force-raw.pdf\")\npage = pdf.pages[0]\npage.show()\nLet's find all the headers, they're the text at the top of the pag, which means they have the smallest y0.\nheaders = page.find_all('text[y0=min()]')\nheaders.extract_each_text()\nWe can now use those headers to create guides that fit between each column.\nfrom natural_pdf.analyzers.guides import Guides\n\nguides = Guides(page)\nguides.vertical.from_headers(headers)\nguides.show()\nOnce we've established the columns, we're free to extract the table. [pdfplumber](https://github.com/jsvine/pdfplumber) is smart enough behind the scenes to know what each row is.\nguides.extract_table().to_df()\nCombining the results for every page\n\nIf you provide a list of pages, guides can extract the tables from each of them. It will also do nice things like automatically remove duplicate column headers without you even asking!\ndf = guides.extract_table(pdf.pages).to_df()\nprint(\"You found\", len(df), \"rows\")\n\ndf.tail()",
+      "code": "from natural_pdf import PDF\n\npdf = PDF(\"use-of-force-raw.pdf\")\npage = pdf.pages[0]\npage.show()\nheaders = page.find_all('text[y0=min()]')\nheaders.extract_each_text()\nfrom natural_pdf.analyzers.guides import Guides\n\nguides = Guides(page)\nguides.vertical.from_headers(headers)\nguides.show()\nguides.extract_table().to_df()\ndf = guides.extract_table(pdf.pages).to_df()\nprint(\"You found\", len(df), \"rows\")\n\ndf.tail()",
+      "methods": [
+        "Guides",
+        "PDF",
+        "extract_each_text",
+        "extract_table",
+        "find_all",
+        "from_headers",
+        "show",
+        "to_df"
+      ],
+      "selectors": [
+        "text[y0=min()]"
+      ],
+      "tags": [
+        "small font",
+        "public records",
+        "tables",
+        "sparse"
+      ],
+      "complexity": 5,
+      "pdf": "use-of-force-raw.pdf"
+    },
+    {
+      "id": "sample-bop-policy-restaurant",
+      "slug": "sample-bop-policy-restaurant",
+      "title": "Extracting Business Insurance Details from BOP PDF",
+      "description": "This PDF is a complex insurance policy document generated for small businesses requiring BOP coverage. It contains an overwhelming amount of information across 111 pages. Challenges include varied forms that may differ slightly between carriers, making extraction inconsistent. It has to deal with different templated layouts, meaning even standard parts can shift when generated by different software.",
+      "content": "Extracting Business Insurance Details from BOP PDF\n\nThis PDF is a complex insurance policy document generated for small businesses requiring BOP coverage. It contains an overwhelming amount of information across 111 pages. Challenges include varied forms that may differ slightly between carriers, making extraction inconsistent. It has to deal with different templated layouts, meaning even standard parts can shift when generated by different software.\nfrom natural_pdf import PDF\nfrom natural_pdf.analyzers.guides import Guides\n\npdf = PDF(\"sample-bop-policy-restaurant.pdf\")\npage = pdf.pages[0]\npage.show()\nLook at that watermark!\npage.find_all('text[color~=red]').show()\nLet's exclude it by finding all reddish text and removing it on each page. We can do this pdf-wide.\n# pdf.add_exclusion('text[color~=red]')\npdf.find_all('text[color~=red]').exclude()\nWe can get the policy number by going to the right of the label.\n(\n    page\n    .find(text=\"POLICY NUMBER\")\n    .right(until='text')\n    .show()\n)\n(\n    page\n    .find(text=\"POLICY NUMBER\")\n    .right(until='text')\n    .extract_text()\n)\nThe address is a little different since it spans two (or more? or fewer?) lines. We'll start by grabbing it, and expanding downwards until we hit the next text label.\n(\n    page\n    .find(text=\"Mailing Address\")\n    .expand(bottom='text')\n    .show()\n)\nThen we just swing to the right and grab the text across the rest of the page.\n(\n    page\n    .find(text=\"Mailing Address\")\n    .expand(bottom='text')\n    .right()\n    .extract_text()\n)\nHmm what else do we have?\npdf.pages[:10].show(cols=2)\nHmmm let's go to the Service of Suit page. I don't want to think abotu guessing what page it is, so I'll just find the text on it.\npage = pdf.find(text=\"SERVICE OF SUIT\").page\npage.show()\nWe probably want to get rid of those headers and footers.\nheader = page.region(bottom=100)\nfooter = page.region(bottom=page.height-70)\n(header + footer).show()\nMight as well get rid of them on every single page while we're at it.\npdf.add_exclusion(lambda page: page.region(bottom=100))\npdf.add_exclusion(lambda page: page.region(top=page.height-70))\nAnd now we can grab the text!\ntext = page.extract_text()\nprint(text)\nThe rest of the PDF is a low of finding and .below() and .right() and all of that.",
+      "code": "from natural_pdf import PDF\nfrom natural_pdf.analyzers.guides import Guides\n\npdf = PDF(\"sample-bop-policy-restaurant.pdf\")\npage = pdf.pages[0]\npage.show()\npage.find_all('text[color~=red]').show()\n# pdf.add_exclusion('text[color~=red]')\npdf.find_all('text[color~=red]').exclude()\n(\n    page\n    .find(text=\"POLICY NUMBER\")\n    .right(until='text')\n    .show()\n)\n(\n    page\n    .find(text=\"POLICY NUMBER\")\n    .right(until='text')\n    .extract_text()\n)\n(\n    page\n    .find(text=\"Mailing Address\")\n    .expand(bottom='text')\n    .show()\n)\n(\n    page\n    .find(text=\"Mailing Address\")\n    .expand(bottom='text')\n    .right()\n    .extract_text()\n)\npdf.pages[:10].show(cols=2)\npage = pdf.find(text=\"SERVICE OF SUIT\").page\npage.show()\nheader = page.region(bottom=100)\nfooter = page.region(bottom=page.height-70)\n(header + footer).show()\npdf.add_exclusion(lambda page: page.region(bottom=100))\npdf.add_exclusion(lambda page: page.region(top=page.height-70))\ntext = page.extract_text()\nprint(text)",
+      "methods": [
+        "Guides",
+        "PDF",
+        "add_exclusion",
+        "exclude",
+        "expand",
+        "extract_text",
+        "find",
+        "find_all",
+        "region",
+        "right",
+        "show"
+      ],
+      "selectors": [
+        "text[color~=red]"
+      ],
+      "tags": [
+        "Insurance Policy",
+        "Complex Layouts",
+        "Templated Documents",
+        "Watermark"
+      ],
+      "complexity": 12,
+      "pdf": "sample-bop-policy-restaurant.pdf"
+    },
+    {
+      "id": "liberty-county-boe",
+      "slug": "liberty-county-boe",
+      "title": "Bad OCR in a board of education annual financial report",
+      "description": "This PDF is all sorts of information about the Board of Education in Liberty County, Georgia",
+      "content": "Bad OCR in a board of education annual financial report\n\nSo we have a reasonably long PDF (72 pages) that we want to grab a single page of information from. On top of everything else the text recognition (OCR) is bad. We'll need to redo that, so we'll start by reading the PDF in with text_layer=False to have it discard the incorrect text.\nfrom natural_pdf import PDF\n\npdf = PDF(\"liberty-county-boe.pdf\", text_layer=False)\npdf.pages.show(cols=6)\nNow we need to apply new OCR to it.\n\nWe're impatient and only care about one specific page, and we know the page is somewhere near the front. To speed things up, we'll apply OCR to a subset of the pages.\npdf.pages[5:20].apply_ocr()\nNow we can look for the content we're interested in.\npdf.find(text=\"FINANCIAL HIGHLIGHTS\").show()\nGranted if our OCR was off we might not be able to just grab what we're looking for, but luckily it's printed very nicely and we can almost guarantee the text comes through well.\n\nWe can preview to make sure the page looks right...\npage = pdf.find(text=\"FINANCIAL HIGHLIGHTS\").page\npage.show()\n...and then pull out the text, save it to a file, whatever we want.\ntext = page.extract_text()\nprint(text)\n\nwith open(\"content.txt\", 'w') as fp:\n    fp.write(text)\nIf we wanted to pass this over to someone else to double-check, we could even save the page itself as an image. We use .render() instead of .show() because it by default won't include highlights and annotations and that kind of stuff.\npage.render().save(\"output.png\")",
+      "code": "from natural_pdf import PDF\n\npdf = PDF(\"liberty-county-boe.pdf\", text_layer=False)\npdf.pages.show(cols=6)\npdf.pages[5:20].apply_ocr()\npdf.find(text=\"FINANCIAL HIGHLIGHTS\").show()\npage = pdf.find(text=\"FINANCIAL HIGHLIGHTS\").page\npage.show()\ntext = page.extract_text()\nprint(text)\n\nwith open(\"content.txt\", 'w') as fp:\n    fp.write(text)\npage.render().save(\"output.png\")",
+      "methods": [
+        "PDF",
+        "extract_text",
+        "find",
+        "render",
+        "save",
+        "show"
+      ],
+      "selectors": [],
+      "tags": [
+        "financial report",
+        "multi-page",
+        "OCR",
+        "page navigation"
+      ],
+      "complexity": 6,
+      "pdf": "liberty-county-boe.pdf"
+    },
+    {
+      "id": "ocr-example",
+      "slug": "ocr-example",
+      "title": "OCR and AI magic",
+      "description": "Master OCR techniques with Natural PDF - from basic text recognition to advanced LLM-powered corrections. Learn to extract text from image-based PDFs, handle tables without proper boundaries, and leverage AI for accuracy improvements.",
+      "content": "OCR: Recognizing text\n\nSometimes you can't actually get the text off of the page. It's an image of text instead of being actual text.\nfrom natural_pdf import PDF\n\npdf = PDF(\"ocr-example.pdf\")\n\npage = pdf.pages[0]\npage.show(width=700)\nLooks like it's full of words, right? But when we try to extract the text, it doesn't go as planned.\ntext = page.extract_text()\nprint(text)\nNothing \u2013 it's time for OCR!\n\nOCR stands for Optical Character Recognition, which just means detecting characters from images. No one ever actually says \"optical character recognition,\" though, they always just call it \"OCR.\"\n\nThere are a looooot of OCR engines out there, and one of the things that makes Natural PDF nice is that it supports multiples. Figuring out which one is the \"best\" isn't as tough when you can just run them all right after each other.\n\nThe default is [EasyOCR](https://github.com/JaidedAI/EasyOCR) which usually works fine.\npage.apply_ocr()\ntext = page.extract_text()\nprint(text)\nI'm very iritated by the \"Durham's Pure Leaf Lardl\" instead of \"Durham's Pure Leaf Lard!\". Why'd it miss that??\n\nI don't need to know why, though, really, because I can just try some other engine! You can also fool around with the options - some of the the lowest-hanging fruit is increasing the resolution of the OCR. The default at the moment is 150, you can try upping to 300 for (potentially) better results.\npage.apply_ocr('surya', resolution=192)\ntext = page.extract_text()\nprint(text)\nFinding tables on OCR documents\n\nWhen we used page.extract_table() last time, it was easy because there were all of these line elements on the page that pdfplumber could detect and say \"hey, it's a table!\" For the same reason that there's no real text on the page, there's also no real lines on the page. Instead, we're going to do a fun secret trick where we look at what horizontal and vertical coordinates seem like they might be lines by setting a threshold.\npage.extract_table()\ntable_area = (\n    page\n    .find('text:contains(Violations)')\n    .below(\n        until='text:contains(Jungle)',\n        include_endpoint=False\n    )\n)\ntable_area.show(crop=True)\nfrom natural_pdf.analyzers import Guides\n\nguides = Guides(table_area)\n\n# Add guides between the headers\nguides.vertical.from_content(\n    ['Statute', 'Description', 'Level', 'Repeat'],\n    align='between'\n)\n\n# Shift them around so they don't overlap the text\nguides.vertical.snap_to_whitespace(detection_method='text')\n\n# add in horizontal lines in places where 80% of the pixels are 'used'\nguides.horizontal.from_lines(threshold=0.8)\n\n# Honestly you could have done the same thing for the vertical lines\n# but it isn't as fun as .from_content, you know?\n# n=5 finds the 5 most likely places based on pixel density\n# guides.vertical.from_lines(n=5)\n\nguides.show()\nYou can just extract the data with .extract_table()...\ndf = guides.extract_table().to_df()\ndf\ndf.to_csv(\"output.csv\", index=False)\nBut if you want to actually do things with specific columns or have more control, you can ask the guides for specific columns or rows.\nguides.columns[-1].show()\nguides.rows[3].show()\nFiguring out information about things that are not text\n\nIn a tiny preview of the next notebook: what about those checkboxes? Turns out we can use image classification AI to do it for us!\nlast_col = guides.columns[-1].expand(top=-40)\nlast_col.show(crop=True)\ncells = guides.cells[-1][:]\ncells = cells.expand(left=-60, right=-175, top=-16, bottom=-16)\ncells.show(crop=True)\ncells.classify_all(['X', 'empty'], using='vision')\ncells.apply(lambda cell: (cell.category, cell.category_confidence))\nIt's like magic! We'll look at it more in another notebook.\n\nCorrecting OCR\n\nWhile we love OCR when it works, it often does not work great. We have a few solutions: send humans after it, or use LLMs or spell check to correct it.\n\nWith LLMs\n\nLet's OCR at a low resolution, then see what our text looks like.\npage.apply_ocr(resolution=50)\npage.find_all('text').inspect()\nSome of these are pretty easy - for example, \"Uraanilary Warking Conditions\" should be \"Unsanity working conditions.\" OCR tools just don't know that kind of thing! But what if we could go through each piece of text, some some sort of spell check or something?\n\nYou can use correct_ocr to change the text in a region.\ndef correct_text_region(region):\n    return \"This is the updated text\"\n    \npage.correct_ocr(correct_text_region)\nAnd then, magically, all of our text is whatever we return.\npage.find_all('text').inspect()\nBut clearly we don't want the same thing every time! Let's add the bad OCR back in...\n# Re-apply the OCR to break it again\npage.apply_ocr('surya', resolution=15)\n...and feed each line to an LLM trying to fix it.\nimport os\nfrom openai import OpenAI\nfrom natural_pdf.ocr.utils import direct_ocr_llm\n\n# Set your API key as an environment variable:\n# export OPENAI_API_KEY=\"your_actual_api_key\"\nclient = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))\n\nprompt = \"\"\"\nCorrect the spelling of this OCR'd text, a snippet of a document.\nPreserve original capitalization, punctuation, and symbols. \nChanging meaning is okay if it's clearly an OCR issue.\nDo not add any explanatory text, translations, comments, or quotation marks around the result.\n\"\"\"\n\ndef correct_text_region(region):\n    text = region.extract_text()\n    completion = client.chat.completions.create(\n        model=\"gpt-4o-nano\",\n        messages=[\n            {\n                \"role\": \"system\", \"content\": prompt\n            },\n            {\n                \"role\": \"user\",\n                \"content\": text\n            },\n        ],\n    )\n\n    updated = completion.choices[0].message.content\n\n    if text != updated:    \n        print(f\"OLD: {text}\\nNEW:{updated}\") \n\n    return updated\n\npage.correct_ocr(correct_text_region)\nAnd now we can use .extract_text() the magical same way.\n\nThe real benefit of this vs sending the whole document to the LLM is we don't change where the text is. An LLM might OCR something for us, but it loses the spatial context that we find so important.\ntext = page.extract_text()\nprint(text)\nLet's do the OCR with the LLM, period\n\nBut if the LLM is that good at OCR, we can also find pieces of the page we would like to OCR and send them each in isolation to the LLM. We use detect_only=True so it doesn't try to figure out what the text is, just that the text is there.\npage.apply_ocr('surya', detect_only=True)\npage.find_all('text').show()\npage.find_all('text').inspect()\nNow we'll do an even fancier correct_text_region: it takes the region as an image, and sends it right on over to the LLM for OCR.\nimport os\nfrom openai import OpenAI\nfrom natural_pdf.ocr.utils import direct_ocr_llm\n\n# Set your API key as an environment variable:\n# export OPENAI_API_KEY=\"your_actual_api_key\"\nclient = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))\n\nprompt = \"\"\"OCR this image patch. Return only the exact text content visible in the image. \nPreserve original spelling, capitalization, punctuation, and symbols.\nFix misspellings if they are the result of blurry or incorrect OCR.\nDo not add any explanatory text, translations, comments, or quotation marks around the result.\nIf you cannot process the image or do not see any text, return an empty space.\nThe text is from an inspection report of a slaughterhouse.\"\"\"\n# The text is likely from a Greek document, potentially a spreadsheet, containing Modern Greek words or numbers\n\ndef correct_text_region(region):\n    # Use a high resolution for the LLM call for best accuracy\n    return direct_ocr_llm(\n        region, \n        client, \n        prompt=prompt, \n        resolution=150, \n        model=\"gpt-4o\" \n    )\n\npage.correct_ocr(correct_text_region)\nWhat do we have now?\npage.find_all('text').inspect()\ntext = page.extract_text()\nprint(text)",
+      "code": "from natural_pdf import PDF\n\npdf = PDF(\"ocr-example.pdf\")\n\npage = pdf.pages[0]\npage.show(width=700)\ntext = page.extract_text()\nprint(text)\npage.apply_ocr()\ntext = page.extract_text()\nprint(text)\npage.apply_ocr('surya', resolution=192)\ntext = page.extract_text()\nprint(text)\npage.extract_table()\ntable_area = (\n    page\n    .find('text:contains(Violations)')\n    .below(\n        until='text:contains(Jungle)',\n        include_endpoint=False\n    )\n)\ntable_area.show(crop=True)\nfrom natural_pdf.analyzers import Guides\n\nguides = Guides(table_area)\n\n# Add guides between the headers\nguides.vertical.from_content(\n    ['Statute', 'Description', 'Level', 'Repeat'],\n    align='between'\n)\n\n# Shift them around so they don't overlap the text\nguides.vertical.snap_to_whitespace(detection_method='text')\n\n# add in horizontal lines in places where 80% of the pixels are 'used'\nguides.horizontal.from_lines(threshold=0.8)\n\n# Honestly you could have done the same thing for the vertical lines\n# but it isn't as fun as .from_content, you know?\n# n=5 finds the 5 most likely places based on pixel density\n# guides.vertical.from_lines(n=5)\n\nguides.show()\ndf = guides.extract_table().to_df()\ndf\ndf.to_csv(\"output.csv\", index=False)\nguides.columns[-1].show()\nguides.rows[3].show()\nlast_col = guides.columns[-1].expand(top=-40)\nlast_col.show(crop=True)\ncells = guides.cells[-1][:]\ncells = cells.expand(left=-60, right=-175, top=-16, bottom=-16)\ncells.show(crop=True)\ncells.classify_all(['X', 'empty'], using='vision')\ncells.apply(lambda cell: (cell.category, cell.category_confidence))\npage.apply_ocr(resolution=50)\npage.find_all('text').inspect()\ndef correct_text_region(region):\n    return \"This is the updated text\"\n    \npage.correct_ocr(correct_text_region)\npage.find_all('text').inspect()\n# Re-apply the OCR to break it again\npage.apply_ocr('surya', resolution=15)\nimport os\nfrom openai import OpenAI\nfrom natural_pdf.ocr.utils import direct_ocr_llm\n\n# Set your API key as an environment variable:\n# export OPENAI_API_KEY=\"your_actual_api_key\"\nclient = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))\n\nprompt = \"\"\"\nCorrect the spelling of this OCR'd text, a snippet of a document.\nPreserve original capitalization, punctuation, and symbols. \nChanging meaning is okay if it's clearly an OCR issue.\nDo not add any explanatory text, translations, comments, or quotation marks around the result.\n\"\"\"\n\ndef correct_text_region(region):\n    text = region.extract_text()\n    completion = client.chat.completions.create(\n        model=\"gpt-4o-nano\",\n        messages=[\n            {\n                \"role\": \"system\", \"content\": prompt\n            },\n            {\n                \"role\": \"user\",\n                \"content\": text\n            },\n        ],\n    )\n\n    updated = completion.choices[0].message.content\n\n    if text != updated:    \n        print(f\"OLD: {text}\\nNEW:{updated}\") \n\n    return updated\n\npage.correct_ocr(correct_text_region)\ntext = page.extract_text()\nprint(text)\npage.apply_ocr('surya', detect_only=True)\npage.find_all('text').show()\npage.find_all('text').inspect()\nimport os\nfrom openai import OpenAI\nfrom natural_pdf.ocr.utils import direct_ocr_llm\n\n# Set your API key as an environment variable:\n# export OPENAI_API_KEY=\"your_actual_api_key\"\nclient = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))\n\nprompt = \"\"\"OCR this image patch. Return only the exact text content visible in the image. \nPreserve original spelling, capitalization, punctuation, and symbols.\nFix misspellings if they are the result of blurry or incorrect OCR.\nDo not add any explanatory text, translations, comments, or quotation marks around the result.\nIf you cannot process the image or do not see any text, return an empty space.\nThe text is from an inspection report of a slaughterhouse.\"\"\"\n# The text is likely from a Greek document, potentially a spreadsheet, containing Modern Greek words or numbers\n\ndef correct_text_region(region):\n    # Use a high resolution for the LLM call for best accuracy\n    return direct_ocr_llm(\n        region, \n        client, \n        prompt=prompt, \n        resolution=150, \n        model=\"gpt-4o\" \n    )\n\npage.correct_ocr(correct_text_region)\npage.find_all('text').inspect()\ntext = page.extract_text()\nprint(text)",
+      "methods": [
+        "Guides",
+        "PDF",
+        "apply_ocr",
+        "below",
+        "correct_ocr",
+        "extract_table",
+        "extract_text",
+        "find",
+        "find_all",
+        "from_content",
+        "from_lines",
+        "inspect",
+        "show",
+        "snap_to_whitespace",
+        "to_df"
+      ],
+      "selectors": [
+        "text",
+        "text:contains(Violations)"
+      ],
+      "tags": [
+        "OCR",
+        "LLM Integration",
+        "Text Extraction",
+        "Table Detection",
+        "AI Correction"
+      ],
+      "complexity": 28,
+      "pdf": "ocr-example.pdf"
+    },
+    {
+      "id": "mednine",
+      "slug": "mednine",
+      "title": "Arabic Election Results Table Extraction from Mednine PDF",
+      "description": "This PDF has a data table showing election results from the Tunisian region of Mednine. Challenges include spanning header cells and rotated headers. It has Arabic script.",
+      "content": "Arabic Election Results Table Extraction from Mednine PDF\n\nThis PDF has a data table showing election results from the Tunisian region of Mednine. Challenges include spanning header cells and rotated headers. It has Arabic script.\n\nUpdated for testing caching system with cascading dependencies!\nfrom natural_pdf import PDF\n\npdf = PDF(\"mednine.pdf\")\npdf.show(cols=3)\nI spent far too long making sure Natural PDF supports right-to-left scripts like Arabic. While I can't read them to confirm, I'm vaguely confident that the text we're pulling from the PDF is accurate.\n## Building a flow\n\nSince this PDF is all one big long table with not much else in the way, we can most likely just stack all of the pages on top of each other with a Flow.\nfrom natural_pdf.flows import Flow\n\nflow = Flow(pdf.pages, arrangement='vertical')\nflow.show(width=300)\nFlows are ways of connecting separate pages or regions vertically or horizontally.\n\n## Extracting the table\n\nSince we're using a flow we can just rest easy on `.extract_table()`, which automatically combines the tables across the entire flow.\ndf = flow.extract_table().to_df(header=None)\ndf\nIf you'd rather not use a Flow, an alternative is going through each page. Instead of a `for` loop I like to use `.apply`, as it keeps things a bit shorter. You could also use a list comprehension!\nimport pandas as pd\ndataframes = pdf.pages.apply(\n    lambda page: page.extract_table().to_df(header=None)\n)\nprint(\"Found\", len(dataframes), \"tables\")\n\n# Combine\ndf = pd.concat(dataframes, ignore_index=True)\ndf\nI'm a big fan of taking as much information as possible, then cleaning it up later. We could spend time wrangling the column headers on the first page, spacing out grids, etc etc etc, but instead let's just grab the whole thing and sort it out later.\n\nCleaning up the data\n\nNow it just becomes an exercise in data cleanup! This is something AI coding tools are excellent at, so feel free to lean hard on them.\n# Use row 2 as header\ndf.columns = df.iloc[3].fillna(df.iloc[2]).str.replace(\"\\n\", \" \")\n\n# Drop the first 3 rows\ndf = df.iloc[4:].reset_index(drop=True)\n\n# Remove spaces from numbers and convert to int\nnumeric_cols = df.columns[0:4]\ndf[numeric_cols] = df[numeric_cols].replace(r\"\\s+\", \"\", regex=True).astype(int)\ndf",
+      "code": "from natural_pdf import PDF\n\npdf = PDF(\"mednine.pdf\")\npdf.show(cols=3)\nfrom natural_pdf.flows import Flow\n\nflow = Flow(pdf.pages, arrangement='vertical')\nflow.show(width=300)\ndf = flow.extract_table().to_df(header=None)\ndf\nimport pandas as pd\ndataframes = pdf.pages.apply(\n    lambda page: page.extract_table().to_df(header=None)\n)\nprint(\"Found\", len(dataframes), \"tables\")\n\n# Combine\ndf = pd.concat(dataframes, ignore_index=True)\ndf\n# Use row 2 as header\ndf.columns = df.iloc[3].fillna(df.iloc[2]).str.replace(\"\\n\", \" \")\n\n# Drop the first 3 rows\ndf = df.iloc[4:].reset_index(drop=True)\n\n# Remove spaces from numbers and convert to int\nnumeric_cols = df.columns[0:4]\ndf[numeric_cols] = df[numeric_cols].replace(r\"\\s+\", \"\", regex=True).astype(int)\ndf",
+      "methods": [
+        "Flow",
+        "PDF",
+        "apply",
+        "astype",
+        "extract_table",
+        "replace",
+        "show",
+        "to_df"
+      ],
+      "selectors": [],
+      "tags": [
+        "Election Results",
+        "Arabic Script",
+        "Table Extraction",
+        "Header Challenges"
+      ],
+      "complexity": 5,
+      "pdf": "mednine.pdf"
+    },
+    {
+      "id": "multicolumn",
+      "slug": "multicolumn",
+      "title": "Working with page structure",
+      "description": "Extract text from complex multi-column layouts while maintaining proper reading order. Learn techniques for handling academic papers, newsletters, and documents with intricate column structures using Natural PDF's layout detection features.",
+      "content": "Multi-page flows\n\nSometimes you have data that flows over multiple columns, or pages, or just... isn't arranged in a \"normal\" top-to-bottom way.\nfrom natural_pdf import PDF\n\npdf = PDF(\"multicolumn.pdf\")\npage = pdf.pages[0]\npage.show()\nNatural PDF deals with these through [reflowing pages](https://jsoma.github.io/natural-pdf/reflowing-pages/), where you grab specific regions of a page and then paste them back together either vertically or horizontally.\n\nIn this example we're splitting the page into three columns.\nleft = page.region(left=0, right=page.width/3, top=0, bottom=page.height)\nmid = page.region(left=page.width/3, right=page.width/3*2, top=0, bottom=page.height)\nright = page.region(left=page.width/3*2, right=page.width, top=0, bottom=page.height)\npage.highlight(left, mid, right)\nNow let's stack them on top of each other.\nfrom natural_pdf.flows import Flow\n\nstacked = [left, mid, right]\nflow = Flow(segments=stacked, arrangement=\"vertical\")\nflow.show()\nNow any time we want to use spatial comparisons, like \"find something below this,\" it just works.\nregion = (\n    flow\n    .find('text:contains(\"Table one\")')\n    .below(\n        until='text:contains(\"Table two\")',\n        include_endpoint=False\n    )\n)\nregion.show()\nIt works for text, it works for tables, it works for anything. Let's see how we can get both tables on the page.\n\nFirst we find the bold headers \u2013 we need to say width > 10 because otherwise it pulls some weird tiny empty boxes.\n(\n    flow\n    .find_all('text[width>10]:bold')\n    .show()\n)\nThen we take each of those headers, and go down down down until we either hit another bold header or the \"Here is a bit more text\" text.\nregions = (\n    flow\n    .find_all('text[width>10]:bold')\n    .below(\n        until='text[width>10]:bold|text:contains(\"Here is a bit\")',\n        include_endpoint=False\n    )\n)\nregions.show()\nNow we can use .extract_table() on each individual region to give us however many tables.\nregions[0].extract_table().to_df()\n# Combine them if we want\nimport pandas as pd\n\ndfs = regions.apply(lambda region: region.extract_table().to_df())\nmerged = pd.concat(dfs, ignore_index=True)\nmerged\nLayout analysis and magic table extraction\n\nSimilar to how we have feelings about what things are on a page - headers, tables, graphics \u2013 computers also have opinions! Just like some AI models have been trained to do things like identify pictures of cats and dogs or spell check, others are capable of layout analysis - [YOLO](https://huggingface.co/spaces/omoured/YOLOv11-Document-Layout-Analysis), [surya](https://github.com/datalab-to/surya), etc etc etc. There are a million! [TATR](https://github.com/microsoft/table-transformer) is one of the useful ones for us, it's just for table detection.\n\nBut honestly: they're mostly trained on academic papers, so they aren't very good at the kinds of awful documents that journalists have to deal with. And with Natural PDF, you're probably selecting text[size>12]:bold in order to find headlines, anyway. But if your page has no readable text, they might be able to provide some useful information.\n\nLet's start with [YOLO](https://github.com/opendatalab/DocLayout-YOLO), the default.\nfrom natural_pdf import PDF\n\npdf = PDF(\"needs-ocr.pdf\")\npage = pdf.pages[0]\n# default is YOLO\npage.analyze_layout()\npage.find_all('region').show(group_by='type')\npage.find('table').apply_ocr()\ntext = page.extract_text()\nprint(text)\nBetter layout analysis with tables\n\nLet's see what TATR - Microsoft's table transformer \u2013 finds for us.\npage.analyze_layout('tatr')\npage.find_all('region').show(group_by='type')\nThere's just so much stuff that TATR is finding that it's all overlapping.\n\nFor example, we can just look at one piece at a time.\n# table-cell\n# table-row\n# table-column\npage.find_all('region[type=table-column]').show(crop=True)\n# Grab all of the columns\ncols = page.find_all('region[type=table-column]')\n\n# Take one of the columns and apply OCR to it\ncols[2].apply_ocr()\ntext = cols[2].extract_text()\nprint(text)\nlen(cols[2].find_all('text[source=ocr]'))\npage.find('table').show()\ndata = page.find('table').extract_table()\ndata\nWhy YOLO?\n\nI think YOLO is pretty good for isolating a part of a page that has a table, then using Guides to break it down.\npage.analyze_layout()\npage.find_all('region').show(group_by=\"type\")\ntable_area = page.find(\"region[type=table]\")\ntable_area.apply_ocr()\ntext = table_area.extract_text()\nprint(text)\nfrom natural_pdf.analyzers import Guides\n\nguides = Guides(table_area)\nguides.vertical.from_lines(threshold=0.6)\nguides.horizontal.from_lines(threshold=0.6)\nguides.show()\nguides.extract_table().to_df()",
+      "code": "from natural_pdf import PDF\n\npdf = PDF(\"multicolumn.pdf\")\npage = pdf.pages[0]\npage.show()\nleft = page.region(left=0, right=page.width/3, top=0, bottom=page.height)\nmid = page.region(left=page.width/3, right=page.width/3*2, top=0, bottom=page.height)\nright = page.region(left=page.width/3*2, right=page.width, top=0, bottom=page.height)\npage.highlight(left, mid, right)\nfrom natural_pdf.flows import Flow\n\nstacked = [left, mid, right]\nflow = Flow(segments=stacked, arrangement=\"vertical\")\nflow.show()\nregion = (\n    flow\n    .find('text:contains(\"Table one\")')\n    .below(\n        until='text:contains(\"Table two\")',\n        include_endpoint=False\n    )\n)\nregion.show()\n(\n    flow\n    .find_all('text[width>10]:bold')\n    .show()\n)\nregions = (\n    flow\n    .find_all('text[width>10]:bold')\n    .below(\n        until='text[width>10]:bold|text:contains(\"Here is a bit\")',\n        include_endpoint=False\n    )\n)\nregions.show()\nregions[0].extract_table().to_df()\n# Combine them if we want\nimport pandas as pd\n\ndfs = regions.apply(lambda region: region.extract_table().to_df())\nmerged = pd.concat(dfs, ignore_index=True)\nmerged\nfrom natural_pdf import PDF\n\npdf = PDF(\"needs-ocr.pdf\")\npage = pdf.pages[0]\n# default is YOLO\npage.analyze_layout()\npage.find_all('region').show(group_by='type')\npage.find('table').apply_ocr()\ntext = page.extract_text()\nprint(text)\npage.analyze_layout('tatr')\npage.find_all('region').show(group_by='type')\n# table-cell\n# table-row\n# table-column\npage.find_all('region[type=table-column]').show(crop=True)\n# Grab all of the columns\ncols = page.find_all('region[type=table-column]')\n\n# Take one of the columns and apply OCR to it\ncols[2].apply_ocr()\ntext = cols[2].extract_text()\nprint(text)\nlen(cols[2].find_all('text[source=ocr]'))\npage.find('table').show()\ndata = page.find('table').extract_table()\ndata\npage.analyze_layout()\npage.find_all('region').show(group_by=\"type\")\ntable_area = page.find(\"region[type=table]\")\ntable_area.apply_ocr()\ntext = table_area.extract_text()\nprint(text)\nfrom natural_pdf.analyzers import Guides\n\nguides = Guides(table_area)\nguides.vertical.from_lines(threshold=0.6)\nguides.horizontal.from_lines(threshold=0.6)\nguides.show()\nguides.extract_table().to_df()",
+      "methods": [
+        "Flow",
+        "Guides",
+        "PDF",
+        "analyze_layout",
+        "apply_ocr",
+        "below",
+        "extract_table",
+        "extract_text",
+        "find",
+        "find_all",
+        "from_lines",
+        "highlight",
+        "region",
+        "show",
+        "to_df"
+      ],
+      "selectors": [
+        "region",
+        "region[type=table-column]",
+        "region[type=table]",
+        "table",
+        "text:contains(\"Table one\")",
+        "text[source=ocr]",
+        "text[width>10]:bold"
+      ],
+      "tags": [
+        "Multi-Column Layout",
+        "Reading Order",
+        "Text Flow",
+        "Academic Papers",
+        "Layout Detection",
+        "Table Extraction",
+        "YOLO",
+        "TATR"
+      ],
+      "complexity": 22,
+      "pdf": "multicolumn.pdf"
+    },
+    {
+      "id": "pomonajailpomonaca06212004",
+      "slug": "pomonajailpomonaca06212004",
+      "title": "ICE Detention Facilities Compliance Report Extraction",
+      "description": "This PDF is an ICE report on compliance among detention facilities over the last 20-30 years. Our aim is to extract facility statuses and contract signatories' names and dates. Challenges include strange redactions, blobby text, poor contrast, and ineffective OCR. It has handwritten signatures and dates that are redacted.",
+      "content": "ICE Detention Facilities Compliance Report Extraction\n\nThis PDF is an ICE report on compliance among detention facilities over the last 20-30 years. Our aim is to extract facility statuses and contract signatories' names and dates. Challenges include strange redactions, blobby text, poor contrast, and ineffective OCR. It has handwritten signatures and dates that are redacted.\n\nLet's take a look at one of the form pages. The text recognition isn't very good so wer'e going to load it in with text_layer=False and do our own OCR.\nfrom natural_pdf import PDF\n\npdf = PDF(\"pomonajailpomonaca06212004.pdf\", text_layer=False)\npage = pdf.pages[3]\npage.show()\nLooks like it's going to be a nightmare! Let's apply OCR to convert the images to text.\n# pdf.apply_ocr(resolution=192) if we wanted the whole thing\npage.apply_ocr(resolution=192)\ntext = page.extract_text()[:200]\nprint(text)\nSelecting content in a column\n\nWe need to grab the content on column at a time, so let's start by focusing on the left column.\nleft_col = page.region(right=page.width/2 - 15)\nleft_col.show()\nWe could also pull one specific section of the page if we wanted to\nwith left_col.within() as col:\n    portion = (\n        left_col\n        .find(\"text:contains(Name and Location)\")\n        .below(\n          until='text:contains(ICE Information)',\n          include_endpoint=False\n        )\n    )\nportion.show(crop=True)\nFuzzy matching\n\nBecause there might be errors in reading the text, we're going to use text:closest to find our labels instead of text:contains. The code below will find the text that's closest to \"Dates of Review,\" even though it will actually come through as Date[s] of Review (I wasn't sure whether it would understand the brackets or convert them to parens).\nlabel = (\n    left_col\n    .find(\"text:closest(Dates of Review)\")\n)\nprint(\"Found\", label.extract_text())\nlabel.show(crop=20)\nNow we want to find the first piece of text under it. Normally we'd just be able to say \"find me the text below this,\" but sometimes when you run OCR on a page the content overlaps. By using anchor='start' we tell Natural PDF that \"below\" counts as anything below the top of the source text.\nwith left_col.within() as col:\n    answer = (\n      label\n      .below(until='text', anchor='start')\n    )\n    print(answer.extract_text('words'))\nNotice that we use left_col.within() to make sure it doesnt' grab any text outside of the box. We also use .endpoint to make sure we're talking about only the text Natural PDF found directly below the label.\n\nWe can duplicate this pattern for anything with the same top/bottom pattern. For example, the county.\n(\n  left_col\n  .find(\"text:closest(County)\")\n  .show(crop=50)\n)\nIt just takes the same code:\nwith left_col.within() as col:\n    label = left_col.find(\"text:closest(County)\")\n    answer = label.below(until='text')\n    print(answer.extract_text('words'))\nThis is an alternative approach to the .endpoint method we saw before. Sometimes text below the answer overlaps slightly with the answer, and if Natural PDF pulls character-by-character it pollutes the answer. By asking for complete \"words\" it should pull the right stuff.\n\nCheckboxes\n\nThis part is the hard one. We'll find the section under Previous Rating, expand it a bit (OCR never lines up perfectly) and trim out the whitespace to make it a nice tight box.\nwith left_col.within() as col:\n    label = left_col.find(\"text:closest(Previous Rating)\")\n    answer = label.below(until='text')\nanswer.expand(5).trim().show(crop=True)\nIn an ideal world I'd have trained a nice custom checkbox analyzer, but I did and it didn't work. So instead we're going to train our own with a few examples. We'll start by grabbing the three checkboxes here.\ndef get_checkbox(region):\n  return region.left(width=20).expand(top=3)\n\nregion1 = get_checkbox(answer.find(text='Acceptable'))\nregion2 = get_checkbox(answer.find(text='Deficient'))\nregion3 = get_checkbox(answer.find(text='At-Risk'))\n(region1 + region2 + region3).show(crop=True)\nNow we'll add the first one as an example of a checked box and the second as an example of an unchecked box.\nfrom natural_pdf import Judge\n\njudge = Judge(\"checkboxes\", labels=[\"checked\", \"unchecked\"])\njudge.forget(delete=True)\n\njudge.add(region1, \"checked\")\njudge.add(region2, \"unchecked\")\nWhat's it think of the third one?\njudge.decide(region3)\nNow let's add a bunch more!\njudge.add(get_checkbox(page.find(text='Field Office')))\njudge.add(get_checkbox(page.find(text='HQ Review')))\njudge.add(get_checkbox(page.find('text[text=Court Order]')))\njudge.add(get_checkbox(page.find('text[text=Major Litigation]')))\njudge.add(get_checkbox(page.find('text[text=Class Action Order]'))))\njudge.add(get_checkbox(page.find('text[text=No]')))\nWhat does it think about them, only knowing two examples?\njudge.inspect()\nUsually you'd take a couple forms worth of checkboxes and mark them all, then send your judge on to the rest of your forms. You can do a quick graphical scoring interface with judge.teach(). Sadly I can't show it to you here because it's interacive.\n# judge.teach()\nBut I promise once you do it you can easily see whether a checkbox on your document is checked or not.",
+      "code": "from natural_pdf import PDF\n\npdf = PDF(\"pomonajailpomonaca06212004.pdf\", text_layer=False)\npage = pdf.pages[3]\npage.show()\n# pdf.apply_ocr(resolution=192) if we wanted the whole thing\npage.apply_ocr(resolution=192)\ntext = page.extract_text()[:200]\nprint(text)\nleft_col = page.region(right=page.width/2 - 15)\nleft_col.show()\nwith left_col.within() as col:\n    portion = (\n        left_col\n        .find(\"text:contains(Name and Location)\")\n        .below(\n          until='text:contains(ICE Information)',\n          include_endpoint=False\n        )\n    )\nportion.show(crop=True)\nlabel = (\n    left_col\n    .find(\"text:closest(Dates of Review)\")\n)\nprint(\"Found\", label.extract_text())\nlabel.show(crop=20)\nwith left_col.within() as col:\n    answer = (\n      label\n      .below(until='text', anchor='start')\n    )\n    print(answer.extract_text('words'))\n(\n  left_col\n  .find(\"text:closest(County)\")\n  .show(crop=50)\n)\nwith left_col.within() as col:\n    label = left_col.find(\"text:closest(County)\")\n    answer = label.below(until='text')\n    print(answer.extract_text('words'))\nwith left_col.within() as col:\n    label = left_col.find(\"text:closest(Previous Rating)\")\n    answer = label.below(until='text')\nanswer.expand(5).trim().show(crop=True)\ndef get_checkbox(region):\n  return region.left(width=20).expand(top=3)\n\nregion1 = get_checkbox(answer.find(text='Acceptable'))\nregion2 = get_checkbox(answer.find(text='Deficient'))\nregion3 = get_checkbox(answer.find(text='At-Risk'))\n(region1 + region2 + region3).show(crop=True)\nfrom natural_pdf import Judge\n\njudge = Judge(\"checkboxes\", labels=[\"checked\", \"unchecked\"])\njudge.forget(delete=True)\n\njudge.add(region1, \"checked\")\njudge.add(region2, \"unchecked\")\njudge.decide(region3)\njudge.add(get_checkbox(page.find(text='Field Office')))\njudge.add(get_checkbox(page.find(text='HQ Review')))\njudge.add(get_checkbox(page.find('text[text=Court Order]')))\njudge.add(get_checkbox(page.find('text[text=Major Litigation]')))\njudge.add(get_checkbox(page.find('text[text=Class Action Order]'))))\njudge.add(get_checkbox(page.find('text[text=No]')))\njudge.inspect()\n# judge.teach()",
+      "methods": [
+        "Judge",
+        "PDF",
+        "add",
+        "apply_ocr",
+        "below",
+        "expand",
+        "extract_text",
+        "find",
+        "forget",
+        "left",
+        "region",
+        "show",
+        "trim"
+      ],
+      "selectors": [
+        "text:closest(County)",
+        "text:closest(Dates of Review)",
+        "text:closest(Previous Rating)",
+        "text:contains(Name and Location)",
+        "text[text=Class Action Order]",
+        "text[text=Court Order]",
+        "text[text=Major Litigation]",
+        "text[text=No]"
+      ],
+      "tags": [
+        "ICE compliance report",
+        "Redacted text",
+        "Handwriting",
+        "OCR needed",
+        "Text extraction issues",
+        "Columns"
+      ],
+      "complexity": 15,
+      "pdf": "pomonajailpomonaca06212004.pdf"
+    },
+    {
+      "id": "basics",
+      "slug": "basics",
+      "title": "Natural PDF basics with text and tables",
+      "description": "Learn the fundamentals of Natural PDF - opening PDFs, extracting text with layout preservation, selecting elements by criteria, spatial navigation, and managing exclusion zones. Perfect starting point for PDF data extraction.",
+      "content": "Opening a PDF\n\nLet's start by opening a PDF. Natural PDF can work with local files or URLs.\nfrom natural_pdf import PDF\n\npdf = PDF(\"basics.pdf\")\npage = pdf.pages[0]\npage.show()\nGrabbing Page Text\n\nYou can extract text while preserving the layout, which maintains the spatial arrangement of text on the page.\ntext = page.extract_text(layout=True)\nprint(text)\nSelecting Elements and Text\n\nNatural PDF provides powerful selectors to find specific elements on the page.\n\nSelect text in a rectangle\npage.find('rect').show()\ntext = page.find('rect').extract_text()\nprint(text)\nFind all text elements\npage.find_all('text').show()\ntexts = page.find_all('text').extract_each_text()\nfor t in texts[:5]:  # Show first 5\n    print(t)\nFind colored text\n# Find red text\nred_text = page.find('text[color~=red]')\nprint(red_text.extract_text())\nFind text by content\n# Find text starting with specific string\ntext = page.find('text:contains(\"INS-\")')\nprint(text.extract_text())\nSpatial Navigation\n\nNatural PDF excels at spatial relationships between elements.\n\nExtract text to the right of a label\n# Extract text to the right of \"Date:\"\ndate = page.find(text=\"Date:\").right(height='element')\ndate.show()\ndate.extract_text()\nExtract tables\ntable = page.extract_table()\nif table:\n    df = table.to_df()\n    print(df.head())\nExclusion Zones\n\nSometimes you need to exclude headers, footers, or other unwanted areas from extraction.\n\nExclude specific regions\ntop = page.region(top=0, left=0, height=80)\nbottom = page.find_all(\"line\")[-1].below()\n(top + bottom).show()\n# Exclude top header area\npage.add_exclusion(top)\n\n# Exclude area below last line\npage.add_exclusion(bottom)\n\n# Now extract text without excluded areas\ntext = page.extract_text()\nprint(text)\nPDF-level exclusions\n\nApply exclusions to all pages in a PDF:\nprint(\"BEFORE EXCLUSION:\", pdf.pages[0].extract_text()[:200])\n# Add header exclusion to all pages\npdf.add_exclusion(lambda page: page.region(top=0, left=0, height=80))\nprint(\"AFTER EXCLUSION:\", pdf.pages[0].extract_text()[:200])",
+      "code": "from natural_pdf import PDF\n\npdf = PDF(\"basics.pdf\")\npage = pdf.pages[0]\npage.show()\ntext = page.extract_text(layout=True)\nprint(text)\npage.find('rect').show()\ntext = page.find('rect').extract_text()\nprint(text)\npage.find_all('text').show()\ntexts = page.find_all('text').extract_each_text()\nfor t in texts[:5]:  # Show first 5\n    print(t)\n# Find red text\nred_text = page.find('text[color~=red]')\nprint(red_text.extract_text())\n# Find text starting with specific string\ntext = page.find('text:contains(\"INS-\")')\nprint(text.extract_text())\n# Extract text to the right of \"Date:\"\ndate = page.find(text=\"Date:\").right(height='element')\ndate.show()\ndate.extract_text()\ntable = page.extract_table()\nif table:\n    df = table.to_df()\n    print(df.head())\ntop = page.region(top=0, left=0, height=80)\nbottom = page.find_all(\"line\")[-1].below()\n(top + bottom).show()\n# Exclude top header area\npage.add_exclusion(top)\n\n# Exclude area below last line\npage.add_exclusion(bottom)\n\n# Now extract text without excluded areas\ntext = page.extract_text()\nprint(text)\nprint(\"BEFORE EXCLUSION:\", pdf.pages[0].extract_text()[:200])\n# Add header exclusion to all pages\npdf.add_exclusion(lambda page: page.region(top=0, left=0, height=80))\nprint(\"AFTER EXCLUSION:\", pdf.pages[0].extract_text()[:200])",
+      "methods": [
+        "PDF",
+        "add_exclusion",
+        "extract_each_text",
+        "extract_table",
+        "extract_text",
+        "find",
+        "find_all",
+        "region",
+        "right",
+        "show",
+        "to_df"
+      ],
+      "selectors": [
+        "line",
+        "rect",
+        "text",
+        "text:contains(\"INS-\")",
+        "text[color~=red]"
+      ],
+      "tags": [
+        "Text Extraction",
+        "Basic Usage",
+        "Element Selection",
+        "Spatial Navigation",
+        "Tables",
+        "Exclusion Zones"
+      ],
+      "complexity": 14,
+      "pdf": "basics.pdf"
+    },
+    {
+      "id": "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+      "slug": "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+      "title": "Extracting Complex Data from Serbian Regulatory PDF",
+      "description": "This PDF contains parts of Serbian policy documents, crucial for a research project analyzing industry policies across countries. The challenge lies in extracting a large table that spans pages (page 90 to 97) and a math formula on page 98, all in Serbian. Both elements lack clear boundaries between pages, complicating extraction.",
+      "content": "Extracting Complex Data from Serbian Regulatory PDF\n\nThis PDF contains parts of Serbian policy documents, crucial for a research project analyzing industry policies across countries. The challenge lies in extracting a large table that spans pages (page 90 to 97) and a math formula on page 98, all in Serbian. Both elements lack clear boundaries between pages, complicating extraction.\nfrom natural_pdf import PDF\nfrom natural_pdf.analyzers.guides import Guides\n\npdf = PDF(\"serbia-zakon-o-naknadama-za-koriscenje-javnih.pdf\")\npdf.pages[:8].show(cols=4)\nThe submitter mentioned specific pages, but it's more fun to say \"between the page with this and the page with that.\"\nfirst_page = pdf.find(text=\"Prilog 7.\").page\nlast_page = pdf.find(text='VISINA NAKNADE ZA ZAGA\u0110ENJE VODA').page\npages = pdf.pages[first_page.index:last_page.index+1]\npages.show(cols=4)\nWe want everything between Table 4 and 5.\nregion = (\n    pages\n    .find(text=\"Tabela 4\")\n    .below(\n        until=\"text:contains(Tabela 5)\",\n        include_endpoint=False,\n        multipage=True\n    )\n)\nregion.show(cols=4)\nWe want everything broken up by category, which is labeled as \"RAZRED\" in the document. We'll just split it into sections with those serving as headers.\nsections = region.get_sections('text:contains(RAZRED)', include_boundaries='none')\n    \nsections.show(cols=4)\nSome of them have headers and some of them don't, which can make extraction tough. Here's one that spans two pages and has headers.\nsections[7].show(cols=2)\nSince it has headers, we can just use .to_df().\nsections[7].extract_table().to_df()\nThis next one does not have headers.\nsections[5].show(cols=2)\nWe'll just manually specify them, probably the easiest route.\ndf = sections[5].extract_table().to_df(header=False)\ndf.columns = ['Naziv proizvoda', 'Opis proizvoda', 'Jed. mere', 'Naknada u dinarima po jedinici mere']\ndf\nHow do we find the math formula? Find the page that has it, then just ask for the image.\npage = pdf.find(text=\"Obra\u010dun naknade za neposredno zaga\u0111enje voda\").page\npage.find(\"image\").show()\nIf we were fancier we'd probably use [surya](https://github.com/datalab-to/surya) to convert it, but Natural PDF can't extract images like that just yet (I don't think?).",
+      "code": "from natural_pdf import PDF\nfrom natural_pdf.analyzers.guides import Guides\n\npdf = PDF(\"serbia-zakon-o-naknadama-za-koriscenje-javnih.pdf\")\npdf.pages[:8].show(cols=4)\nfirst_page = pdf.find(text=\"Prilog 7.\").page\nlast_page = pdf.find(text='VISINA NAKNADE ZA ZAGA\u0110ENJE VODA').page\npages = pdf.pages[first_page.index:last_page.index+1]\npages.show(cols=4)\nregion = (\n    pages\n    .find(text=\"Tabela 4\")\n    .below(\n        until=\"text:contains(Tabela 5)\",\n        include_endpoint=False,\n        multipage=True\n    )\n)\nregion.show(cols=4)\nsections = region.get_sections('text:contains(RAZRED)', include_boundaries='none')\n    \nsections.show(cols=4)\nsections[7].show(cols=2)\nsections[7].extract_table().to_df()\nsections[5].show(cols=2)\ndf = sections[5].extract_table().to_df(header=False)\ndf.columns = ['Naziv proizvoda', 'Opis proizvoda', 'Jed. mere', 'Naknada u dinarima po jedinici mere']\ndf\npage = pdf.find(text=\"Obra\u010dun naknade za neposredno zaga\u0111enje voda\").page\npage.find(\"image\").show()",
+      "methods": [
+        "Guides",
+        "PDF",
+        "below",
+        "extract_table",
+        "find",
+        "show",
+        "to_df"
+      ],
+      "selectors": [
+        "image"
+      ],
+      "tags": [
+        "Serbian",
+        "Large Tables",
+        "Math Formulas",
+        "Regulatory Documents",
+        "multiple tables",
+        "spanning pages"
+      ],
+      "complexity": 9,
+      "pdf": "serbia-zakon-o-naknadama-za-koriscenje-javnih.pdf"
+    },
+    {
+      "id": "20252026-236232",
+      "slug": "20252026-236232",
+      "title": "Extracting Text from Georgia Legislative Bills",
+      "description": "This PDF contains legal bills from the Georgia legislature, published yearly. Challenges include extracting marked-up text like underlines and strikethroughs. It has line numbers that complicate text extraction. ",
+      "content": "Extracting Text from Georgia Legislative Bills\n\nThis PDF contains legal bills from the Georgia legislature, published yearly. Challenges include extracting marked-up text like underlines and strikethroughs. It has line numbers that complicate text extraction... or do they make it easier?\nfrom natural_pdf import PDF\n\npdf = PDF(\"20252026-236232.pdf\")\npage = pdf.pages[-1]\npage.show()\nText with strikethroughs\n\nSee those strikeouts? Usually they're awful, terrible, impossible. When you use .extract_text() it pulls both the \"normal\" text and the struck-out text, ruining your ability to analyze the results.\ntext = page.extract_text()\nprint(text)\nLuckily we have a strikeout selector!\npage.find_all('text:strikeout').show(crop='wide')\nWe can do the same thing with underlined text.\nunderlined = page.find_all('text:underline')\nprint(\"Underlined text is\", underlined.extract_text())\nunderlined.show(crop='wide')\nThis works across pages, too. All of the added text across the pages can be found like this:\ntext = pdf.find_all('text:underline').extract_text()\nprint(text)\ntext = pdf.find_all('text:underline').extract_each_text()\nprint(text)\nIgnoring struck-out text\n\nIf we want .extract_text() to fully ignore struck-out text, we can add an exclusion.\npdf.add_exclusion('text:strikeout')\nEasy!\n\nSelecting the good areas\n\nWe have three approaches to avoiding the numbers on the left-hand column: make use of the numbers, select the region we do want, or ignore the stuff we don't want.\npage = pdf.pages[0]\npage.show()\nOne way to describe the sections we want is text to the right of the numbers. So first we find the general area of the numbers...\npage.region(right=70).show()\n...find the numbers...\n(\n  page\n  .region(right=70)\n  .find_all('text')\n  .show(crop='wide')\n)\n...get the stuff to the right of them...\n(\n  page\n  .region(right=70)\n  .find_all('text')\n  .right()\n  .show(crop='wide')\n)\n...and merge it all together.\n(\n  page\n  .region(right=70)\n  .find_all('text')\n  .right()\n  .merge()\n  .show(crop='wide')\n)\nWe can do it for all pages.\nsections = pdf.pages.apply(lambda page: (\n    page\n        .region(right=70)\n        .find_all('text')\n        .right()\n        .merge()\n    )\n)\nsections.show()\ntext = sections.extract_text()\nprint(text)\nMost documents have headers and footers, this one just also has a left-hand area. What if we just selected the region based on pixels?\narea = page.region(left=70, top=50, bottom=page.height - 100)\narea.show()\nWe can go through each page and do the same thing, ending up with a collection of sections.\nsections = pdf.pages.apply(lambda page: page.region(\n    left=70,\n    top=50,\n    bottom=page.height - 100\n  )\n)\nsections.show()\nAnd now we simply grab the text!\nsections.extract_text()\nsections[0].extract_text()\nsections.extract_each_text()\nAnother route is through **more exclusions**. We start by finding the area on the page where the Bad Stuff is.\nleft = page.region(right=70)\ntop = page.region(bottom=50)\nbottom = page.region(top=page.height-100)\n(left + top + bottom).show()\nThen we tell the PDF to ignore those regions on every single page.\npdf.add_exclusion(lambda page: page.region(right=70))\npdf.add_exclusion(lambda page: page.region(bottom=50))\npdf.add_exclusion(lambda page: page.region(top=page.height-100))\nDone and done! We get a little extra copy on the first page compared to first approach, but this is 100x easier.\npdf.extract_text()",
+      "code": "from natural_pdf import PDF\n\npdf = PDF(\"20252026-236232.pdf\")\npage = pdf.pages[-1]\npage.show()\ntext = page.extract_text()\nprint(text)\npage.find_all('text:strikeout').show(crop='wide')\nunderlined = page.find_all('text:underline')\nprint(\"Underlined text is\", underlined.extract_text())\nunderlined.show(crop='wide')\ntext = pdf.find_all('text:underline').extract_text()\nprint(text)\ntext = pdf.find_all('text:underline').extract_each_text()\nprint(text)\npdf.add_exclusion('text:strikeout')\npage = pdf.pages[0]\npage.show()\npage.region(right=70).show()\n(\n  page\n  .region(right=70)\n  .find_all('text')\n  .show(crop='wide')\n)\n(\n  page\n  .region(right=70)\n  .find_all('text')\n  .right()\n  .show(crop='wide')\n)\n(\n  page\n  .region(right=70)\n  .find_all('text')\n  .right()\n  .merge()\n  .show(crop='wide')\n)\nsections = pdf.pages.apply(lambda page: (\n    page\n        .region(right=70)\n        .find_all('text')\n        .right()\n        .merge()\n    )\n)\nsections.show()\ntext = sections.extract_text()\nprint(text)\narea = page.region(left=70, top=50, bottom=page.height - 100)\narea.show()\nsections = pdf.pages.apply(lambda page: page.region(\n    left=70,\n    top=50,\n    bottom=page.height - 100\n  )\n)\nsections.show()\nsections.extract_text()\nsections[0].extract_text()\nsections.extract_each_text()\nleft = page.region(right=70)\ntop = page.region(bottom=50)\nbottom = page.region(top=page.height-100)\n(left + top + bottom).show()\npdf.add_exclusion(lambda page: page.region(right=70))\npdf.add_exclusion(lambda page: page.region(bottom=50))\npdf.add_exclusion(lambda page: page.region(top=page.height-100))\npdf.extract_text()",
+      "methods": [
+        "PDF",
+        "add_exclusion",
+        "apply",
+        "extract_each_text",
+        "extract_text",
+        "find_all",
+        "merge",
+        "region",
+        "right",
+        "show"
+      ],
+      "selectors": [
+        "text",
+        "text:strikeout",
+        "text:underline"
+      ],
+      "tags": [
+        "text extraction",
+        "legislative documents",
+        "PDF challenges",
+        "text formatting"
+      ],
+      "complexity": 21,
+      "pdf": "20252026-236232.pdf"
+    },
+    {
+      "id": "cia-document",
+      "slug": "cia-document-extraction",
+      "title": "CIA Document Analysis",
+      "description": "Extracting information from declassified CIA documents using AI",
+      "content": "CIA Document Classification\n\nLet's work with a declassified CIA document and use AI to classify and extract information.\nfrom natural_pdf import PDF\n\npdf = PDF(\"cia-doc.pdf\")\npdf.pages.show(cols=6)\nJust like we did above, we can ask what category we think the PDF belongs to.\npdf.classify(\n    ['slaughterhouse report', 'dolphin training manual', 'basketball', 'birding'],\n    using='text'\n)\n(pdf.category, pdf.category_confidence)\nI promise birding is real! The PDF is about using pigeons to take surveillance photos.\n\nBut beyond the text content, notice how all of the pages look very very different. We can also categorize each page using vision!\npdf.classify_pages(\n    ['diagram', 'text', 'invoice', 'blank'],\n    using='vision'\n)\n\nfor page in pdf.pages:\n    print(f\"Page {page.number} is {page.category} - {page.category_confidence:0.3}\")\nAnd if we just want to see the pages that are diagrams, we can .filter for them.\n(\n    pdf.pages\n    .filter(lambda page: page.category == 'diagram')\n    .show(show_category=True)\n)\nWe can also put them into groups.\ngroups = pdf.pages.groupby(lambda page: page.category)\ngroups.info()\ndiagrams = groups.get('diagram')\ndiagrams.show()\nAnd if that's all we're interested in? We can save a new PDF of just those pages!\n(\n    pdf.pages\n    .filter(lambda page: page.category == 'diagram')\n    .save_pdf(\"diagrams.pdf\", original=True)\n)",
+      "code": "from natural_pdf import PDF\n\npdf = PDF(\"cia-doc.pdf\")\npdf.pages.show(cols=6)\npdf.classify(\n    ['slaughterhouse report', 'dolphin training manual', 'basketball', 'birding'],\n    using='text'\n)\n(pdf.category, pdf.category_confidence)\npdf.classify_pages(\n    ['diagram', 'text', 'invoice', 'blank'],\n    using='vision'\n)\n\nfor page in pdf.pages:\n    print(f\"Page {page.number} is {page.category} - {page.category_confidence:0.3}\")\n(\n    pdf.pages\n    .filter(lambda page: page.category == 'diagram')\n    .show(show_category=True)\n)\ngroups = pdf.pages.groupby(lambda page: page.category)\ngroups.info()\ndiagrams = groups.get('diagram')\ndiagrams.show()\n(\n    pdf.pages\n    .filter(lambda page: page.category == 'diagram')\n    .save_pdf(\"diagrams.pdf\", original=True)\n)",
+      "methods": [
+        "PDF",
+        "classify",
+        "classify_pages",
+        "filter",
+        "groupby",
+        "info",
+        "save_pdf",
+        "show"
+      ],
+      "selectors": [],
+      "tags": [
+        "workshop",
+        "ai",
+        "government-documents"
+      ],
+      "complexity": 7,
+      "pdf": "cia-doc.pdf"
+    },
+    {
+      "id": "statecallcenterdata_redacted",
+      "slug": "statecallcenterdata_redacted",
+      "title": "Extracting State Agency Call Center Wait Times from FOIA PDF",
+      "description": "This PDF contains data on wait times at a state agency call center. The main focus is on the data on the first two pages, which matches other states' submission formats. The later pages provide granular breakdowns over several years. Challenges include it being heavily pixelated, making it hard to read numbers and text, with inconsistent and unreadable charts.",
+      "content": "Extracting State Agency Call Center Wait Times from FOIA PDF\n\nThis PDF contains data on wait times at a state agency call center. The main focus is on the data on the first two pages, which matches other states' submission formats. The later pages provide granular breakdowns over several years. Challenges include it being heavily pixelated, making it hard to read numbers and text, with inconsistent and unreadable charts.\n\nThe submission said \"the first two pages\" so I'm going with that. The rest of the pages are insane and will need a wholly separate writeup.\nfrom natural_pdf import PDF\n\npdf = PDF(\"statecallcenterdata_redacted.pdf\")\npage = pdf.pages[0]\npage.show()\nThe pages are images so they don't have text, but we can always double-check.\n# No results? Needs OCR!\nprint(page.extract_text())\nI love [surya](https://github.com/datalab-to/surya) so I'm going to use it instead of the default of easyocr. Two ways to check the results: look at where it found text and look at what the text is.\npage.apply_ocr('surya')\npage.find_all('text').show(crop=True)\nAnd now we'll look at what the text is.\nprint(page.extract_text(layout=True))\nTo get the table area, we get everything from the \"Figure\" header down to \"Please use the comments field\"\ntable_area = (\n    page\n    .find('text:contains(Figure)')\n    .below(\n        until='text:contains(Please use the comments)',\n        include_endpoint=False\n    )\n)\ntable_area.show(crop='wide')\nWe need to cut it in on the sides a little bit, and expand it on the bottom. I just pick some manual values because I'm lazy, should probably be a better way to resize things based on selectors.\ntable_area = (\n    page\n    .find('text:contains(Figure)')\n    .below(\n        until='text:contains(Please use the comments)',\n        include_endpoint=False\n    )\n    .expand(\n        right=-(page.width * 0.58),\n        left=-30,\n        bottom=3\n    )\n)\ntable_area.show(crop='wide')\nNow we can see all the text in our area.\ntable_area.find_all('text').show(crop=True)\nFor some reason we can't just use .extract_table('stream') on this, even though there are some nice gaps between each column. Oh well!\n\nInstead we'll throw three vertical dividers in and then shuffle then around until they don't intersect any of the text. The horizontal borders are easier because they're just lines.\nfrom natural_pdf.analyzers.guides import Guides\n\nguide = Guides(table_area)\nguide.vertical.divide(3)\nguide.vertical.snap_to_whitespace(detection_method='text')\nguide.horizontal.from_lines()\nguide.show()\nAnd now we can grab the table!\ndf = (\n  guide\n  .extract_table()\n  .to_df(\n    header=['value', 'amount', 'comments']\n  )\n)\ndf\nThe next page is....... too hard for now.\npdf.pages[1].show()",
+      "code": "from natural_pdf import PDF\n\npdf = PDF(\"statecallcenterdata_redacted.pdf\")\npage = pdf.pages[0]\npage.show()\n# No results? Needs OCR!\nprint(page.extract_text())\npage.apply_ocr('surya')\npage.find_all('text').show(crop=True)\nprint(page.extract_text(layout=True))\ntable_area = (\n    page\n    .find('text:contains(Figure)')\n    .below(\n        until='text:contains(Please use the comments)',\n        include_endpoint=False\n    )\n)\ntable_area.show(crop='wide')\ntable_area = (\n    page\n    .find('text:contains(Figure)')\n    .below(\n        until='text:contains(Please use the comments)',\n        include_endpoint=False\n    )\n    .expand(\n        right=-(page.width * 0.58),\n        left=-30,\n        bottom=3\n    )\n)\ntable_area.show(crop='wide')\ntable_area.find_all('text').show(crop=True)\nfrom natural_pdf.analyzers.guides import Guides\n\nguide = Guides(table_area)\nguide.vertical.divide(3)\nguide.vertical.snap_to_whitespace(detection_method='text')\nguide.horizontal.from_lines()\nguide.show()\ndf = (\n  guide\n  .extract_table()\n  .to_df(\n    header=['value', 'amount', 'comments']\n  )\n)\ndf\npdf.pages[1].show()",
+      "methods": [
+        "Guides",
+        "PDF",
+        "apply_ocr",
+        "below",
+        "divide",
+        "expand",
+        "extract_table",
+        "extract_text",
+        "find",
+        "find_all",
+        "from_lines",
+        "show",
+        "snap_to_whitespace",
+        "to_df"
+      ],
+      "selectors": [
+        "text",
+        "text:contains(Figure)"
+      ],
+      "tags": [
+        "Call Center Data",
+        "Pixelated Scan",
+        "OCR Required",
+        "Granular Breakdown"
+      ],
+      "complexity": 10,
+      "pdf": "statecallcenterdata_redacted.pdf"
+    },
+    {
+      "id": "czech-republic-pisa2012_zakovsky_dotaznik_a",
+      "slug": "czech-republic-pisa2012_zakovsky_dotaznik_a",
+      "title": "Complex Table Extraction from OECD Czech PISA Assessment",
+      "description": "This PDF is a document from the OECD regarding the PISA assessment, provided in Czech. The main extraction goal is to get the survey question table found on page 9. Challenges include the weird table format, making it hard to extract automatically.",
+      "content": "Complex Table Extraction from OECD Czech PISA Assessment\n\nThis PDF is a document from the OECD regarding the PISA assessment, provided in Czech. The main extraction goal is to get the survey question table found on page 9. Challenges include the weird table format, making it hard to extract automatically.\n\nI'm assuming by \"survey question\" the submitter wants as much as possible. You can extend the work we do here to get all of the surveys in the PDF, but for now we're just going to do a single section of the survey, from pages 7-15.\nfrom natural_pdf import PDF\n\npdf = PDF(\"czech-republic-pisa2012_zakovsky_dotaznik_a.pdf\")\npdf.pages[6:15].show()\nIf we want to look at one of the pages, it seems like the questions are in bold.\npdf.pages[7].find_all(\"text:bold:not-empty\").show()\nZoom in! You can see that some of the words, like vzd\u011bl\u00e1n\u00ed, are broken up into multiple words. We can see why if we inspect the text on the page.\npdf.pages[7].inspect()\nTurns out the accented letters are a font variant! Each change in boldness, font size, or font type trigger the idea that something is a new word, even if we know it's not.\n\nDo we deal with it? Do we ignore it? At least two paths open up ahead!\nBy default we'll assume you don't know why this is happening, and lean heavily in `dissolve()`. Dissolve can be used to combine texts or regions that are close to one another.\npdf.pages[7].find_all(\"text:bold:not-empty\").dissolve().show()\nWhen we use `dissolve()` on the selection you'll see them combine into blocks. Along with weird font issues, dissolving is also useful for combining parts of the same question that are broken into separate rows. By using `padding=5` we have the dissolve reach out five pixels to find nearby overlapping regions, including the ones on the row above/below.\nquestions = (\n    pdf\n    .pages[6:15]\n    .find_all('text:bold[size~=14][x0>100]:not-empty')\n    .dissolve(padding=5)\n)\nquestions.show()\nIf we were just interested in the questions, we could pull them each out now.\nquestions.extract_each_text()\nInstead, we're going to use the question to **break the page into sections**. Starting from each question, we'll look `.below()` until it hits the either:\n\n- The next question\n- A wide line (Why is it a `rect`? Who knows!)\n- The STXX text used to denote questions\n\nThis didn't come easy: It took a lot of trial and error to see the right selectors.\nanswer_areas = (\n    questions.below(\n        until='text:bold[size~=14]:regex(\\d+) | rect[width>300] | text:regex(^ST\\d)',\n        include_endpoint=False\n    )\n)\nanswer_areas.show()\nNow we can find the text of the question by asking for the text that is neither bold nor tiny:\nanswer_areas[3].find_all('text:not(:italic):not-empty[size>8]').show()\nAnd if we want it for each of the questions, we'll just search through each of them.\n\n> There are about two hundred ways to do this part.\nresults = []\nfor question, answer_area in zip(questions, answer_areas):\n    result = {}\n    result['question'] = question.extract_text()\n    result['notes'] = (\n        answer_area\n        .find_all('text:italic:not-empty[size>8]')\n        .extract_text()\n    )\n    result['answers'] = (\n        answer_area\n        .find_all('text:not(:italic):not-empty[size>8]')\n        .extract_text()\n    )\n    results.append(result)\nprint(\"Found\", len(results))\nNow we can pack it up into pandas and be good to go.\nimport pandas as pd\n\ndf = pd.DataFrame(results)\ndf\nInstead of focusing on the questions, we can also think about patterns on the page: each question begins with a number. Let's break the page up based on bold, size 14 text that includes numbers.\nsections = (\n    pdf\n    .pages[6:15]\n    .get_sections(\n        start_elements='text:bold[size~=14]:regex(\\d+)'\n    )\n)\nsections.show()\nLet's a look at the first section.\nsections[0].show()\nIf we wanted the rough text from the section, we just ask for it.\ntext = sections[0].extract_text(layout=True)\nprint(text)\nMost likely we want to pull out the pieces separately: the italic, the bold, the normal. We can inspect the text on the page to see what selectors might work for each.\nsections[0].find_all('text').inspect()\nquestion = sections[0].find_all('text:bold').extract_text()\nprint(question)\nnotes = sections[0].find_all('text:italic[size~=14]').extract_text()\nprint(notes)\nanswers = (\n    sections[0]\n    .find_all('text:not(:bold):not(:italic)[size=12]')\n    .extract_text(\n        layout=True,\n        strip=True,\n    )\n)\nprint(answers)\nNow that we know it works for one of them, we can do it for all of the sections.\nresults = []\n\nfor section in sections:\n    question = (\n        section\n        .find_all('text:bold')\n        .extract_text()\n    )\n    notes = (\n        section\n        .find_all('text:italic[size~=14]')\n        .extract_text()\n    )\n    answers = (\n        section\n        .find_all('text:not(:bold):not(:italic)[size=12]')\n        .extract_text(layout=True, strip=True)\n    )\n    results.append({\n        'question': question,\n        'notes': notes,\n        'answers': answers\n    })\nlen(results)\nPop it into a pandas dataframe and you're ready to go!\nimport pandas as pd\n\ndf = pd.DataFrame(results)\ndf.head()\nDone!",
+      "code": "from natural_pdf import PDF\n\npdf = PDF(\"czech-republic-pisa2012_zakovsky_dotaznik_a.pdf\")\npdf.pages[6:15].show()\npdf.pages[7].find_all(\"text:bold:not-empty\").show()\npdf.pages[7].inspect()\npdf.pages[7].find_all(\"text:bold:not-empty\").dissolve().show()\nquestions = (\n    pdf\n    .pages[6:15]\n    .find_all('text:bold[size~=14][x0>100]:not-empty')\n    .dissolve(padding=5)\n)\nquestions.show()\nquestions.extract_each_text()\nanswer_areas = (\n    questions.below(\n        until='text:bold[size~=14]:regex(\\d+) | rect[width>300] | text:regex(^ST\\d)',\n        include_endpoint=False\n    )\n)\nanswer_areas.show()\nanswer_areas[3].find_all('text:not(:italic):not-empty[size>8]').show()\nresults = []\nfor question, answer_area in zip(questions, answer_areas):\n    result = {}\n    result['question'] = question.extract_text()\n    result['notes'] = (\n        answer_area\n        .find_all('text:italic:not-empty[size>8]')\n        .extract_text()\n    )\n    result['answers'] = (\n        answer_area\n        .find_all('text:not(:italic):not-empty[size>8]')\n        .extract_text()\n    )\n    results.append(result)\nprint(\"Found\", len(results))\nimport pandas as pd\n\ndf = pd.DataFrame(results)\ndf\nsections = (\n    pdf\n    .pages[6:15]\n    .get_sections(\n        start_elements='text:bold[size~=14]:regex(\\d+)'\n    )\n)\nsections.show()\nsections[0].show()\ntext = sections[0].extract_text(layout=True)\nprint(text)\nsections[0].find_all('text').inspect()\nquestion = sections[0].find_all('text:bold').extract_text()\nprint(question)\nnotes = sections[0].find_all('text:italic[size~=14]').extract_text()\nprint(notes)\nanswers = (\n    sections[0]\n    .find_all('text:not(:bold):not(:italic)[size=12]')\n    .extract_text(\n        layout=True,\n        strip=True,\n    )\n)\nprint(answers)\nresults = []\n\nfor section in sections:\n    question = (\n        section\n        .find_all('text:bold')\n        .extract_text()\n    )\n    notes = (\n        section\n        .find_all('text:italic[size~=14]')\n        .extract_text()\n    )\n    answers = (\n        section\n        .find_all('text:not(:bold):not(:italic)[size=12]')\n        .extract_text(layout=True, strip=True)\n    )\n    results.append({\n        'question': question,\n        'notes': notes,\n        'answers': answers\n    })\nlen(results)\nimport pandas as pd\n\ndf = pd.DataFrame(results)\ndf.head()",
+      "methods": [
+        "PDF",
+        "dissolve",
+        "extract_text",
+        "find_all",
+        "inspect",
+        "show"
+      ],
+      "selectors": [
+        "text",
+        "text:bold",
+        "text:bold:not-empty",
+        "text:bold[size~=14][x0>100]:not-empty",
+        "text:italic:not-empty[size>8]",
+        "text:italic[size~=14]",
+        "text:not(:bold):not(:italic)[size=12]",
+        "text:not(:italic):not-empty[size>8]"
+      ],
+      "tags": [
+        "OECD",
+        "Czech",
+        "PISA",
+        "Survey Table",
+        "Complex Format"
+      ],
+      "complexity": 19,
+      "pdf": "czech-republic-pisa2012_zakovsky_dotaznik_a.pdf"
+    },
+    {
+      "id": "focus",
+      "slug": "focus",
+      "title": "Extracting Economic Data from Brazil's Central Bank PDF",
+      "description": "This PDF is the weekly \u201cFocus\u201d report from Brazil\u2019s central bank with economic projections and statistics. Challenges include commas instead of decimal points, images showing projection changes, and tables without border lines that merge during extraction.",
+      "content": "Extracting Economic Data from Brazil's Central Bank PDF\n\nThis PDF is the weekly \u201cFocus\u201d report from Brazil\u2019s central bank with economic projections and statistics. Challenges include commas instead of decimal points, images showing projection changes, and tables without border lines that merge during extraction.\nfrom natural_pdf import PDF\n\npdf = PDF(\"focus.pdf\")\npage = pdf.pages[0]\npage.show()\nLet's cut out the part of the page we're interested in: everything from Expectativas to the long, light text that starts with comportamento.\ndata = (\n    page\n    .find(text='Expectativas')\n    .below(\n        until='text:contains(comportamento)',\n        include_endpoint=False\n    )\n)\n    \ndata.show(crop=True)\nGrabbing headers\n\nWhile we could type out the column names on the left, it's probably easier to just scrape them from the page. We start from IPCA, move down, clip it to the section we cut out earlier (otherwise it runs down the whole page), then find all of the text that even somewhat overlaps.\nrow_names = (\n    data\n    .find(text='IPCA')\n    .below(width='element', include_source=True)\n    .clip(data)\n    .find_all('text', overlap='partial')\n)\nheaders = row_names.extract_each_text()\nheaders\n## Horizontal sections\n\nWhile you usually use `.get_sections` to split pages vertically, you can also do it horizontally. In this case we'll find the year headers - four numbers in a row, size 10 font - and use them as our breakpoints.\nsections = (\n    data.get_sections(\n        start_elements=\"text[size~=10]:regex(\\d\\d\\d\\d)\",\n        include_boundaries='start',\n        orientation='horizontal'\n    )\n)\nsections.show()\nWe'll take the first table as an example. We don't want all of that junk up top \u2013 it's easy to retype multi-row headers \u2013 so we'll dial it back in a bit.\n(\n    sections[0]\n    .expand(top=-50)\n    .show()\n)\nThen we'll ask it to extract the content using the **stream** method, which uses the space between text. Even though we can see lines and backgrounds and all sorts of things, stream works consistently when other approaches don't!\n(\n    sections[0]\n    .expand(top=-50, right=0)\n    .extract_table('stream')\n    .to_df(header=False)\n    .dropna(axis=0, how='all')\n)\nWe include the `.dropna` in there because stream injects some phantom rows full of empty values.\n\n## Looping through sections\n\nNow that we know how it works from one section, let's do it for all of them. We'll use `.apply` so that it creates a list of dataframes that we can combine later on.\ndataframes = sections.apply(lambda section: (\n    section\n        .expand(top=-50, right=0)\n        .extract_table('stream')\n        .to_df(header=False)\n        .dropna(axis=0, how='all')\n        .assign(\n            year=section.find('text[size~=10]:regex(\\d\\d\\d\\d)').extract_text(),\n            value=headers\n        )\n    )\n)\n\nimport pandas as pd\n\npd.concat(dataframes, ignore_index=True)\nimport pandas as pd\n\npd.concat(dataframes, ignore_index=True)\n## Grabbing tables\n\nWe start by grabbing the space between the 2025 and 2026 headers.\n(\n    data\n    .find('text:contains(2025)')\n    .right(\n        until='text:contains(2026)',\n        include_source=True,\n        include_endpoint=False\n    )\n).show()\n...then we move down...\n(\n    data\n    .find('text:contains(2025)')\n    .right(\n        until='text:contains(2026)',\n        include_source=True,\n        include_endpoint=False\n    )\n    .below(width='element')\n).show()\n...then we nudge the top down a little bit and clip it to the size of the region of interest (the `data` region).\ntable = (\n    data\n    .find('text:contains(2025)')\n    .right(\n        until='text:contains(2026)',\n        include_source=True,\n        include_endpoint=False\n    )\n    .below(width='element')\n    .expand(top=-20)\n    .clip(data)\n)\n\ntable.show()\nWe could try to figure out something magic with all of the headers and colors and backgrounds and blah blah blah, but it's easier to just extract the table using the \"stream\" method, which looks at the gaps between rows and columns. While there *are* actual boundaries between the rows, I promise stream works the best.\ndf_2025 = table.expand(top=-5).extract_table('stream').to_df(header=False)\ndf_2025\nIt needs a *little* cleanup. Due to using the steam approach we got some extra (empty) columns, but we can just drop them with pandas. We'll also insert the year and the row titles that we grabbed up above.\ndf_2025 = df_2025.dropna(axis=0, how='all')\ndf_2025.insert(0, 'year', 2025)\ndf_2025.insert(0, 'value', headers)\ndf_2025\n### Working on all the other tables\n\n2026 is basically the same.\ntable = (\n    data\n    .find('text:contains(2026)')\n    .right(\n        until='text:contains(2027)',\n        include_source=True,\n        include_endpoint=False\n    )\n    .below(width='element')\n    .expand(top=-20)\n    .clip(data)\n)\ntable.show()\ndf_2026 = table.expand(top=-5).extract_table('stream').to_df(header=False).dropna(axis=0, how='all')\ndf_2026.insert(0, 'year', 2026)\ndf_2026.insert(0, 'value', headers)\ndf_2026\nAs is 2027.\ntable = (\n    data\n    .find('text:contains(2027)')\n    .right(\n        until='text:contains(2028)',\n        include_source=True,\n        include_endpoint=False\n    )\n    .below(width='element')\n    .expand(top=-20)\n    .clip(data)\n)\ndf_2027 = table.expand(top=-5).extract_table('stream').to_df(header=False).dropna(axis=0, how='all')\ndf_2027.insert(0, 'year', 2027)\ndf_2027.insert(0, 'value', headers)\ndf_2027\n2028 is a *little* different because it doesn't including an endpoint on the right. We just blast on through until we hit the right-hand side of the page.\ntable = (\n    data\n    .find('text:contains(2028)')\n    .right(include_source=True)\n    .below(width='element')\n    .expand(top=-20)\n    .clip(data)\n)\ndf_2028 = table.expand(top=-5).extract_table('stream').to_df(header=False).dropna(axis=0, how='all')\ndf_2028.insert(0, 'year', 2028)\ndf_2028.insert(0, 'value', headers)\ndf_2028\nNow we'll set up the dataframes in a nice long list to combine in the next step.\ndataframes = [df_2025, df_2026, df_2027, df_2028]\nCombining our data\n\nNow that we have a list of dataframes (no matter which path we took) we can just use pandas to concatenate them.\nimport pandas as pd\n\ndf = pd.concat(dataframes, ignore_index=True)\ndf\nThere we go!",
+      "code": "from natural_pdf import PDF\n\npdf = PDF(\"focus.pdf\")\npage = pdf.pages[0]\npage.show()\ndata = (\n    page\n    .find(text='Expectativas')\n    .below(\n        until='text:contains(comportamento)',\n        include_endpoint=False\n    )\n)\n    \ndata.show(crop=True)\nrow_names = (\n    data\n    .find(text='IPCA')\n    .below(width='element', include_source=True)\n    .clip(data)\n    .find_all('text', overlap='partial')\n)\nheaders = row_names.extract_each_text()\nheaders\nsections = (\n    data.get_sections(\n        start_elements=\"text[size~=10]:regex(\\d\\d\\d\\d)\",\n        include_boundaries='start',\n        orientation='horizontal'\n    )\n)\nsections.show()\n(\n    sections[0]\n    .expand(top=-50)\n    .show()\n)\n(\n    sections[0]\n    .expand(top=-50, right=0)\n    .extract_table('stream')\n    .to_df(header=False)\n    .dropna(axis=0, how='all')\n)\ndataframes = sections.apply(lambda section: (\n    section\n        .expand(top=-50, right=0)\n        .extract_table('stream')\n        .to_df(header=False)\n        .dropna(axis=0, how='all')\n        .assign(\n            year=section.find('text[size~=10]:regex(\\d\\d\\d\\d)').extract_text(),\n            value=headers\n        )\n    )\n)\n\nimport pandas as pd\n\npd.concat(dataframes, ignore_index=True)\n(\n    data\n    .find('text:contains(2025)')\n    .right(\n        until='text:contains(2026)',\n        include_source=True,\n        include_endpoint=False\n    )\n).show()\n(\n    data\n    .find('text:contains(2025)')\n    .right(\n        until='text:contains(2026)',\n        include_source=True,\n        include_endpoint=False\n    )\n    .below(width='element')\n).show()\ntable = (\n    data\n    .find('text:contains(2025)')\n    .right(\n        until='text:contains(2026)',\n        include_source=True,\n        include_endpoint=False\n    )\n    .below(width='element')\n    .expand(top=-20)\n    .clip(data)\n)\n\ntable.show()\ndf_2025 = table.expand(top=-5).extract_table('stream').to_df(header=False)\ndf_2025\ndf_2025 = df_2025.dropna(axis=0, how='all')\ndf_2025.insert(0, 'year', 2025)\ndf_2025.insert(0, 'value', headers)\ndf_2025\ntable = (\n    data\n    .find('text:contains(2026)')\n    .right(\n        until='text:contains(2027)',\n        include_source=True,\n        include_endpoint=False\n    )\n    .below(width='element')\n    .expand(top=-20)\n    .clip(data)\n)\ntable.show()\ndf_2026 = table.expand(top=-5).extract_table('stream').to_df(header=False).dropna(axis=0, how='all')\ndf_2026.insert(0, 'year', 2026)\ndf_2026.insert(0, 'value', headers)\ndf_2026\ntable = (\n    data\n    .find('text:contains(2027)')\n    .right(\n        until='text:contains(2028)',\n        include_source=True,\n        include_endpoint=False\n    )\n    .below(width='element')\n    .expand(top=-20)\n    .clip(data)\n)\ndf_2027 = table.expand(top=-5).extract_table('stream').to_df(header=False).dropna(axis=0, how='all')\ndf_2027.insert(0, 'year', 2027)\ndf_2027.insert(0, 'value', headers)\ndf_2027\ntable = (\n    data\n    .find('text:contains(2028)')\n    .right(include_source=True)\n    .below(width='element')\n    .expand(top=-20)\n    .clip(data)\n)\ndf_2028 = table.expand(top=-5).extract_table('stream').to_df(header=False).dropna(axis=0, how='all')\ndf_2028.insert(0, 'year', 2028)\ndf_2028.insert(0, 'value', headers)\ndf_2028\ndataframes = [df_2025, df_2026, df_2027, df_2028]\nimport pandas as pd\n\ndf = pd.concat(dataframes, ignore_index=True)\ndf",
+      "methods": [
+        "PDF",
+        "assign",
+        "below",
+        "clip",
+        "dropna",
+        "expand",
+        "extract_table",
+        "extract_text",
+        "find",
+        "find_all",
+        "right",
+        "show",
+        "to_df"
+      ],
+      "selectors": [
+        "text",
+        "text:contains(2025)",
+        "text:contains(2026)",
+        "text:contains(2027)",
+        "text:contains(2028)",
+        "text[size~=10]:regex(\\d\\d\\d\\d)"
+      ],
+      "tags": [
+        "Brazil",
+        "Economic Data",
+        "PDF Extraction",
+        "Tables without Borders",
+        "Comma as Decimal",
+        "Image Interpretation"
+      ],
+      "complexity": 18,
+      "pdf": "focus.pdf"
+    }
+  ],
+  "methodIndex": {
+    "Flow": [
+      "mednine",
+      "multicolumn"
+    ],
+    "Guides": [
+      "24480polcompleted",
+      "k046682-111320-opa-lea-database-install_1",
+      "m27",
+      "multicolumn",
+      "ocr-example",
+      "sample-bop-policy-restaurant",
+      "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+      "statecallcenterdata_redacted",
+      "use-of-force-raw"
+    ],
+    "Judge": [
+      "pomonajailpomonaca06212004"
+    ],
+    "PDF": [
+      "20252026-236232",
+      "24480polcompleted",
+      "basics",
+      "cia-document",
+      "czech-republic-pisa2012_zakovsky_dotaznik_a",
+      "focus",
+      "k046682-111320-opa-lea-database-install_1",
+      "liberty-county-boe",
+      "m27",
+      "mednine",
+      "multicolumn",
+      "ocr-example",
+      "pomonajailpomonaca06212004",
+      "sample-bop-policy-restaurant",
+      "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+      "statecallcenterdata_redacted",
+      "use-of-force-raw"
+    ],
+    "above": [
+      "k046682-111320-opa-lea-database-install_1",
+      "m27"
+    ],
+    "add": [
+      "pomonajailpomonaca06212004"
+    ],
+    "add_exclusion": [
+      "20252026-236232",
+      "24480polcompleted",
+      "basics",
+      "k046682-111320-opa-lea-database-install_1",
+      "m27",
+      "sample-bop-policy-restaurant"
+    ],
+    "analyze_layout": [
+      "multicolumn"
+    ],
+    "apply": [
+      "20252026-236232",
+      "mednine"
+    ],
+    "apply_ocr": [
+      "multicolumn",
+      "ocr-example",
+      "pomonajailpomonaca06212004",
+      "statecallcenterdata_redacted"
+    ],
+    "assign": [
+      "focus"
+    ],
+    "astype": [
+      "mednine"
+    ],
+    "below": [
+      "focus",
+      "k046682-111320-opa-lea-database-install_1",
+      "m27",
+      "multicolumn",
+      "ocr-example",
+      "pomonajailpomonaca06212004",
+      "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+      "statecallcenterdata_redacted"
+    ],
+    "classify": [
+      "cia-document"
+    ],
+    "classify_pages": [
+      "cia-document"
+    ],
+    "clip": [
+      "focus"
+    ],
+    "correct_ocr": [
+      "ocr-example"
+    ],
+    "dissolve": [
+      "czech-republic-pisa2012_zakovsky_dotaznik_a"
+    ],
+    "divide": [
+      "statecallcenterdata_redacted"
+    ],
+    "dropna": [
+      "focus"
+    ],
+    "exclude": [
+      "sample-bop-policy-restaurant"
+    ],
+    "expand": [
+      "focus",
+      "k046682-111320-opa-lea-database-install_1",
+      "m27",
+      "pomonajailpomonaca06212004",
+      "sample-bop-policy-restaurant",
+      "statecallcenterdata_redacted"
+    ],
+    "extract_each_text": [
+      "20252026-236232",
+      "basics",
+      "use-of-force-raw"
+    ],
+    "extract_table": [
+      "24480polcompleted",
+      "basics",
+      "focus",
+      "k046682-111320-opa-lea-database-install_1",
+      "m27",
+      "mednine",
+      "multicolumn",
+      "ocr-example",
+      "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+      "statecallcenterdata_redacted",
+      "use-of-force-raw"
+    ],
+    "extract_text": [
+      "20252026-236232",
+      "basics",
+      "czech-republic-pisa2012_zakovsky_dotaznik_a",
+      "focus",
+      "k046682-111320-opa-lea-database-install_1",
+      "liberty-county-boe",
+      "m27",
+      "multicolumn",
+      "ocr-example",
+      "pomonajailpomonaca06212004",
+      "sample-bop-policy-restaurant",
+      "statecallcenterdata_redacted"
+    ],
+    "filter": [
+      "cia-document"
+    ],
+    "find": [
+      "basics",
+      "focus",
+      "k046682-111320-opa-lea-database-install_1",
+      "liberty-county-boe",
+      "m27",
+      "multicolumn",
+      "ocr-example",
+      "pomonajailpomonaca06212004",
+      "sample-bop-policy-restaurant",
+      "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+      "statecallcenterdata_redacted"
+    ],
+    "find_all": [
+      "20252026-236232",
+      "24480polcompleted",
+      "basics",
+      "czech-republic-pisa2012_zakovsky_dotaznik_a",
+      "focus",
+      "k046682-111320-opa-lea-database-install_1",
+      "m27",
+      "multicolumn",
+      "ocr-example",
+      "sample-bop-policy-restaurant",
+      "statecallcenterdata_redacted",
+      "use-of-force-raw"
+    ],
+    "forget": [
+      "pomonajailpomonaca06212004"
+    ],
+    "from_content": [
+      "24480polcompleted",
+      "ocr-example"
+    ],
+    "from_headers": [
+      "use-of-force-raw"
+    ],
+    "from_lines": [
+      "k046682-111320-opa-lea-database-install_1",
+      "multicolumn",
+      "ocr-example",
+      "statecallcenterdata_redacted"
+    ],
+    "get_sections": [
+      "k046682-111320-opa-lea-database-install_1"
+    ],
+    "groupby": [
+      "cia-document"
+    ],
+    "highlight": [
+      "multicolumn"
+    ],
+    "info": [
+      "cia-document"
+    ],
+    "inspect": [
+      "czech-republic-pisa2012_zakovsky_dotaznik_a",
+      "ocr-example"
+    ],
+    "left": [
+      "pomonajailpomonaca06212004"
+    ],
+    "merge": [
+      "20252026-236232",
+      "k046682-111320-opa-lea-database-install_1"
+    ],
+    "region": [
+      "20252026-236232",
+      "basics",
+      "multicolumn",
+      "pomonajailpomonaca06212004",
+      "sample-bop-policy-restaurant"
+    ],
+    "render": [
+      "liberty-county-boe"
+    ],
+    "replace": [
+      "mednine"
+    ],
+    "right": [
+      "20252026-236232",
+      "basics",
+      "focus",
+      "k046682-111320-opa-lea-database-install_1",
+      "m27",
+      "sample-bop-policy-restaurant"
+    ],
+    "save": [
+      "liberty-county-boe"
+    ],
+    "save_pdf": [
+      "cia-document"
+    ],
+    "show": [
+      "20252026-236232",
+      "24480polcompleted",
+      "basics",
+      "cia-document",
+      "czech-republic-pisa2012_zakovsky_dotaznik_a",
+      "focus",
+      "k046682-111320-opa-lea-database-install_1",
+      "liberty-county-boe",
+      "m27",
+      "mednine",
+      "multicolumn",
+      "ocr-example",
+      "pomonajailpomonaca06212004",
+      "sample-bop-policy-restaurant",
+      "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+      "statecallcenterdata_redacted",
+      "use-of-force-raw"
+    ],
+    "snap_to_whitespace": [
+      "ocr-example",
+      "statecallcenterdata_redacted"
+    ],
+    "to_df": [
+      "24480polcompleted",
+      "basics",
+      "focus",
+      "k046682-111320-opa-lea-database-install_1",
+      "m27",
+      "mednine",
+      "multicolumn",
+      "ocr-example",
+      "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+      "statecallcenterdata_redacted",
+      "use-of-force-raw"
+    ],
+    "trim": [
+      "pomonajailpomonaca06212004"
+    ]
+  },
+  "suggestions": {
+    "methods": [
+      "Flow",
+      "Guides",
+      "Judge",
+      "PDF",
+      "above",
+      "add",
+      "add_exclusion",
+      "analyze_layout",
+      "apply",
+      "apply_ocr",
+      "assign",
+      "astype",
+      "below",
+      "classify",
+      "classify_pages",
+      "clip",
+      "correct_ocr",
+      "dissolve",
+      "divide",
+      "dropna",
+      "exclude",
+      "expand",
+      "extract_each_text",
+      "extract_table",
+      "extract_text",
+      "filter",
+      "find",
+      "find_all",
+      "forget",
+      "from_content",
+      "from_headers",
+      "from_lines",
+      "get_sections",
+      "groupby",
+      "highlight",
+      "info",
+      "inspect",
+      "left",
+      "merge",
+      "region",
+      "render",
+      "replace",
+      "right",
+      "save",
+      "save_pdf",
+      "show",
+      "snap_to_whitespace",
+      "to_df",
+      "trim"
+    ],
+    "terms": [
+      "about",
+      "academic",
+      "accuracy",
+      "accurately",
+      "across",
+      "advanced",
+      "after",
+      "agency",
+      "alcohol",
+      "alternative",
+      "among",
+      "amount",
+      "analysis",
+      "analyzing",
+      "animal",
+      "animals",
+      "annual",
+      "arabic",
+      "assessment",
+      "automatic",
+      "automatically",
+      "bank",
+      "based",
+      "basic",
+      "basics",
+      "being",
+      "between",
+      "bills",
+      "blobby",
+      "board",
+      "booze",
+      "border",
+      "borderless",
+      "both",
+      "boundaries",
+      "brazil",
+      "breakdowns",
+      "business",
+      "businesses",
+      "cafe",
+      "call",
+      "calls",
+      "carriers",
+      "cells",
+      "center",
+      "central",
+      "challenge",
+      "challenges",
+      "changes",
+      "charts"
+    ]
+  },
+  "stats": {
+    "totalDocuments": 17,
+    "totalMethods": 49,
+    "indexVersion": "2.0"
+  }
+}

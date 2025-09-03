@@ -1,0 +1,410 @@
+{
+  "slug": "20252026-236232",
+  "title": "Extracting Text from Georgia Legislative Bills",
+  "description": "This PDF contains legal bills from the Georgia legislature, published yearly. Challenges include extracting marked-up text like underlines and strikethroughs. It has line numbers that complicate text extraction. ",
+  "pdf": "20252026-236232.pdf",
+  "tags": [
+    "text extraction",
+    "legislative documents",
+    "PDF challenges",
+    "text formatting"
+  ],
+  "file_size_mb": 0.09,
+  "page_count": 8,
+  "submitted_by": "maggie lee",
+  "language": "English",
+  "published": true,
+  "file": "20252026-236232.md",
+  "id": "20252026-236232",
+  "methods": [
+    "PDF",
+    "add_exclusion",
+    "apply",
+    "extract_each_text",
+    "extract_text",
+    "find_all",
+    "merge",
+    "region",
+    "right",
+    "show"
+  ],
+  "method_usage": [
+    {
+      "method": "PDF",
+      "method_full": "PDF",
+      "args": [
+        "20252026-236232.pdf"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "page.show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "page.extract_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {
+        "crop": "wide"
+      }
+    },
+    {
+      "method": "find_all",
+      "method_full": "page.find_all",
+      "args": [
+        "text:strikeout"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "find_all",
+      "method_full": "page.find_all",
+      "args": [
+        "text:underline"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "underlined.extract_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "underlined.show",
+      "args": [],
+      "kwargs": {
+        "crop": "wide"
+      }
+    },
+    {
+      "method": "extract_text",
+      "method_full": "extract_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "find_all",
+      "method_full": "pdf.find_all",
+      "args": [
+        "text:underline"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_each_text",
+      "method_full": "extract_each_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "find_all",
+      "method_full": "pdf.find_all",
+      "args": [
+        "text:underline"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "add_exclusion",
+      "method_full": "pdf.add_exclusion",
+      "args": [
+        "text:strikeout"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "page.show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "region",
+      "method_full": "page.region",
+      "args": [],
+      "kwargs": {
+        "right": 70
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {
+        "crop": "wide"
+      }
+    },
+    {
+      "method": "find_all",
+      "method_full": "find_all",
+      "args": [
+        "text"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "region",
+      "method_full": "page.region",
+      "args": [],
+      "kwargs": {
+        "right": 70
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {
+        "crop": "wide"
+      }
+    },
+    {
+      "method": "right",
+      "method_full": "right",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "find_all",
+      "method_full": "find_all",
+      "args": [
+        "text"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "region",
+      "method_full": "page.region",
+      "args": [],
+      "kwargs": {
+        "right": 70
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {
+        "crop": "wide"
+      }
+    },
+    {
+      "method": "merge",
+      "method_full": "merge",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "right",
+      "method_full": "right",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "find_all",
+      "method_full": "find_all",
+      "args": [
+        "text"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "region",
+      "method_full": "page.region",
+      "args": [],
+      "kwargs": {
+        "right": 70
+      }
+    },
+    {
+      "method": "apply",
+      "method_full": "pdf.apply",
+      "args": [
+        "<Lambda>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "merge",
+      "method_full": "merge",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "right",
+      "method_full": "right",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "find_all",
+      "method_full": "find_all",
+      "args": [
+        "text"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "region",
+      "method_full": "page.region",
+      "args": [],
+      "kwargs": {
+        "right": 70
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "sections.show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "region",
+      "method_full": "page.region",
+      "args": [],
+      "kwargs": {
+        "left": 70,
+        "top": 50,
+        "bottom": "<BinOp>"
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "area.show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "apply",
+      "method_full": "pdf.apply",
+      "args": [
+        "<Lambda>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "region",
+      "method_full": "page.region",
+      "args": [],
+      "kwargs": {
+        "left": 70,
+        "top": 50,
+        "bottom": "<BinOp>"
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "sections.show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "region",
+      "method_full": "page.region",
+      "args": [],
+      "kwargs": {
+        "right": 70
+      }
+    },
+    {
+      "method": "region",
+      "method_full": "page.region",
+      "args": [],
+      "kwargs": {
+        "bottom": 50
+      }
+    },
+    {
+      "method": "region",
+      "method_full": "page.region",
+      "args": [],
+      "kwargs": {
+        "top": "<BinOp>"
+      }
+    },
+    {
+      "method": "add_exclusion",
+      "method_full": "pdf.add_exclusion",
+      "args": [
+        "<Lambda>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "region",
+      "method_full": "page.region",
+      "args": [],
+      "kwargs": {
+        "right": 70
+      }
+    },
+    {
+      "method": "add_exclusion",
+      "method_full": "pdf.add_exclusion",
+      "args": [
+        "<Lambda>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "region",
+      "method_full": "page.region",
+      "args": [],
+      "kwargs": {
+        "bottom": 50
+      }
+    },
+    {
+      "method": "add_exclusion",
+      "method_full": "pdf.add_exclusion",
+      "args": [
+        "<Lambda>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "region",
+      "method_full": "page.region",
+      "args": [],
+      "kwargs": {
+        "top": "<BinOp>"
+      }
+    },
+    {
+      "method": "extract_text",
+      "method_full": "pdf.extract_text",
+      "args": [],
+      "kwargs": {}
+    }
+  ],
+  "selectors": [
+    "text",
+    "text:strikeout",
+    "text:underline"
+  ],
+  "complexity": {
+    "code_blocks": 21,
+    "total_lines": 70,
+    "total_chars": 1532
+  },
+  "approaches": [
+    "20252026-236232.md"
+  ]
+}

@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bad PDFs Backend Dashboard</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        input, select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        input[type="search"] {
+            width: 300px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        th:hover {
+            background: #e9ecef;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        .published {
+            color: #28a745;
+            font-weight: 500;
+        }
+        .unpublished {
+            color: #dc3545;
+            font-weight: 500;
+        }
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            margin: 2px;
+            background: #e9ecef;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .vscode-link {
+            color: #007acc;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .vscode-link:hover {
+            text-decoration: underline;
+        }
+        .sort-arrow {
+            font-size: 10px;
+            margin-left: 5px;
+            color: #999;
+        }
+        .active-sort {
+            color: #333;
+        }
+        .file-size {
+            font-family: monospace;
+            color: #666;
+        }
+        .description {
+            font-size: 12px;
+            color: #666;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .pdf-title {
+            color: #007acc;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .pdf-title:hover {
+            text-decoration: underline;
+        }
+        .pdf-id {
+            font-size: 11px;
+            color: #999;
+            font-family: monospace;
+            margin-bottom: 2px;
+        }
+        .preview-btn {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-right: 8px;
+        }
+        .preview-btn:hover {
+            background: #005a9e;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+        }
+        .modal-content {
+            position: relative;
+            background: white;
+            margin: 20px auto;
+            width: 90%;
+            max-width: 1200px;
+            height: calc(100vh - 40px);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+        }
+        .pdf-preview {
+            flex: 1;
+            background: #f5f5f5;
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            min-height: 600px;
+        }
+        .pdf-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .pdf-details {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .detail-section {
+            margin-bottom: 24px;
+        }
+        .detail-section h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .close {
+            font-size: 28px;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        .close:hover {
+            color: #333;
+        }
+        .nav-buttons {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            padding: 0 20px;
+        }
+        .nav-btn {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 60px;
+            cursor: pointer;
+            pointer-events: all;
+            font-size: 20px;
+            border-radius: 4px;
+        }
+        .nav-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .keyboard-hint {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 12px;
+            color: #666;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bad PDFs Backend Dashboard</h1>
+        <div class="stats" id="stats"></div>
+        
+        <div class="controls">
+            <input type="search" id="search" placeholder="Search PDFs, tags, descriptions...">
+            
+            <select id="statusFilter">
+                <option value="">All PDFs</option>
+                <option value="published">Published Only</option>
+                <option value="unpublished">Unpublished Only</option>
+            </select>
+            
+            <select id="sizeFilter">
+                <option value="">All Sizes</option>
+                <option value="small">Small (&lt; 1MB)</option>
+                <option value="medium">Medium (1-5MB)</option>
+                <option value="large">Large (&gt; 5MB)</option>
+            </select>
+            
+            <select id="pageFilter">
+                <option value="">All Page Counts</option>
+                <option value="single">Single Page</option>
+                <option value="few">2-10 Pages</option>
+                <option value="many">11+ Pages</option>
+            </select>
+            
+            <button onclick="resetFilters()">Reset Filters</button>
+        </div>
+        
+        <table id="pdfTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable('title')">PDF <span class="sort-arrow" data-col="title"></span></th>
+                    <th onclick="sortTable('published')">Status <span class="sort-arrow" data-col="published"></span></th>
+                    <th onclick="sortTable('file_size_mb')">Size (MB) <span class="sort-arrow" data-col="file_size_mb"></span></th>
+                    <th onclick="sortTable('page_count')">Pages <span class="sort-arrow" data-col="page_count"></span></th>
+                    <th onclick="sortTable('submitted_by')">Submitter <span class="sort-arrow" data-col="submitted_by"></span></th>
+                    <th>Tags</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Preview Modal -->
+    <div id="previewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">PDF Preview</h2>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="pdf-preview">
+                    <div class="loading" id="pdfLoading">Loading PDF...</div>
+                    <iframe id="pdfFrame" class="pdf-frame" style="display: none;"></iframe>
+                    <div class="nav-buttons">
+                        <button class="nav-btn" id="prevBtn" onclick="navigatePDF(-1)">&lt;</button>
+                        <button class="nav-btn" id="nextBtn" onclick="navigatePDF(1)">&gt;</button>
+                    </div>
+                    <div class="keyboard-hint">Use ← → keys to navigate</div>
+                </div>
+                <div class="pdf-details">
+                    <div class="detail-section">
+                        <h3>Details</h3>
+                        <div id="pdfDetails"></div>
+                    </div>
+                    <div class="detail-section">
+                        <h3>Queue Management</h3>
+                        <label>
+                            <input type="checkbox" id="queueCheckbox" onchange="toggleQueue()">
+                            <span>Add to processing queue</span>
+                        </label>
+                        <div id="queueStatus" style="margin-top: 8px; color: #666; font-size: 14px;"></div>
+                    </div>
+                    <div class="detail-section">
+                        <h3>Actions</h3>
+                        <button class="vscode-link" id="modalVscodeLink" style="padding: 8px 16px;">Open in VS Code</button>
+                    </div>
+                    <div class="detail-section">
+                        <h3>Raw Metadata</h3>
+                        <pre id="rawMetadata"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Embedded metadata
+        const allPDFs = [
+        {
+                "slug": "m27",
+                "title": "Extracting Data Tables from Oklahoma Booze Licensees PDF",
+                "description": "This PDF contains detailed tables listing alcohol licensees in Oklahoma. It has multi-line cells making it hard to extract data accurately. Challenges include alternative row colors instead of lines (\"zebra stripes\"), complicating row differentiation and extraction.",
+                "pdf": "m27.pdf",
+                "tags": [
+                        "data tables",
+                        "multiline cells",
+                        "PDF extraction issues",
+                        "row colors"
+                ],
+                "file_size_mb": 0.03,
+                "page_count": 2,
+                "submitted_by": "Jeremy Merrill",
+                "published": true,
+                "file": "m27.md",
+                "id": "m27",
+                "vscode_link": "vscode://file//home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/m27/m27.md",
+                "file_path": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/m27/m27.md"
+        },
+        {
+                "slug": "24480polcompleted",
+                "title": "Animal 911 Calls Extraction from Rainforest Cafe Report",
+                "description": "This PDF is a service call report covering 911 incidents at the Rainforest Cafe in Niagara Falls, NY. We're hunting for animals! The data is formatted as a spreadsheet within the PDF, and challenges include varied column widths, borderless tables, and large swaths of missing data.",
+                "pdf": "24480polcompleted.pdf",
+                "tags": [
+                        "Animal 911 Logs",
+                        "PDF Spreadsheet",
+                        "Truncated Columns",
+                        "Selective Redactions"
+                ],
+                "file_size_mb": 4.77,
+                "page_count": 47,
+                "submitted_by": "Adiel Kaplan",
+                "published": true,
+                "file": "24480polcompleted.md",
+                "id": "24480polcompleted",
+                "vscode_link": "vscode://file//home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/24480polcompleted/24480polcompleted.md",
+                "file_path": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/24480polcompleted/24480polcompleted.md"
+        },
+        {
+                "slug": "k046682-111320-opa-lea-database-install_1",
+                "title": "Complex Extraction of Law Enforcement Complaints",
+                "description": "This PDF contains a set of complaint records from a local law enforcement agency. Challenges include its relational data structure, unusual formatting common in the region, and redactions that disrupt automatic parsing.",
+                "pdf": "k046682-111320-opa-lea-database-install_1.pdf",
+                "tags": [
+                        "law enforcement",
+                        "PDF extraction",
+                        "redactions",
+                        "relational data",
+                        "complex formatting"
+                ],
+                "file_size_mb": 1.02,
+                "page_count": 5,
+                "submitted_by": "Brandon Roberts",
+                "language": [
+                        "English",
+                        "English"
+                ],
+                "published": true,
+                "file": "k046682-111320-opa-lea-database-install_1.md",
+                "id": "k046682-111320-opa-lea-database-install_1",
+                "vscode_link": "vscode://file//home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1.md",
+                "file_path": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/k046682-111320-opa-lea-database-install_1/k046682-111320-opa-lea-database-install_1.md"
+        },
+        {
+                "slug": "use-of-force-raw",
+                "title": "Extracting Use-of-Force Records from Vancouver Police PDF",
+                "description": "This PDF contains detailed records of Vancouver Police's use-of-force incidents, provided after a public records request by journalists. Challenges include its very very very small font size and lots of empty whitespace.",
+                "pdf": "use-of-force-raw.pdf",
+                "tags": [
+                        "small font",
+                        "public records",
+                        "tables",
+                        "sparse"
+                ],
+                "file_size_mb": 0.7,
+                "page_count": 4,
+                "submitted_by": "Brandon Roberts",
+                "language": [
+                        "English"
+                ],
+                "published": true,
+                "file": "use-of-force-raw.md",
+                "id": "use-of-force-raw",
+                "vscode_link": "vscode://file//home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/use-of-force-raw/use-of-force-raw.md",
+                "file_path": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/use-of-force-raw/use-of-force-raw.md"
+        },
+        {
+                "slug": "sample-bop-policy-restaurant",
+                "title": "Extracting Business Insurance Details from BOP PDF",
+                "description": "This PDF is a complex insurance policy document generated for small businesses requiring BOP coverage. It contains an overwhelming amount of information across 111 pages. Challenges include varied forms that may differ slightly between carriers, making extraction inconsistent. It has to deal with different templated layouts, meaning even standard parts can shift when generated by different software.",
+                "pdf": "sample-bop-policy-restaurant.pdf",
+                "tags": [
+                        "Insurance Policy",
+                        "Complex Layouts",
+                        "Templated Documents",
+                        "Watermark"
+                ],
+                "file_size_mb": 3.64,
+                "page_count": 111,
+                "submitted_by": "Olex Ponomarenko",
+                "published": true,
+                "file": "sample-bop-policy-restaurant.md",
+                "id": "sample-bop-policy-restaurant",
+                "vscode_link": "vscode://file//home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/sample-bop-policy-restaurant/sample-bop-policy-restaurant.md",
+                "file_path": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/sample-bop-policy-restaurant/sample-bop-policy-restaurant.md"
+        },
+        {
+                "slug": "liberty-county-boe",
+                "title": "Bad OCR in a board of education annual financial report",
+                "description": "This PDF is all sorts of information about the Board of Education in Liberty County, Georgia",
+                "pdf": "liberty-county-boe.pdf",
+                "tags": [
+                        "financial report",
+                        "multi-page",
+                        "OCR",
+                        "page navigation"
+                ],
+                "file_size_mb": 2.1,
+                "page_count": 72,
+                "submitted_by": "Maggie Lee",
+                "published": true,
+                "file": "liberty-county-boe.md",
+                "id": "liberty-county-boe",
+                "vscode_link": "vscode://file//home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/liberty-county-boe/liberty-county-boe.md",
+                "file_path": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/liberty-county-boe/liberty-county-boe.md"
+        },
+        {
+                "slug": "ocr-example",
+                "title": "OCR and AI magic",
+                "description": "Master OCR techniques with Natural PDF - from basic text recognition to advanced LLM-powered corrections. Learn to extract text from image-based PDFs, handle tables without proper boundaries, and leverage AI for accuracy improvements.",
+                "pdf": "ocr-example.pdf",
+                "tags": [
+                        "OCR",
+                        "LLM Integration",
+                        "Text Extraction",
+                        "Table Detection",
+                        "AI Correction"
+                ],
+                "file_size_mb": 0.5,
+                "page_count": 1,
+                "submitted_by": "Natural PDF",
+                "published": true,
+                "file": "ocr-example.md",
+                "id": "ocr-example",
+                "vscode_link": "vscode://file//home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/ocr-example/ocr-example.md",
+                "file_path": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/ocr-example/ocr-example.md"
+        },
+        {
+                "slug": "mednine",
+                "title": "Arabic Election Results Table Extraction from Mednine PDF",
+                "description": "This PDF has a data table showing election results from the Tunisian region of Mednine. Challenges include spanning header cells and rotated headers. It has Arabic script.",
+                "pdf": "mednine.pdf",
+                "tags": [
+                        "Election Results",
+                        "Arabic Script",
+                        "Table Extraction",
+                        "Header Challenges"
+                ],
+                "file_size_mb": 0.24,
+                "page_count": 4,
+                "submitted_by": "Jeremy Merrill",
+                "language": [
+                        "Arabic"
+                ],
+                "published": true,
+                "file": "mednine.md",
+                "id": "mednine",
+                "vscode_link": "vscode://file//home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/mednine/mednine.md",
+                "file_path": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/mednine/mednine.md"
+        },
+        {
+                "slug": "multicolumn",
+                "title": "Working with page structure",
+                "description": "Extract text from complex multi-column layouts while maintaining proper reading order. Learn techniques for handling academic papers, newsletters, and documents with intricate column structures using Natural PDF's layout detection features.",
+                "pdf": "multicolumn.pdf",
+                "tags": [
+                        "Multi-Column Layout",
+                        "Reading Order",
+                        "Text Flow",
+                        "Academic Papers",
+                        "Layout Detection",
+                        "Table Extraction",
+                        "YOLO",
+                        "TATR"
+                ],
+                "file_size_mb": 0.8,
+                "page_count": 1,
+                "submitted_by": "Natural PDF Team",
+                "published": true,
+                "file": "multicolumn.md",
+                "id": "multicolumn",
+                "vscode_link": "vscode://file//home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/multicolumn/multicolumn.md",
+                "file_path": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/multicolumn/multicolumn.md"
+        },
+        {
+                "slug": "pomonajailpomonaca06212004",
+                "title": "ICE Detention Facilities Compliance Report Extraction",
+                "description": "This PDF is an ICE report on compliance among detention facilities over the last 20-30 years. Our aim is to extract facility statuses and contract signatories' names and dates. Challenges include strange redactions, blobby text, poor contrast, and ineffective OCR. It has handwritten signatures and dates that are redacted.",
+                "pdf": "pomonajailpomonaca06212004.pdf",
+                "tags": [
+                        "ICE compliance report",
+                        "Redacted text",
+                        "Handwriting",
+                        "OCR needed",
+                        "Text extraction issues",
+                        "Columns"
+                ],
+                "file_size_mb": 41.36,
+                "page_count": 26,
+                "submitted_by": "Paroma Soni",
+                "published": true,
+                "file": "pomonajailpomonaca06212004.md",
+                "id": "pomonajailpomonaca06212004",
+                "vscode_link": "vscode://file//home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/pomonajailpomonaca06212004/pomonajailpomonaca06212004.md",
+                "file_path": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/pomonajailpomonaca06212004/pomonajailpomonaca06212004.md"
+        },
+        {
+                "slug": "basics",
+                "title": "Natural PDF basics with text and tables",
+                "description": "Learn the fundamentals of Natural PDF - opening PDFs, extracting text with layout preservation, selecting elements by criteria, spatial navigation, and managing exclusion zones. Perfect starting point for PDF data extraction.",
+                "pdf": "basics.pdf",
+                "tags": [
+                        "Text Extraction",
+                        "Basic Usage",
+                        "Element Selection",
+                        "Spatial Navigation",
+                        "Tables",
+                        "Exclusion Zones"
+                ],
+                "file_size_mb": 0.2,
+                "page_count": 1,
+                "submitted_by": "Natural PDF Team",
+                "published": true,
+                "file": "basics.md",
+                "id": "basics",
+                "vscode_link": "vscode://file//home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/basics/basics.md",
+                "file_path": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/basics/basics.md"
+        },
+        {
+                "slug": "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+                "title": "Extracting Complex Data from Serbian Regulatory PDF",
+                "description": "This PDF contains parts of Serbian policy documents, crucial for a research project analyzing industry policies across countries. The challenge lies in extracting a large table that spans pages (page 90 to 97) and a math formula on page 98, all in Serbian. Both elements lack clear boundaries between pages, complicating extraction.",
+                "pdf": "serbia-zakon-o-naknadama-za-koriscenje-javnih.pdf",
+                "tags": [
+                        "Serbian",
+                        "Large Tables",
+                        "Math Formulas",
+                        "Regulatory Documents",
+                        "multiple tables",
+                        "spanning pages"
+                ],
+                "file_size_mb": 1.89,
+                "page_count": 120,
+                "submitted_by": "Yuqi Liao",
+                "language": "Serbian",
+                "published": true,
+                "file": "serbia-zakon-o-naknadama-za-koriscenje-javnih.md",
+                "id": "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+                "vscode_link": "vscode://file//home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/serbia-zakon-o-naknadama-za-koriscenje-javnih/serbia-zakon-o-naknadama-za-koriscenje-javnih.md",
+                "file_path": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/serbia-zakon-o-naknadama-za-koriscenje-javnih/serbia-zakon-o-naknadama-za-koriscenje-javnih.md"
+        },
+        {
+                "slug": "20252026-236232",
+                "title": "Extracting Text from Georgia Legislative Bills",
+                "description": "This PDF contains legal bills from the Georgia legislature, published yearly. Challenges include extracting marked-up text like underlines and strikethroughs. It has line numbers that complicate text extraction. ",
+                "pdf": "20252026-236232.pdf",
+                "tags": [
+                        "text extraction",
+                        "legislative documents",
+                        "PDF challenges",
+                        "text formatting"
+                ],
+                "file_size_mb": 0.09,
+                "page_count": 8,
+                "submitted_by": "maggie lee",
+                "language": "English",
+                "published": true,
+                "file": "20252026-236232.md",
+                "id": "20252026-236232",
+                "vscode_link": "vscode://file//home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/20252026-236232/20252026-236232.md",
+                "file_path": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/20252026-236232/20252026-236232.md"
+        },
+        {
+                "slug": "cia-document-extraction",
+                "title": "CIA Document Analysis",
+                "description": "Extracting information from declassified CIA documents using AI",
+                "pdf": "cia-doc.pdf",
+                "tags": [
+                        "workshop",
+                        "ai",
+                        "government-documents"
+                ],
+                "published": true,
+                "file": "cia-document-extraction.md",
+                "id": "cia-document"
+        },
+        {
+                "slug": "statecallcenterdata_redacted",
+                "title": "Extracting State Agency Call Center Wait Times from FOIA PDF",
+                "description": "This PDF contains data on wait times at a state agency call center. The main focus is on the data on the first two pages, which matches other states' submission formats. The later pages provide granular breakdowns over several years. Challenges include it being heavily pixelated, making it hard to read numbers and text, with inconsistent and unreadable charts.",
+                "pdf": "statecallcenterdata_redacted.pdf",
+                "tags": [
+                        "Call Center Data",
+                        "Pixelated Scan",
+                        "OCR Required",
+                        "Granular Breakdown"
+                ],
+                "file_size_mb": 6.19,
+                "page_count": 66,
+                "submitted_by": "Adiel Kaplan",
+                "published": true,
+                "file": "statecallcenterdata_redacted.md",
+                "id": "statecallcenterdata_redacted",
+                "vscode_link": "vscode://file//home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/statecallcenterdata_redacted/statecallcenterdata_redacted.md",
+                "file_path": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/statecallcenterdata_redacted/statecallcenterdata_redacted.md"
+        },
+        {
+                "slug": "czech-republic-pisa2012_zakovsky_dotaznik_a",
+                "title": "Complex Table Extraction from OECD Czech PISA Assessment",
+                "description": "This PDF is a document from the OECD regarding the PISA assessment, provided in Czech. The main extraction goal is to get the survey question table found on page 9. Challenges include the weird table format, making it hard to extract automatically.",
+                "pdf": "czech-republic-pisa2012_zakovsky_dotaznik_a.pdf",
+                "tags": [
+                        "OECD",
+                        "Czech",
+                        "PISA",
+                        "Survey Table",
+                        "Complex Format"
+                ],
+                "file_size_mb": 0.86,
+                "page_count": 56,
+                "submitted_by": "Yuqi Liao",
+                "language": "Czech",
+                "published": true,
+                "file": "czech-republic-pisa2012_zakovsky_dotaznik_a.md",
+                "id": "czech-republic-pisa2012_zakovsky_dotaznik_a",
+                "vscode_link": "vscode://file//home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a.md",
+                "file_path": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/czech-republic-pisa2012_zakovsky_dotaznik_a/czech-republic-pisa2012_zakovsky_dotaznik_a.md"
+        },
+        {
+                "slug": "focus",
+                "title": "Extracting Economic Data from Brazil's Central Bank PDF",
+                "description": "This PDF is the weekly \u201cFocus\u201d report from Brazil\u2019s central bank with economic projections and statistics. Challenges include commas instead of decimal points, images showing projection changes, and tables without border lines that merge during extraction.",
+                "pdf": "focus.pdf",
+                "tags": [
+                        "Brazil",
+                        "Economic Data",
+                        "PDF Extraction",
+                        "Tables without Borders",
+                        "Comma as Decimal",
+                        "Image Interpretation"
+                ],
+                "file_size_mb": 0.87,
+                "page_count": 2,
+                "submitted_by": "Giovanna serafim",
+                "language": "Spanish",
+                "published": true,
+                "file": "focus.md",
+                "id": "focus",
+                "vscode_link": "vscode://file//home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/focus/focus.md",
+                "file_path": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/focus/focus.md"
+        }
+];
+        
+        let sortColumn = 'file_size_mb';
+        let sortDirection = 'desc';
+        let filteredPDFs = [...allPDFs];
+        
+        function updateStats() {
+            const total = allPDFs.length;
+            const published = allPDFs.filter(p => p.published).length;
+            const unpublished = total - published;
+            const totalSize = allPDFs.reduce((sum, p) => sum + (p.file_size_mb || 0), 0);
+            const totalPages = allPDFs.reduce((sum, p) => sum + (p.page_count || 0), 0);
+            
+            document.getElementById('stats').innerHTML = `
+                <div><strong>Total PDFs:</strong> ${total}</div>
+                <div><strong>Published:</strong> <span class="published">${published}</span></div>
+                <div><strong>Unpublished:</strong> <span class="unpublished">${unpublished}</span></div>
+                <div><strong>Total Size:</strong> ${totalSize.toFixed(1)} MB</div>
+                <div><strong>Total Pages:</strong> ${totalPages.toLocaleString()}</div>
+                <div><strong>Generated:</strong> 2025-09-02 23:59</div>
+            `;
+        }
+        
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = filteredPDFs.map((pdf, index) => `
+                <tr>
+                    <td>
+                        <div class="pdf-id">${pdf.id}</div>
+                        <a href="#" class="pdf-title" onclick="openPreview(${index}); return false;">${pdf.title || pdf.id}</a>
+                        ${pdf.description ? `<div class="description">${pdf.description}</div>` : ''}
+                    </td>
+                    <td class="${pdf.published ? 'published' : 'unpublished'}">${pdf.published ? 'Published' : 'Unpublished'}</td>
+                    <td class="file-size">${(pdf.file_size_mb || 0).toFixed(2)}</td>
+                    <td>${pdf.page_count || 0}</td>
+                    <td>${pdf.submitted_by || 'Unknown'}</td>
+                    <td>${(pdf.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('')}</td>
+                    <td>
+                        ${pdf.vscode_link ? `<a href="${pdf.vscode_link}" class="vscode-link" title="${pdf.file_path}">VS Code</a>` : ''}
+                    </td>
+                </tr>
+            `).join('');
+            
+            // Update sort arrows
+            document.querySelectorAll('.sort-arrow').forEach(arrow => {
+                arrow.textContent = '';
+                arrow.classList.remove('active-sort');
+                if (arrow.dataset.col === sortColumn) {
+                    arrow.textContent = sortDirection === 'asc' ? '▲' : '▼';
+                    arrow.classList.add('active-sort');
+                }
+            });
+        }
+        
+        function sortTable(column) {
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = column;
+                sortDirection = 'asc';
+            }
+            
+            filteredPDFs.sort((a, b) => {
+                let aVal = a[column];
+                let bVal = b[column];
+                
+                // Handle null/undefined
+                if (aVal == null) aVal = '';
+                if (bVal == null) bVal = '';
+                
+                // Numeric comparison for numbers
+                if (typeof aVal === 'number' && typeof bVal === 'number') {
+                    return sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
+                }
+                
+                // String comparison
+                aVal = String(aVal).toLowerCase();
+                bVal = String(bVal).toLowerCase();
+                
+                if (sortDirection === 'asc') {
+                    return aVal.localeCompare(bVal);
+                } else {
+                    return bVal.localeCompare(aVal);
+                }
+            });
+            
+            renderTable();
+        }
+        
+        function applyFilters() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const sizeFilter = document.getElementById('sizeFilter').value;
+            const pageFilter = document.getElementById('pageFilter').value;
+            
+            filteredPDFs = allPDFs.filter(pdf => {
+                // Search filter
+                if (searchTerm) {
+                    const searchIn = [
+                        pdf.id,
+                        pdf.title,
+                        pdf.description,
+                        pdf.submitted_by,
+                        ...(pdf.tags || [])
+                    ].filter(Boolean).join(' ').toLowerCase();
+                    
+                    if (!searchIn.includes(searchTerm)) return false;
+                }
+                
+                // Status filter
+                if (statusFilter === 'published' && !pdf.published) return false;
+                if (statusFilter === 'unpublished' && pdf.published) return false;
+                
+                // Size filter
+                const size = pdf.file_size_mb || 0;
+                if (sizeFilter === 'small' && size >= 1) return false;
+                if (sizeFilter === 'medium' && (size < 1 || size > 5)) return false;
+                if (sizeFilter === 'large' && size <= 5) return false;
+                
+                // Page filter
+                const pages = pdf.page_count || 0;
+                if (pageFilter === 'single' && pages !== 1) return false;
+                if (pageFilter === 'few' && (pages < 2 || pages > 10)) return false;
+                if (pageFilter === 'many' && pages <= 10) return false;
+                
+                return true;
+            });
+            
+            renderTable();
+        }
+        
+        function resetFilters() {
+            document.getElementById('search').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('sizeFilter').value = '';
+            document.getElementById('pageFilter').value = '';
+            applyFilters();
+        }
+        
+        // Event listeners
+        document.getElementById('search').addEventListener('input', applyFilters);
+        document.getElementById('statusFilter').addEventListener('change', applyFilters);
+        document.getElementById('sizeFilter').addEventListener('change', applyFilters);
+        document.getElementById('pageFilter').addEventListener('change', applyFilters);
+        
+        // Initialize with size descending
+        sortTable('file_size_mb');
+        updateStats();
+        
+        // Modal and preview functionality
+        let currentPDFIndex = 0;
+        let processingQueue = JSON.parse(localStorage.getItem('pdfProcessingQueue') || '[]');
+        
+        function openPreview(index) {
+            currentPDFIndex = index;
+            showPDF(filteredPDFs[index]);
+            document.getElementById('previewModal').style.display = 'block';
+            updateNavigationButtons();
+            
+            // Preload adjacent PDFs
+            preloadAdjacentPDFs(index);
+        }
+        
+        function closeModal() {
+            document.getElementById('previewModal').style.display = 'none';
+            document.getElementById('pdfFrame').src = '';
+        }
+        
+        function showPDF(pdf) {
+            // Update modal title
+            document.getElementById('modalTitle').textContent = pdf.title || pdf.id;
+            
+            // Show loading
+            document.getElementById('pdfLoading').style.display = 'block';
+            document.getElementById('pdfFrame').style.display = 'none';
+            
+            // Set PDF URL - using R2 URL from metadata
+            const pdfFilename = pdf.pdf || pdf.id + '.pdf';
+            const pdfUrl = `https://pub-4e99d31d19cb404d8d4f5f7efa51ef6e.r2.dev/pdfs/${pdf.id}/${pdfFilename}`;
+            console.log('Loading PDF:', pdfUrl, 'from metadata:', pdf);
+            const frame = document.getElementById('pdfFrame');
+            
+            frame.onload = function() {
+                document.getElementById('pdfLoading').style.display = 'none';
+                document.getElementById('pdfFrame').style.display = 'block';
+            };
+            
+            frame.src = pdfUrl;
+            
+            // Update details
+            const detailsHtml = `
+                <p><strong>ID:</strong> ${pdf.id}</p>
+                <p><strong>Status:</strong> <span class="${pdf.published ? 'published' : 'unpublished'}">${pdf.published ? 'Published' : 'Unpublished'}</span></p>
+                <p><strong>Size:</strong> ${(pdf.file_size_mb || 0).toFixed(2)} MB</p>
+                <p><strong>Pages:</strong> ${pdf.page_count || 0}</p>
+                <p><strong>Submitted by:</strong> ${pdf.submitted_by || 'Unknown'}</p>
+                ${pdf.description ? `<p><strong>Description:</strong> ${pdf.description}</p>` : ''}
+                ${pdf.tags && pdf.tags.length ? `<p><strong>Tags:</strong> ${pdf.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</p>` : ''}
+            `;
+            document.getElementById('pdfDetails').innerHTML = detailsHtml;
+            
+            // Update raw metadata
+            document.getElementById('rawMetadata').textContent = JSON.stringify(pdf, null, 2);
+            
+            // Update VS Code link
+            const vscodeBtn = document.getElementById('modalVscodeLink');
+            if (pdf.vscode_link) {
+                vscodeBtn.style.display = 'inline-block';
+                vscodeBtn.onclick = () => window.location.href = pdf.vscode_link;
+            } else {
+                vscodeBtn.style.display = 'none';
+            }
+            
+            // Update queue checkbox
+            document.getElementById('queueCheckbox').checked = processingQueue.includes(pdf.id);
+            updateQueueStatus();
+        }
+        
+        function navigatePDF(direction) {
+            const newIndex = currentPDFIndex + direction;
+            if (newIndex >= 0 && newIndex < filteredPDFs.length) {
+                currentPDFIndex = newIndex;
+                showPDF(filteredPDFs[newIndex]);
+                updateNavigationButtons();
+                preloadAdjacentPDFs(newIndex);
+            }
+        }
+        
+        function updateNavigationButtons() {
+            document.getElementById('prevBtn').disabled = currentPDFIndex === 0;
+            document.getElementById('nextBtn').disabled = currentPDFIndex === filteredPDFs.length - 1;
+        }
+        
+        function preloadAdjacentPDFs(index) {
+            // Preload previous and next PDFs
+            const preloadFrame = document.createElement('iframe');
+            preloadFrame.style.display = 'none';
+            
+            if (index > 0) {
+                const prevPdf = filteredPDFs[index - 1];
+                const prevFilename = prevPdf.pdf || prevPdf.id + '.pdf';
+                const prevUrl = `https://pub-4e99d31d19cb404d8d4f5f7efa51ef6e.r2.dev/pdfs/${prevPdf.id}/${prevFilename}`;
+                preloadFrame.src = prevUrl;
+            }
+            
+            if (index < filteredPDFs.length - 1) {
+                const nextPdf = filteredPDFs[index + 1];
+                const nextFilename = nextPdf.pdf || nextPdf.id + '.pdf';
+                const nextUrl = `https://pub-4e99d31d19cb404d8d4f5f7efa51ef6e.r2.dev/pdfs/${nextPdf.id}/${nextFilename}`;
+                setTimeout(() => {
+                    const nextFrame = document.createElement('iframe');
+                    nextFrame.style.display = 'none';
+                    nextFrame.src = nextUrl;
+                }, 100);
+            }
+        }
+        
+        function toggleQueue() {
+            const pdf = filteredPDFs[currentPDFIndex];
+            const isChecked = document.getElementById('queueCheckbox').checked;
+            
+            if (isChecked) {
+                if (!processingQueue.includes(pdf.id)) {
+                    processingQueue.push(pdf.id);
+                }
+            } else {
+                processingQueue = processingQueue.filter(id => id !== pdf.id);
+            }
+            
+            localStorage.setItem('pdfProcessingQueue', JSON.stringify(processingQueue));
+            updateQueueStatus();
+        }
+        
+        function updateQueueStatus() {
+            const statusDiv = document.getElementById('queueStatus');
+            statusDiv.textContent = `Total in queue: ${processingQueue.length} PDFs`;
+            
+            // Update table to show queued items
+            renderTable();
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('previewModal').style.display === 'block') {
+                if (e.key === 'ArrowLeft') {
+                    navigatePDF(-1);
+                } else if (e.key === 'ArrowRight') {
+                    navigatePDF(1);
+                } else if (e.key === 'Escape') {
+                    closeModal();
+                }
+            }
+        });
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('previewModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+    </script>
+</body>
+</html>

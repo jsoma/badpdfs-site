@@ -1,0 +1,131 @@
+[
+  {
+    "slug": "cia-document-extraction",
+    "title": "CIA Document Analysis",
+    "description": "Extracting information from declassified CIA documents using AI",
+    "pdf": "cia-doc.pdf",
+    "tags": [
+      "workshop",
+      "ai",
+      "government-documents"
+    ],
+    "published": true,
+    "file": "cia-document-extraction.md",
+    "id": "cia-document",
+    "methods": [
+      "PDF",
+      "classify",
+      "classify_pages",
+      "filter",
+      "groupby",
+      "info",
+      "save_pdf",
+      "show"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "cia-doc.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "pdf.show",
+        "args": [],
+        "kwargs": {
+          "cols": 6
+        }
+      },
+      {
+        "method": "classify",
+        "method_full": "pdf.classify",
+        "args": [
+          [
+            "slaughterhouse report",
+            "dolphin training manual",
+            "basketball",
+            "birding"
+          ]
+        ],
+        "kwargs": {
+          "using": "text"
+        }
+      },
+      {
+        "method": "classify_pages",
+        "method_full": "pdf.classify_pages",
+        "args": [
+          [
+            "diagram",
+            "text",
+            "invoice",
+            "blank"
+          ]
+        ],
+        "kwargs": {
+          "using": "vision"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "show_category": true
+        }
+      },
+      {
+        "method": "filter",
+        "method_full": "pdf.filter",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "groupby",
+        "method_full": "pdf.groupby",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "info",
+        "method_full": "groups.info",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "save_pdf",
+        "method_full": "save_pdf",
+        "args": [
+          "diagrams.pdf"
+        ],
+        "kwargs": {
+          "original": true
+        }
+      },
+      {
+        "method": "filter",
+        "method_full": "pdf.filter",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [],
+    "complexity": {
+      "code_blocks": 7,
+      "total_lines": 28,
+      "total_chars": 733
+    },
+    "approaches": [
+      "cia-document-extraction.md"
+    ]
+  }
+]

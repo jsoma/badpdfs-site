@@ -1,0 +1,264 @@
+[
+  {
+    "slug": "m27",
+    "title": "Extracting Data Tables from Oklahoma Booze Licensees PDF",
+    "description": "This PDF contains detailed tables listing alcohol licensees in Oklahoma. It has multi-line cells making it hard to extract data accurately. Challenges include alternative row colors instead of lines (\"zebra stripes\"), complicating row differentiation and extraction.",
+    "pdf": "m27.pdf",
+    "tags": [
+      "data tables",
+      "multiline cells",
+      "PDF extraction issues",
+      "row colors"
+    ],
+    "file_size_mb": 0.03,
+    "page_count": 2,
+    "submitted_by": "Jeremy Merrill",
+    "published": true,
+    "file": "m27.md",
+    "id": "m27",
+    "methods": [
+      "Guides",
+      "PDF",
+      "above",
+      "add_exclusion",
+      "below",
+      "expand",
+      "extract_table",
+      "extract_text",
+      "find",
+      "find_all",
+      "right",
+      "show",
+      "to_df"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "m27.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "above",
+        "method_full": "above",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "PREMISE"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "text:regex(Page \\d+ of)"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "pdf.add_exclusion",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "above",
+        "method_full": "above",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "PREMISE"
+        }
+      },
+      {
+        "method": "add_exclusion",
+        "method_full": "pdf.add_exclusion",
+        "args": [
+          "<Lambda>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "text:regex(Page \\d+ of)"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {
+          "exclusions": "red"
+        }
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<var:page>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "NUMBER"
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "expand",
+        "method_full": "expand",
+        "args": [],
+        "kwargs": {
+          "top": 3,
+          "bottom": 3
+        }
+      },
+      {
+        "method": "right",
+        "method_full": "right",
+        "args": [],
+        "kwargs": {
+          "include_source": true
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "NUMBER"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": 100,
+          "width": 700
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element"
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "NUMBER"
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "find_all",
+        "args": [
+          "text"
+        ],
+        "kwargs": {
+          "overlap": "partial"
+        }
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "width": "element",
+          "include_source": true
+        }
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [],
+        "kwargs": {
+          "text": "NUMBER"
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [
+      "text",
+      "text:regex(Page \\d+ of)"
+    ],
+    "complexity": {
+      "code_blocks": 12,
+      "total_lines": 55,
+      "total_chars": 1289
+    },
+    "approaches": [
+      "m27.md"
+    ]
+  }
+]

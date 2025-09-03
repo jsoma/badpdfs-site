@@ -1,0 +1,200 @@
+{
+  "slug": "statecallcenterdata_redacted",
+  "title": "Extracting State Agency Call Center Wait Times from FOIA PDF",
+  "description": "This PDF contains data on wait times at a state agency call center. The main focus is on the data on the first two pages, which matches other states' submission formats. The later pages provide granular breakdowns over several years. Challenges include it being heavily pixelated, making it hard to read numbers and text, with inconsistent and unreadable charts.",
+  "pdf": "statecallcenterdata_redacted.pdf",
+  "tags": [
+    "Call Center Data",
+    "Pixelated Scan",
+    "OCR Required",
+    "Granular Breakdown"
+  ],
+  "file_size_mb": 6.19,
+  "page_count": 66,
+  "submitted_by": "Adiel Kaplan",
+  "published": true,
+  "file": "statecallcenterdata_redacted.md",
+  "id": "statecallcenterdata_redacted",
+  "methods": [
+    "Guides",
+    "PDF",
+    "apply_ocr",
+    "below",
+    "divide",
+    "expand",
+    "extract_table",
+    "extract_text",
+    "find",
+    "find_all",
+    "from_lines",
+    "show",
+    "snap_to_whitespace",
+    "to_df"
+  ],
+  "method_usage": [
+    {
+      "method": "PDF",
+      "method_full": "PDF",
+      "args": [
+        "statecallcenterdata_redacted.pdf"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "page.show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "page.extract_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "apply_ocr",
+      "method_full": "page.apply_ocr",
+      "args": [
+        "surya"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {
+        "crop": true
+      }
+    },
+    {
+      "method": "find_all",
+      "method_full": "page.find_all",
+      "args": [
+        "text"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "page.extract_text",
+      "args": [],
+      "kwargs": {
+        "layout": true
+      }
+    },
+    {
+      "method": "below",
+      "method_full": "below",
+      "args": [],
+      "kwargs": {
+        "until": "text:contains(Please use the comments)",
+        "include_endpoint": false
+      }
+    },
+    {
+      "method": "find",
+      "method_full": "page.find",
+      "args": [
+        "text:contains(Figure)"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "expand",
+      "method_full": "expand",
+      "args": [],
+      "kwargs": {
+        "right": "<UnaryOp>",
+        "left": "<UnaryOp>",
+        "bottom": 3
+      }
+    },
+    {
+      "method": "below",
+      "method_full": "below",
+      "args": [],
+      "kwargs": {
+        "until": "text:contains(Please use the comments)",
+        "include_endpoint": false
+      }
+    },
+    {
+      "method": "find",
+      "method_full": "page.find",
+      "args": [
+        "text:contains(Figure)"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {
+        "crop": true
+      }
+    },
+    {
+      "method": "Guides",
+      "method_full": "Guides",
+      "args": [
+        "<var:table_area>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "divide",
+      "method_full": "guide.divide",
+      "args": [
+        3
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "snap_to_whitespace",
+      "method_full": "guide.snap_to_whitespace",
+      "args": [],
+      "kwargs": {
+        "detection_method": "text"
+      }
+    },
+    {
+      "method": "from_lines",
+      "method_full": "guide.from_lines",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "guide.show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "to_df",
+      "method_full": "to_df",
+      "args": [],
+      "kwargs": {
+        "header": [
+          "value",
+          "amount",
+          "comments"
+        ]
+      }
+    }
+  ],
+  "selectors": [
+    "text",
+    "text:contains(Figure)"
+  ],
+  "complexity": {
+    "code_blocks": 10,
+    "total_lines": 47,
+    "total_chars": 1028
+  },
+  "approaches": [
+    "statecallcenterdata_redacted.md"
+  ]
+}

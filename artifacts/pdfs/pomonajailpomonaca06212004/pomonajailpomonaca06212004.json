@@ -1,0 +1,204 @@
+{
+  "slug": "pomonajailpomonaca06212004",
+  "title": "ICE Detention Facilities Compliance Report Extraction",
+  "description": "This PDF is an ICE report on compliance among detention facilities over the last 20-30 years. Our aim is to extract facility statuses and contract signatories' names and dates. Challenges include strange redactions, blobby text, poor contrast, and ineffective OCR. It has handwritten signatures and dates that are redacted.",
+  "pdf": "pomonajailpomonaca06212004.pdf",
+  "tags": [
+    "ICE compliance report",
+    "Redacted text",
+    "Handwriting",
+    "OCR needed",
+    "Text extraction issues",
+    "Columns"
+  ],
+  "file_size_mb": 41.36,
+  "page_count": 26,
+  "submitted_by": "Paroma Soni",
+  "published": true,
+  "file": "pomonajailpomonaca06212004.md",
+  "id": "pomonajailpomonaca06212004",
+  "methods": [
+    "Judge",
+    "PDF",
+    "add",
+    "apply_ocr",
+    "below",
+    "expand",
+    "extract_text",
+    "find",
+    "forget",
+    "left",
+    "region",
+    "show",
+    "trim"
+  ],
+  "method_usage": [
+    {
+      "method": "PDF",
+      "method_full": "PDF",
+      "args": [
+        "pomonajailpomonaca06212004.pdf"
+      ],
+      "kwargs": {
+        "text_layer": false
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "page.show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "apply_ocr",
+      "method_full": "page.apply_ocr",
+      "args": [],
+      "kwargs": {
+        "resolution": 192
+      }
+    },
+    {
+      "method": "extract_text",
+      "method_full": "page.extract_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "region",
+      "method_full": "page.region",
+      "args": [],
+      "kwargs": {
+        "right": "<BinOp>"
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "left_col.show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "below",
+      "method_full": "below",
+      "args": [],
+      "kwargs": {
+        "until": "text:contains(ICE Information)",
+        "include_endpoint": false
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {
+        "crop": 50
+      }
+    },
+    {
+      "method": "trim",
+      "method_full": "trim",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "expand",
+      "method_full": "expand",
+      "args": [],
+      "kwargs": {
+        "top": 3
+      }
+    },
+    {
+      "method": "forget",
+      "method_full": "judge.forget",
+      "args": [],
+      "kwargs": {
+        "delete": true
+      }
+    },
+    {
+      "method": "add",
+      "method_full": "judge.add",
+      "args": [
+        "<var:region1>",
+        "checked"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "add",
+      "method_full": "judge.add",
+      "args": [
+        "<var:region2>",
+        "unchecked"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "find",
+      "method_full": "page.find",
+      "args": [],
+      "kwargs": {
+        "text": "Field Office"
+      }
+    },
+    {
+      "method": "find",
+      "method_full": "page.find",
+      "args": [],
+      "kwargs": {
+        "text": "HQ Review"
+      }
+    },
+    {
+      "method": "find",
+      "method_full": "page.find",
+      "args": [
+        "text[text=Court Order]"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "find",
+      "method_full": "page.find",
+      "args": [
+        "text[text=Major Litigation]"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "find",
+      "method_full": "page.find",
+      "args": [
+        "text[text=Class Action Order]"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "find",
+      "method_full": "page.find",
+      "args": [
+        "text[text=No]"
+      ],
+      "kwargs": {}
+    }
+  ],
+  "selectors": [
+    "text:closest(County)",
+    "text:closest(Dates of Review)",
+    "text:closest(Name and Location)",
+    "text:closest(Previous Rating)",
+    "text[text=Class Action Order]",
+    "text[text=Court Order]",
+    "text[text=Major Litigation]",
+    "text[text=No]"
+  ],
+  "complexity": {
+    "code_blocks": 15,
+    "total_lines": 64,
+    "total_chars": 2021
+  },
+  "approaches": [
+    "pomonajailpomonaca06212004.md"
+  ]
+}

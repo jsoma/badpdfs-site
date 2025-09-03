@@ -1,0 +1,114 @@
+{
+  "slug": "mednine",
+  "title": "Arabic Election Results Table Extraction from Mednine PDF",
+  "description": "This PDF has a data table showing election results from the Tunisian region of Mednine. Challenges include spanning header cells and rotated headers. It has Arabic script.",
+  "pdf": "mednine.pdf",
+  "tags": [
+    "Election Results",
+    "Arabic Script",
+    "Table Extraction",
+    "Header Challenges"
+  ],
+  "file_size_mb": 0.24,
+  "page_count": 4,
+  "submitted_by": "Jeremy Merrill",
+  "language": [
+    "Arabic"
+  ],
+  "published": true,
+  "file": "mednine.md",
+  "id": "mednine",
+  "methods": [
+    "Flow",
+    "PDF",
+    "apply",
+    "astype",
+    "extract_table",
+    "replace",
+    "show",
+    "to_df"
+  ],
+  "method_usage": [
+    {
+      "method": "PDF",
+      "method_full": "PDF",
+      "args": [
+        "mednine.pdf"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "pdf.show",
+      "args": [],
+      "kwargs": {
+        "cols": 3
+      }
+    },
+    {
+      "method": "Flow",
+      "method_full": "Flow",
+      "args": [
+        "<Attribute>"
+      ],
+      "kwargs": {
+        "arrangement": "vertical"
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "flow.show",
+      "args": [],
+      "kwargs": {
+        "width": 300
+      }
+    },
+    {
+      "method": "to_df",
+      "method_full": "to_df",
+      "args": [],
+      "kwargs": {
+        "header": null
+      }
+    },
+    {
+      "method": "apply",
+      "method_full": "pdf.apply",
+      "args": [
+        "<Lambda>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "to_df",
+      "method_full": "to_df",
+      "args": [],
+      "kwargs": {
+        "header": null
+      }
+    },
+    {
+      "method": "extract_table",
+      "method_full": "page.extract_table",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "astype",
+      "method_full": "astype",
+      "args": [
+        "<var:int>"
+      ],
+      "kwargs": {}
+    }
+  ],
+  "selectors": [],
+  "complexity": {
+    "code_blocks": 5,
+    "total_lines": 20,
+    "total_chars": 621
+  },
+  "approaches": [
+    "mednine.md"
+  ]
+}

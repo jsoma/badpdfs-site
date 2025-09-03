@@ -1,0 +1,492 @@
+{
+  "slug": "focus",
+  "title": "Extracting Economic Data from Brazil's Central Bank PDF",
+  "description": "This PDF is the weekly \u201cFocus\u201d report from Brazil\u2019s central bank with economic projections and statistics. Challenges include commas instead of decimal points, images showing projection changes, and tables without border lines that merge during extraction.",
+  "pdf": "focus.pdf",
+  "tags": [
+    "Brazil",
+    "Economic Data",
+    "PDF Extraction",
+    "Tables without Borders",
+    "Comma as Decimal",
+    "Image Interpretation"
+  ],
+  "file_size_mb": 0.87,
+  "page_count": 2,
+  "submitted_by": "Giovanna serafim",
+  "language": "Spanish",
+  "published": true,
+  "file": "focus.md",
+  "id": "focus",
+  "methods": [
+    "PDF",
+    "assign",
+    "below",
+    "clip",
+    "dropna",
+    "expand",
+    "extract_table",
+    "extract_text",
+    "find",
+    "find_all",
+    "right",
+    "show",
+    "to_df"
+  ],
+  "method_usage": [
+    {
+      "method": "PDF",
+      "method_full": "PDF",
+      "args": [
+        "focus.pdf"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "page.show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "below",
+      "method_full": "below",
+      "args": [],
+      "kwargs": {
+        "until": "text:contains(comportamento)",
+        "include_endpoint": false
+      }
+    },
+    {
+      "method": "find",
+      "method_full": "page.find",
+      "args": [],
+      "kwargs": {
+        "text": "Expectativas"
+      }
+    },
+    {
+      "method": "find_all",
+      "method_full": "find_all",
+      "args": [
+        "text"
+      ],
+      "kwargs": {
+        "overlap": "partial"
+      }
+    },
+    {
+      "method": "clip",
+      "method_full": "clip",
+      "args": [
+        "<var:data>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "below",
+      "method_full": "below",
+      "args": [],
+      "kwargs": {
+        "width": "element",
+        "include_source": true
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "dropna",
+      "method_full": "dropna",
+      "args": [],
+      "kwargs": {
+        "axis": 0,
+        "how": "all"
+      }
+    },
+    {
+      "method": "to_df",
+      "method_full": "to_df",
+      "args": [],
+      "kwargs": {
+        "header": false
+      }
+    },
+    {
+      "method": "extract_table",
+      "method_full": "extract_table",
+      "args": [
+        "stream"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "assign",
+      "method_full": "assign",
+      "args": [],
+      "kwargs": {
+        "year": "<Call>",
+        "value": "<var:headers>"
+      }
+    },
+    {
+      "method": "dropna",
+      "method_full": "dropna",
+      "args": [],
+      "kwargs": {
+        "axis": 0,
+        "how": "all"
+      }
+    },
+    {
+      "method": "to_df",
+      "method_full": "to_df",
+      "args": [],
+      "kwargs": {
+        "header": false
+      }
+    },
+    {
+      "method": "extract_table",
+      "method_full": "extract_table",
+      "args": [
+        "stream"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "extract_text",
+      "method_full": "extract_text",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "right",
+      "method_full": "right",
+      "args": [],
+      "kwargs": {
+        "until": "text:contains(2026)",
+        "include_source": true,
+        "include_endpoint": false
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "below",
+      "method_full": "below",
+      "args": [],
+      "kwargs": {
+        "width": "element"
+      }
+    },
+    {
+      "method": "right",
+      "method_full": "right",
+      "args": [],
+      "kwargs": {
+        "until": "text:contains(2026)",
+        "include_source": true,
+        "include_endpoint": false
+      }
+    },
+    {
+      "method": "clip",
+      "method_full": "clip",
+      "args": [
+        "<var:data>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "expand",
+      "method_full": "expand",
+      "args": [],
+      "kwargs": {
+        "top": "<UnaryOp>"
+      }
+    },
+    {
+      "method": "below",
+      "method_full": "below",
+      "args": [],
+      "kwargs": {
+        "width": "element"
+      }
+    },
+    {
+      "method": "right",
+      "method_full": "right",
+      "args": [],
+      "kwargs": {
+        "until": "text:contains(2026)",
+        "include_source": true,
+        "include_endpoint": false
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "table.show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "to_df",
+      "method_full": "to_df",
+      "args": [],
+      "kwargs": {
+        "header": false
+      }
+    },
+    {
+      "method": "extract_table",
+      "method_full": "extract_table",
+      "args": [
+        "stream"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "expand",
+      "method_full": "table.expand",
+      "args": [],
+      "kwargs": {
+        "top": "<UnaryOp>"
+      }
+    },
+    {
+      "method": "clip",
+      "method_full": "clip",
+      "args": [
+        "<var:data>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "expand",
+      "method_full": "expand",
+      "args": [],
+      "kwargs": {
+        "top": "<UnaryOp>"
+      }
+    },
+    {
+      "method": "below",
+      "method_full": "below",
+      "args": [],
+      "kwargs": {
+        "width": "element"
+      }
+    },
+    {
+      "method": "right",
+      "method_full": "right",
+      "args": [],
+      "kwargs": {
+        "until": "text:contains(2027)",
+        "include_source": true,
+        "include_endpoint": false
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "table.show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "dropna",
+      "method_full": "dropna",
+      "args": [],
+      "kwargs": {
+        "axis": 0,
+        "how": "all"
+      }
+    },
+    {
+      "method": "to_df",
+      "method_full": "to_df",
+      "args": [],
+      "kwargs": {
+        "header": false
+      }
+    },
+    {
+      "method": "extract_table",
+      "method_full": "extract_table",
+      "args": [
+        "stream"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "expand",
+      "method_full": "table.expand",
+      "args": [],
+      "kwargs": {
+        "top": "<UnaryOp>"
+      }
+    },
+    {
+      "method": "clip",
+      "method_full": "clip",
+      "args": [
+        "<var:data>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "expand",
+      "method_full": "expand",
+      "args": [],
+      "kwargs": {
+        "top": "<UnaryOp>"
+      }
+    },
+    {
+      "method": "below",
+      "method_full": "below",
+      "args": [],
+      "kwargs": {
+        "width": "element"
+      }
+    },
+    {
+      "method": "right",
+      "method_full": "right",
+      "args": [],
+      "kwargs": {
+        "until": "text:contains(2028)",
+        "include_source": true,
+        "include_endpoint": false
+      }
+    },
+    {
+      "method": "dropna",
+      "method_full": "dropna",
+      "args": [],
+      "kwargs": {
+        "axis": 0,
+        "how": "all"
+      }
+    },
+    {
+      "method": "to_df",
+      "method_full": "to_df",
+      "args": [],
+      "kwargs": {
+        "header": false
+      }
+    },
+    {
+      "method": "extract_table",
+      "method_full": "extract_table",
+      "args": [
+        "stream"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "expand",
+      "method_full": "table.expand",
+      "args": [],
+      "kwargs": {
+        "top": "<UnaryOp>"
+      }
+    },
+    {
+      "method": "clip",
+      "method_full": "clip",
+      "args": [
+        "<var:data>"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "expand",
+      "method_full": "expand",
+      "args": [],
+      "kwargs": {
+        "top": "<UnaryOp>"
+      }
+    },
+    {
+      "method": "below",
+      "method_full": "below",
+      "args": [],
+      "kwargs": {
+        "width": "element"
+      }
+    },
+    {
+      "method": "right",
+      "method_full": "right",
+      "args": [],
+      "kwargs": {
+        "include_source": true
+      }
+    },
+    {
+      "method": "dropna",
+      "method_full": "dropna",
+      "args": [],
+      "kwargs": {
+        "axis": 0,
+        "how": "all"
+      }
+    },
+    {
+      "method": "to_df",
+      "method_full": "to_df",
+      "args": [],
+      "kwargs": {
+        "header": false
+      }
+    },
+    {
+      "method": "extract_table",
+      "method_full": "extract_table",
+      "args": [
+        "stream"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "expand",
+      "method_full": "table.expand",
+      "args": [],
+      "kwargs": {
+        "top": "<UnaryOp>"
+      }
+    }
+  ],
+  "selectors": [
+    "text",
+    "text:contains(2025)",
+    "text:contains(2026)",
+    "text:contains(2027)",
+    "text:contains(2028)",
+    "text[size~=10]:regex(\\d\\d\\d\\d)"
+  ],
+  "complexity": {
+    "code_blocks": 18,
+    "total_lines": 143,
+    "total_chars": 3170
+  },
+  "approaches": [
+    "focus.md"
+  ]
+}

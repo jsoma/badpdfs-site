@@ -1,0 +1,251 @@
+{
+  "file": "/home/runner/work/badpdfs-site/badpdfs-site/content/pdfs/m27/m27.md",
+  "metadata": {
+    "slug": "m27",
+    "title": "Extracting Data Tables from Oklahoma Booze Licensees PDF",
+    "description": "This PDF contains detailed tables listing alcohol licensees in Oklahoma. It has multi-line cells making it hard to extract data accurately. Challenges include alternative row colors instead of lines (\"zebra stripes\"), complicating row differentiation and extraction.",
+    "pdf": "m27.pdf",
+    "tags": [
+      "data tables",
+      "multiline cells",
+      "PDF extraction issues",
+      "row colors"
+    ],
+    "file_size_mb": 0.03,
+    "page_count": 2,
+    "submitted_by": "Jeremy Merrill",
+    "published": true,
+    "file": "m27.md"
+  },
+  "cells": [
+    {
+      "type": "markdown",
+      "content": "# Extracting Data Tables from Oklahoma Booze Licensees PDF\n\nThis PDF contains detailed tables listing alcohol licensees in Oklahoma. It has zebra-striped, multi-line cells without lines, making it hard to extract data accurately.\n\n*...or is that helpful?*"
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf import PDF\n\npdf = PDF(\"m27.pdf\")\npage = pdf.pages[0]\npage.show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf import PDF\npdf = PDF('m27.pdf')\npage = pdf.pages[0]...\n[DEBUG] Evaluating expression: page.show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/m27/m27/images/image_1.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "## Exclusions\n\nFirst let's think about what we don't want: headers and footers."
+    },
+    {
+      "type": "code",
+      "content": "header = page.find(text=\"PREMISE\").above()\nfooter = page.find(\"text:regex(Page \\d+ of)\")\n(header + footer).show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: header = page.find(text='PREMISE').above()\nfooter = page.find('text:regex(Page \\\\d+ of)')...\n[DEBUG] Evaluating expression: (header + footer).show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/m27/m27/images/image_2.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "To make exclusions apply to *each* page instead of just your current page, you can use `lambda page: page.xxx`."
+    },
+    {
+      "type": "code",
+      "content": "print(\"Before exclusions:\", page.extract_text()[:200])\n\n# Add exclusions\npdf.add_exclusion(lambda page: page.find(text=\"PREMISE\").above())\npdf.add_exclusion(lambda page: page.find(\"text:regex(Page \\d+ of)\").expand())\n\nprint(\"After exclusions:\", page.extract_text()[:200])\n\n# Preview\npage.show(exclusions='red')",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: print('Before exclusions:', page.extract_text()[:200])\npdf.add_exclusion(lambda page: page.find(text...\nBefore exclusions: FEBRUARY 2014 M27 (BUS) ALPHABETIC LISTING BY TYPE ABLPDM27\nOF ACTIVE LICENSES 3/19/2014\nOKLAHOMA ABLE COMMISSION\nLICENSE PREMISE\nNUMBER TYPE DBA NAME LICENSEE NAME ADDRESS CITY ST ZIP PHONE NUMBER EX\nAfter exclusions: LICENSE PREMISE\nNUMBER TYPE DBA NAME LICENSEE NAME ADDRESS CITY ST ZIP PHONE NUMBER EXPIRES\n648765 AAA ALLEGIANT AIR ALLEGIANT AIR LLC 7100 TERMINAL DRIVE OKLAHOMA CITY OK 73159 - 2014/12/03\n7777 EAST\n[DEBUG] Evaluating expression: page.show(exclusions='red')...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/m27/m27/images/image_3.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "## Table extraction\n\nA basic `page.extract_table()` won't work \u2013 spacing is too narrow, not enough details \u2013 so we'll use guides to extract the table."
+    },
+    {
+      "type": "code",
+      "content": "from natural_pdf.analyzers.guides import Guides\n\nguides = Guides(page)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: from natural_pdf.analyzers.guides import Guides\n\nguides = Guides(page)...\n",
+        "error": null,
+        "figures": [],
+        "result": null
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "### Table columns\n\nWe'll start by creating some lines to separate each column. It's easiest to grab the \"NUMBER\" header and then everything to the right of it."
+    },
+    {
+      "type": "code",
+      "content": "region = (\n    page\n    .find(text=\"NUMBER\")\n    .right(include_source=True)\n)\nregion.show(crop=100)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: region = page.find(text='NUMBER').right(include_source=True)...\n[DEBUG] Evaluating expression: region.show(crop=100)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/m27/m27/images/image_4.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "When we grab each header we need a little 3px wiggle room, as the lines aren't *exactly* lined up."
+    },
+    {
+      "type": "code",
+      "content": "headers = (\n    page\n    .find(text=\"NUMBER\")\n    .right(include_source=True)\n    .expand(top=3, bottom=3)\n    .find_all('text')\n)\nheaders.show(crop=100)",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: headers = page.find(text='NUMBER').right(include_source=True).expand(top=3, bottom=3).find_all('text...\n[DEBUG] Evaluating expression: headers.show(crop=100)...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/m27/m27/images/image_5.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Notice how all of the headers are left-aligned? We can use that to build a grid with our guides."
+    },
+    {
+      "type": "code",
+      "content": "guides.vertical.from_content(headers, align='left')\nguides.show()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: guides.vertical.from_content(headers, align='left')...\n[DEBUG] Evaluating expression: guides.show()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "image/png",
+          "path": "executions/pdfs/m27/m27/images/image_6.png"
+        }
+      }
+    },
+    {
+      "type": "markdown",
+      "content": "Now we need to separate out our rows: we have two options!"
+    },
+    {
+      "type": "tab",
+      "title": "By zebra stripes",
+      "cells": [
+        {
+          "type": "markdown",
+          "content": "Rows have alternating blue bands behind them. If we use `horizontal.from_stripes()` it will go through a two-step process:\n\n1. Find the most popular color rectangles\n2. Add guidelines for the top and bottom of each rectangle\n\nYou can also set the `color=` or find+pass the rectangles yourself, but in this case it works with the default options."
+        },
+        {
+          "type": "code",
+          "content": "guides.horizontal.from_stripes()\nguides.show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: guides.horizontal.from_stripes()...\n[DEBUG] Evaluating expression: guides.show()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/m27/m27/images/image_7.png"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "tab",
+      "title": "By license number",
+      "cells": [
+        {
+          "type": "markdown",
+          "content": "Instead of relying on the colored banding, we can also find an item that shows up exactly once in each row, then use that to draw the borders."
+        },
+        {
+          "type": "code",
+          "content": "(\n    page\n    .find(text=\"NUMBER\")\n    .below(width='element')\n).show(crop=100, width=700)",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Evaluating expression: page.find(text='NUMBER').below(width='element').show(crop=100, width=700)...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/m27/m27/images/image_8.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "We draw down from the **NUMBER** header, then find all of the elements under it. We do need to ask for `overlap='partial'` because the header doesn't fully encompass each license number."
+        },
+        {
+          "type": "code",
+          "content": "rows = (\n    page\n    .find(text=\"NUMBER\")\n    .below(\n      width='element',\n      include_source=True\n    )\n    .find_all('text', overlap='partial')\n)\nrows.show(crop=100, width=700)",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: rows = page.find(text='NUMBER').below(width='element', include_source=True).find_all('text', overlap...\n[DEBUG] Evaluating expression: rows.show(crop=100, width=700)...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/m27/m27/images/image_9.png"
+            }
+          }
+        },
+        {
+          "type": "markdown",
+          "content": "Now we can feed each row to `from_content` and tell Natural PDF to draw a border at the bottom of each one."
+        },
+        {
+          "type": "code",
+          "content": "guides.horizontal.from_content(rows, align='bottom')\nguides.show()",
+          "execution": {
+            "status": "success",
+            "output": "[DEBUG] Executing code: guides.horizontal.from_content(rows, align='bottom')...\n[DEBUG] Evaluating expression: guides.show()...\n",
+            "error": null,
+            "figures": [],
+            "result": {
+              "type": "image/png",
+              "path": "executions/pdfs/m27/m27/images/image_10.png"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "markdown",
+      "content": "Depending on how you set up your extraction, `include_outer_boundaries=True` isn't necessarily necessary, but I'm using it here so that it works for both approaches up above (even though one gives you an extra column)."
+    },
+    {
+      "type": "code",
+      "content": "df = (\n  guides\n  .extract_table(include_outer_boundaries=True)\n  .to_df()\n)\ndf.head()",
+      "execution": {
+        "status": "success",
+        "output": "[DEBUG] Executing code: df = guides.extract_table(include_outer_boundaries=True).to_df()...\n[DEBUG] Evaluating expression: df.head()...\n",
+        "error": null,
+        "figures": [],
+        "result": {
+          "type": "text/html",
+          "data": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>None</th>\n      <th>LICENSE\\nNUMBER</th>\n      <th>TYPE</th>\n      <th>DBA NAME</th>\n      <th>LICENSEE NAME</th>\n      <th>PREMISE\\nADDRESS</th>\n      <th>CITY</th>\n      <th>ST</th>\n      <th>ZIP</th>\n      <th>PHONE NUMBER</th>\n      <th>EXPIRES</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>None</td>\n      <td>648765</td>\n      <td>AAA</td>\n      <td>ALLEGIANT AIR</td>\n      <td>ALLEGIANT AIR LLC</td>\n      <td>7100 TERMINAL DRIVE</td>\n      <td>OKLAHOMA CITY</td>\n      <td>OK</td>\n      <td>73159</td>\n      <td>-</td>\n      <td>2014/12/03</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>None</td>\n      <td>648766</td>\n      <td>AAA</td>\n      <td>ALLEGIANT AIR</td>\n      <td>ALLEGIANT AIR LLC</td>\n      <td>7777 EAST APACHE\\nSTREET</td>\n      <td>TULSA</td>\n      <td>OK</td>\n      <td>74115</td>\n      <td>-</td>\n      <td>2014/12/16</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>None</td>\n      <td>82030</td>\n      <td>AAA</td>\n      <td>AMERICAN AIRLINES</td>\n      <td>AMERICAN AIRLINES INC</td>\n      <td>7100 TERMINAL DRIVE</td>\n      <td>OKLAHOMA CITY</td>\n      <td>OK</td>\n      <td>73159</td>\n      <td>(405) 680-3701</td>\n      <td>2014/09/14</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>None</td>\n      <td>509462</td>\n      <td>AAA</td>\n      <td>AMERICAN AIRLINES</td>\n      <td>AMERICAN AIRLINES INC</td>\n      <td>7777 EAST APACHE DRIVE</td>\n      <td>TULSA</td>\n      <td>OK</td>\n      <td>74115</td>\n      <td>(918) 831-6302</td>\n      <td>2014/08/19</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>None</td>\n      <td>509609</td>\n      <td>AAA</td>\n      <td>AMERICAN EAGLE</td>\n      <td>AMERICAN EAGLE\\nAIRLINES INC</td>\n      <td>7100 TERMINAL DRIVE</td>\n      <td>OKLAHOMA CITY</td>\n      <td>OK</td>\n      <td>73159</td>\n      <td>(405) 680-3701</td>\n      <td>2014/08/19</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+        }
+      }
+    }
+  ]
+}

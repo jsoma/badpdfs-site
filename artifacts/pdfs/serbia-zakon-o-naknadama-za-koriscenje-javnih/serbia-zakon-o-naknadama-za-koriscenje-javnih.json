@@ -1,0 +1,113 @@
+{
+  "slug": "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+  "title": "Extracting Complex Data from Serbian Regulatory PDF",
+  "description": "This PDF contains parts of Serbian policy documents, crucial for a research project analyzing industry policies across countries. The challenge lies in extracting a large table that spans pages (page 90 to 97) and a math formula on page 98, all in Serbian. Both elements lack clear boundaries between pages, complicating extraction.",
+  "pdf": "serbia-zakon-o-naknadama-za-koriscenje-javnih.pdf",
+  "tags": [
+    "Serbian",
+    "Large Tables",
+    "Math Formulas",
+    "Regulatory Documents",
+    "multiple tables",
+    "spanning pages"
+  ],
+  "file_size_mb": 1.89,
+  "page_count": 120,
+  "submitted_by": "Yuqi Liao",
+  "language": "Serbian",
+  "published": true,
+  "file": "serbia-zakon-o-naknadama-za-koriscenje-javnih.md",
+  "id": "serbia-zakon-o-naknadama-za-koriscenje-javnih",
+  "methods": [
+    "Guides",
+    "PDF",
+    "below",
+    "extract_table",
+    "find",
+    "show",
+    "to_df"
+  ],
+  "method_usage": [
+    {
+      "method": "PDF",
+      "method_full": "PDF",
+      "args": [
+        "serbia-zakon-o-naknadama-za-koriscenje-javnih.pdf"
+      ],
+      "kwargs": {}
+    },
+    {
+      "method": "find",
+      "method_full": "pdf.find",
+      "args": [],
+      "kwargs": {
+        "text": "Prilog 7."
+      }
+    },
+    {
+      "method": "find",
+      "method_full": "pdf.find",
+      "args": [],
+      "kwargs": {
+        "text": "VISINA NAKNADE ZA ZAGA\u0110ENJE VODA"
+      }
+    },
+    {
+      "method": "below",
+      "method_full": "below",
+      "args": [],
+      "kwargs": {
+        "until": "text:contains(Tabela 5)",
+        "include_endpoint": false,
+        "multipage": true
+      }
+    },
+    {
+      "method": "to_df",
+      "method_full": "to_df",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "to_df",
+      "method_full": "to_df",
+      "args": [],
+      "kwargs": {
+        "header": false
+      }
+    },
+    {
+      "method": "find",
+      "method_full": "pdf.find",
+      "args": [],
+      "kwargs": {
+        "text": "Obra\u010dun naknade za neposredno zaga\u0111enje voda"
+      }
+    },
+    {
+      "method": "show",
+      "method_full": "show",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "method": "find",
+      "method_full": "page.find",
+      "args": [
+        "image"
+      ],
+      "kwargs": {}
+    }
+  ],
+  "selectors": [
+    "image"
+  ],
+  "complexity": {
+    "code_blocks": 9,
+    "total_lines": 28,
+    "total_chars": 957
+  },
+  "approaches": [
+    "serbia-zakon-o-naknadama-za-koriscenje-javnih.md"
+  ]
+}

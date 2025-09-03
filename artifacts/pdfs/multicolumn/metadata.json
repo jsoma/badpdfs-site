@@ -1,0 +1,366 @@
+[
+  {
+    "slug": "multicolumn",
+    "title": "Working with page structure",
+    "description": "Extract text from complex multi-column layouts while maintaining proper reading order. Learn techniques for handling academic papers, newsletters, and documents with intricate column structures using Natural PDF's layout detection features.",
+    "pdf": "multicolumn.pdf",
+    "tags": [
+      "Multi-Column Layout",
+      "Reading Order",
+      "Text Flow",
+      "Academic Papers",
+      "Layout Detection",
+      "Table Extraction",
+      "YOLO",
+      "TATR"
+    ],
+    "file_size_mb": 0.8,
+    "page_count": 1,
+    "submitted_by": "Natural PDF Team",
+    "published": true,
+    "file": "multicolumn.md",
+    "id": "multicolumn",
+    "methods": [
+      "Flow",
+      "Guides",
+      "PDF",
+      "analyze_layout",
+      "apply_ocr",
+      "below",
+      "extract_table",
+      "extract_text",
+      "find",
+      "find_all",
+      "from_lines",
+      "highlight",
+      "region",
+      "show",
+      "to_df"
+    ],
+    "method_usage": [
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "multicolumn.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "page.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "left": 0,
+          "right": "<BinOp>",
+          "top": 0,
+          "bottom": "<Attribute>"
+        }
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "left": "<BinOp>",
+          "right": "<BinOp>",
+          "top": 0,
+          "bottom": "<Attribute>"
+        }
+      },
+      {
+        "method": "region",
+        "method_full": "page.region",
+        "args": [],
+        "kwargs": {
+          "left": "<BinOp>",
+          "right": "<Attribute>",
+          "top": 0,
+          "bottom": "<Attribute>"
+        }
+      },
+      {
+        "method": "highlight",
+        "method_full": "page.highlight",
+        "args": [
+          "<var:left>",
+          "<var:mid>",
+          "<var:right>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "Flow",
+        "method_full": "Flow",
+        "args": [],
+        "kwargs": {
+          "segments": "<var:stacked>",
+          "arrangement": "vertical"
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "flow.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text:contains(\"Table two\")",
+          "include_endpoint": false
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "below",
+        "method_full": "below",
+        "args": [],
+        "kwargs": {
+          "until": "text[width>10]:bold|text:contains(\"Here is a bit\")",
+          "include_endpoint": false
+        }
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "PDF",
+        "method_full": "PDF",
+        "args": [
+          "needs-ocr.pdf"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "analyze_layout",
+        "method_full": "page.analyze_layout",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "group_by": "type"
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "region"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "apply_ocr",
+        "method_full": "apply_ocr",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "table"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_text",
+        "method_full": "page.extract_text",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "analyze_layout",
+        "method_full": "page.analyze_layout",
+        "args": [
+          "tatr"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "group_by": "type"
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "region"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "crop": true
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "region[type=table-column]"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "region[type=table-column]"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "table"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "extract_table",
+        "method_full": "extract_table",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "table"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "analyze_layout",
+        "method_full": "page.analyze_layout",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "show",
+        "method_full": "show",
+        "args": [],
+        "kwargs": {
+          "group_by": "type"
+        }
+      },
+      {
+        "method": "find_all",
+        "method_full": "page.find_all",
+        "args": [
+          "region"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "find",
+        "method_full": "page.find",
+        "args": [
+          "region[type=table]"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "apply_ocr",
+        "method_full": "table_area.apply_ocr",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "Guides",
+        "method_full": "Guides",
+        "args": [
+          "<var:table_area>"
+        ],
+        "kwargs": {}
+      },
+      {
+        "method": "from_lines",
+        "method_full": "guides.from_lines",
+        "args": [],
+        "kwargs": {
+          "threshold": 0.6
+        }
+      },
+      {
+        "method": "from_lines",
+        "method_full": "guides.from_lines",
+        "args": [],
+        "kwargs": {
+          "threshold": 0.6
+        }
+      },
+      {
+        "method": "show",
+        "method_full": "guides.show",
+        "args": [],
+        "kwargs": {}
+      },
+      {
+        "method": "to_df",
+        "method_full": "to_df",
+        "args": [],
+        "kwargs": {}
+      }
+    ],
+    "selectors": [
+      "region",
+      "region[type=table-column]",
+      "region[type=table]",
+      "table",
+      "text:contains(\"Table one\")",
+      "text[source=ocr]",
+      "text[width>10]:bold"
+    ],
+    "complexity": {
+      "code_blocks": 22,
+      "total_lines": 71,
+      "total_chars": 1976
+    },
+    "approaches": [
+      "multicolumn.md"
+    ]
+  }
+]
