@@ -56,7 +56,7 @@ We could also pull one specific section of the page if we wanted to
 with left_col.within() as col:
     portion = (
         left_col
-        .find("text:contains(Name and Location)")
+        .find("text:closest(Name and Location)")
         .below(
           until='text:contains(ICE Information)',
           include_endpoint=False
