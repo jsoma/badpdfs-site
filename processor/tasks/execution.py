@@ -79,7 +79,7 @@ class ExecutionTask(Task):
             if not approach.is_published():
                 continue
             
-            context.log(f"Executing code in {approach.slug}")
+            # context.log(f"Executing code in {approach.slug}")
             
             # Reset state for each approach
             self.reset_state()
@@ -94,26 +94,26 @@ class ExecutionTask(Task):
                     if cell.get('type') == 'code' and cell.get('execution', {}).get('status') == 'error':
                         error_count += 1
                         full_error = cell['execution']['error']
-                        context.log(f"\n{'='*60}", "ERROR")
-                        context.log(f"Code block error in {approach.slug} (cell #{cell_idx + 1}):", "ERROR")
-                        context.log(f"Code snippet: {cell.get('content', '')[:100]}...", "ERROR")
-                        context.log(f"{'='*60}", "ERROR")
-                        context.log(f"Full traceback:\n{full_error}", "ERROR")
-                        context.log(f"{'='*60}\n", "ERROR")
+                        # context.log(f"\n{'='*60}", "ERROR")
+                        # context.log(f"Code block error in {approach.slug} (cell #{cell_idx + 1}):", "ERROR")
+                        # context.log(f"Code snippet: {cell.get('content', '')[:100]}...", "ERROR")
+                        # context.log(f"{'='*60}", "ERROR")
+                        # context.log(f"Full traceback:\n{full_error}", "ERROR")
+                        # context.log(f"{'='*60}\n", "ERROR")
                     elif cell.get('type') == 'tab':
                         for tab_idx, tab_cell in enumerate(cell.get('cells', [])):
                             if tab_cell.get('type') == 'code' and tab_cell.get('execution', {}).get('status') == 'error':
                                 error_count += 1
                                 full_error = tab_cell['execution']['error']
-                                context.log(f"\n{'='*60}", "ERROR")
-                                context.log(f"Code block error in {approach.slug} (tab cell #{tab_idx + 1}):", "ERROR")
-                                context.log(f"Code snippet: {tab_cell.get('content', '')[:100]}...", "ERROR")
-                                context.log(f"{'='*60}", "ERROR")
-                                context.log(f"Full traceback:\n{full_error}", "ERROR")
-                                context.log(f"{'='*60}\n", "ERROR")
+                                # context.log(f"\n{'='*60}", "ERROR")
+                                # context.log(f"Code block error in {approach.slug} (tab cell #{tab_idx + 1}):", "ERROR")
+                                # context.log(f"Code snippet: {tab_cell.get('content', '')[:100]}...", "ERROR")
+                                # context.log(f"{'='*60}", "ERROR")
+                                # context.log(f"Full traceback:\n{full_error}", "ERROR")
+                                # context.log(f"{'='*60}\n", "ERROR")
                 
-                if error_count > 0:
-                    context.log(f"Found {error_count} code block error(s) in {approach.slug}", "WARNING")
+                # if error_count > 0:
+                #     context.log(f"Found {error_count} code block error(s) in {approach.slug}", "WARNING")
                 
                 # Save result
                 output_path = context.get_artifact_path(
@@ -127,7 +127,7 @@ class ExecutionTask(Task):
                     'code_errors': error_count
                 })
             except Exception as e:
-                context.log(f"Error executing {approach.slug}: {e}", "ERROR")
+                # context.log(f"Error executing {approach.slug}: {e}", "ERROR")
                 results.append({
                     'approach': approach.slug,
                     'status': 'error',
@@ -353,13 +353,13 @@ class ExecutionTask(Task):
             with redirect_stdout(stdout_capture), redirect_stderr(stderr_capture):
                 # Execute all but last expression
                 if code_without_last:
-                    context.log(f"Executing code: {code_without_last[:100]}...", "DEBUG")
+                    # context.log(f"Executing code: {code_without_last[:100]}...", "DEBUG")
                     exec(code_without_last, self.namespace)
                 
                 # Evaluate last expression
                 if last_expr:
                     expr_str = ast.unparse(last_expr.value)
-                    context.log(f"Evaluating expression: {expr_str[:100]}...", "DEBUG")
+                    # context.log(f"Evaluating expression: {expr_str[:100]}...", "DEBUG")
                     last_value = eval(expr_str, self.namespace)
             
             # Capture rich output
