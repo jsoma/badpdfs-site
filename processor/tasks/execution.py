@@ -45,6 +45,10 @@ class ExecutionTask(Task):
         self.image_counter = 0
         self.current_file_path = None
         self._setup_matplotlib_capture()
+        
+        # Disable progress bars for all executions
+        os.environ['TQDM_DISABLE'] = '1'  # Standard tqdm
+        os.environ['DISABLE_TQDM'] = 'true'  # Surya's setting
     
     def _setup_matplotlib_capture(self):
         """Setup matplotlib to capture figures."""
